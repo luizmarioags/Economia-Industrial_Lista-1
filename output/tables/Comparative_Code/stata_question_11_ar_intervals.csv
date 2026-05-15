@@ -1,0 +1,4 @@
+model,N,k_inst,ar_low,ar_high,ar_low_grid,ar_high_grid,beta0_minp,p_min,p_max,grid_initial_min,grid_initial_max,grid_min,grid_max,grid_step,coarse_step,fine_step,open_left,open_right,n_expand,left_hits,right_hits,npoints_final
+Z1,52,1,,-.76749998,-19.4375,-.76749998,-1.7125,6.2901663e-06,.99867207,-5,2,-19.4375,2,.0049999999,.05,.0049999999,1,0,2,3,0,4289
+Z2,52,2,,,,,-.30000001,2.4252578e-09,.00027609215,-5,2,-100,100,.0049999999,.05,.0049999999,0,0,4,0,0,
+Z7,51,4,,,,,-.85000002,8.8345580e-09,4.3183846e-07,-5,2,-100,100,.0049999999,.05,.0049999999,0,0,4,0,0,

@@ -1,0 +1,74 @@
+------------------------------------------------------------------------------------------------------------------------
+      name:  weaklog
+       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
+> tata_question_06_weakivtest_Z6.txt
+  log type:  text
+ opened on:  14 May 2026, 21:05:30
+Modelo Z6: instrumentos excluídos = z z_lag
+(obs=51)
+
+Montiel-Pflueger robust weak instrument test
+--------------------------------------------
+Effective F statistic:        1.547
+Confidence level alpha:          5%
+--------------------------------------------
+
+--------------------------------------------
+Critical Values             TSLS      LIML
+--------------------------------------------
+% of Worst Case Bias
+tau=5%                    10.947    22.757
+tau=10%                    7.572    14.238
+tau=20%                    5.605     9.457
+tau=30%                    4.854     7.669
+--------------------------------------------
+
+scalars:
+                  r(K) =  2
+                  r(N) =  51
+                 r(n2) =  10000000
+              r(level) =  .05
+                r(eps) =  .001
+              r(F_eff) =  1.547446137537346
+           r(c_TSLS_5) =  10.94662
+          r(c_TSLS_10) =  7.571594
+          r(c_TSLS_20) =  5.605019
+          r(c_TSLS_30) =  4.854227
+           r(c_LIML_5) =  22.75661
+          r(c_LIML_10) =  14.23777
+          r(c_LIML_20) =  9.457455
+          r(c_LIML_30) =  7.668897
+           r(c_simp_5) =  33.41019
+          r(c_simp_10) =  20.09409
+          r(c_simp_20) =  12.75585
+          r(c_simp_30) =  10.0519
+           r(x_TSLS_5) =  3.868278
+          r(x_TSLS_10) =  1.934139
+          r(x_TSLS_20) =  .9670695
+          r(x_TSLS_30) =  .6440683
+       r(K_eff_TSLS_5) =  1.702564
+      r(K_eff_TSLS_10) =  1.723303
+      r(K_eff_TSLS_20) =  1.755133
+      r(K_eff_TSLS_30) =  1.778476
+           r(x_LIML_5) =  11.92609
+          r(x_LIML_10) =  5.963044
+          r(x_LIML_20) =  2.981522
+          r(x_LIML_30) =  1.985694
+       r(K_eff_LIML_5) =  1.686005
+      r(K_eff_LIML_10) =  1.694247
+      r(K_eff_LIML_20) =  1.709157
+      r(K_eff_LIML_30) =  1.72232
+           r(x_simp_5) =  20
+          r(x_simp_10) =  10
+          r(x_simp_20) =  5
+          r(x_simp_30) =  3.33
+       r(K_eff_simp_5) =  1.682511
+      r(K_eff_simp_10) =  1.687637
+      r(K_eff_simp_20) =  1.697274
+      r(K_eff_simp_30) =  1.706196
+      name:  weaklog
+       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
+> tata_question_06_weakivtest_Z6.txt
+  log type:  text
+ closed on:  14 May 2026, 21:05:31
+------------------------------------------------------------------------------------------------------------------------

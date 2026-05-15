@@ -1,0 +1,11 @@
+software,metric,MAE,RMSE,MaxAbs
+Python,beta_p,0,0,0
+Python,se_p,.0257518834301404,.042329352,.10166359
+Python,f_usual,0,0,0
+Python,f_eff_mop,0,0,0
+Python,hansen_p,0,0,0
+R,beta_p,0,0,0
+R,se_p,.0257518834301404,.042329352,.10166359
+R,f_usual,0,0,0
+R,f_eff_mop,0,0,0
+R,hansen_p,1.25126991803e-09,2.7728180e-09,6.2001200e-09
