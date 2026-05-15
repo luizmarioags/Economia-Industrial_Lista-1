@@ -4,9 +4,9 @@ Este pacote replica a **Lista 1: Estimação de Demanda, 2SLS e Instrumentos Fra
 
 O modelo estrutural é:
 
-\[
+$$
 q_t = \beta_0 + \beta_p p^{ch}_t + \beta_y y_t + \beta_b p^b_t + u_t,
-\]
+$$
 
 onde:
 
