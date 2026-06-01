@@ -1,0 +1,5 @@
+modelo,n_R,parametros_R,momentos_R,n_Stata,parametros_Stata,momentos_Stata,dif_n,abs_dif_n,dif_parametros,abs_dif_parametros,dif_momentos,abs_dif_momentos
+irrestrito,40,18,18,40,18,0,0,0,0,0,18,18
+homogeneidade,40,15,18,40,15,0,0,0,0,0,18,18
+homog_simetria,40,12,18,40,12,0,0,0,0,0,18,18
+homog_simetria_L2,39,12,30,39,12,0,0,0,0,0,30,30

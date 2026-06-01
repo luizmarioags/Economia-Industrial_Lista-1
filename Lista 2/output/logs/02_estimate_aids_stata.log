@@ -1,0 +1,329 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/02_estimate_aids_stata.log
+  log type:  text
+ opened on:   1 Jun 2026, 09:34:50
+
+. 
+. use "$PROC_DTA", clear                             // Abre os dados processados pela etapa 01.
+
+. 
+. drop if missing(w_bfvl, w_pork, w_fish, lngp_bfvl, lngp_pork, lngp_poult, lngp_fish, ln_real_x, L1_lngp_bfvl, L1_lngp_pork, L1_lngp_poult, L1_lngp_fish) // Remove observações sem instrumentos de primeira defasagem.
+(1 observation deleted)
+
+. 
+. global Z1 "ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish" // Define instrumentos principais: escala real e preços defasados.
+
+. global Z2 "ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish L2_lngp_bfvl L2_lngp_pork L2_lngp_poult L2_lngp_fish" // Define instrumentos alternativos com segunda defasagem.
+
+. 
+. ********************************************************************************
+. * Modelo 1: sem homogeneidade e sem simetria.
+. ********************************************************************************
+. 
+. gmm                                                                          ///
+>     (eq_bfvl: w_bfvl - {a_bfvl} - {gbfvl_bfvl}*lngp_bfvl - {gbfvl_pork}*lngp_pork - {gbfvl_poult}*lngp_poult - {gbfvl_fish}*lngp_fish - {b_bfvl}*ln_real_x) ///
+>     (eq_pork: w_pork - {a_pork} - {gpork_bfvl}*lngp_bfvl - {gpork_pork}*lngp_pork - {gpork_poult}*lngp_poult - {gpork_fish}*lngp_fish - {b_pork}*ln_real_x) ///
+>     (eq_fish: w_fish - {a_fish} - {gfish_bfvl}*lngp_bfvl - {gfish_pork}*lngp_pork - {gfish_poult}*lngp_poult - {gfish_fish}*lngp_fish - {b_fish}*ln_real_x), ///
+>     instruments(eq_bfvl: $Z1)                                               ///
+>     instruments(eq_pork: $Z1)                                               ///
+>     instruments(eq_fish: $Z1)                                               ///
+>     winitial(unadjusted, independent) wmatrix(unadjusted) twostep nolog     // Estima o sistema sem restrições por GMM em dois passos.
+
+Final GMM criterion Q(b) = 2.23e-29
+
+GMM estimation 
+
+Number of parameters =  18
+Number of moments    =  18
+Initial weight matrix: Unadjusted                 Number of obs   =         40
+GMM weight matrix:     Unadjusted
+
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     /a_bfvl |   .4355349   .2002588     2.17   0.030     .0430349    .8280349
+ /gbfvl_bfvl |   .2502455    .076542     3.27   0.001      .100226     .400265
+ /gbfvl_pork |   .3607514   .1965344     1.84   0.066    -.0244489    .7459518
+/gbfvl_poult |  -.5682376    .243637    -2.33   0.020    -1.045757   -.0907178
+ /gbfvl_fish |  -.1652337   .0635974    -2.60   0.009    -.2898822   -.0405851
+     /b_bfvl |   .0243673   .1489951     0.16   0.870    -.2676577    .3163923
+     /a_pork |   .3854658    .065181     5.91   0.000     .2577134    .5132182
+ /gpork_bfvl |  -.0530774   .0249132    -2.13   0.033    -.1019063   -.0042485
+ /gpork_pork |   .0056249   .0639688     0.09   0.930    -.1197516    .1310014
+/gpork_poult |  -.0424672   .0792999    -0.54   0.592    -.1978922    .1129578
+ /gpork_fish |   .0488177   .0206999     2.36   0.018     .0082466    .0893888
+     /b_pork |  -.1068449   .0484955    -2.20   0.028    -.2018943   -.0117955
+     /a_fish |   .1820387   .0660093     2.76   0.006     .0526627    .3114146
+ /gfish_bfvl |  -.0799741   .0252298    -3.17   0.002    -.1294235   -.0305246
+ /gfish_pork |  -.1340503   .0647817    -2.07   0.039    -.2610201   -.0070804
+/gfish_poult |   .1163454   .0803077     1.45   0.147    -.0410548    .2737456
+ /gfish_fish |   .1220318    .020963     5.82   0.000     .0809451    .1631185
+     /b_fish |  -.0489879   .0491118    -1.00   0.319    -.1452453    .0472694
+------------------------------------------------------------------------------
+Instruments for equation eq_bfvl: ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish _cons
+Instruments for equation eq_pork: ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish _cons
+Instruments for equation eq_fish: ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish _cons
+
+. 
+. estimates store aids_unrestricted                                            // Guarda o modelo irrestrito na memória.
+
+. estimates save "$MODELS/aids_unrestricted.ster", replace                     // Salva o modelo irrestrito em arquivo.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/models/aids_unrestricted.ster saved
+
+. estat overid                                                                 // Mostra teste de sobreidentificação, quando houver graus de liberdade.
+
+  Test of overidentifying restriction:
+
+  Hansen's J chi2(0) = 8.9e-28 (p =     .)
+
+Note: test cannot be performed because there are no
+      overidentifying restrictions.
+
+. 
+. ********************************************************************************
+. * Modelo 2: com homogeneidade.
+. * A restrição soma_k gamma_gk = 0 é imposta substituindo o coeficiente de poult.
+. * Assim, cada equação usa diferenças de preço contra poult.
+. ********************************************************************************
+. 
+. gmm                                                                          ///
+>     (eq_bfvl: w_bfvl - {a_bfvl} - {gbfvl_bfvl}*(lngp_bfvl-lngp_poult) - {gbfvl_pork}*(lngp_pork-lngp_poult) - {gbfvl_fish}*(lngp_fish-lngp_poult) - {b_bfvl}*ln_real_x) ///
+>     (eq_pork: w_pork - {a_pork} - {gpork_bfvl}*(lngp_bfvl-lngp_poult) - {gpork_pork}*(lngp_pork-lngp_poult) - {gpork_fish}*(lngp_fish-lngp_poult) - {b_pork}*ln_real_x) ///
+>     (eq_fish: w_fish - {a_fish} - {gfish_bfvl}*(lngp_bfvl-lngp_poult) - {gfish_pork}*(lngp_pork-lngp_poult) - {gfish_fish}*(lngp_fish-lngp_poult) - {b_fish}*ln_real_x), ///
+>     instruments(eq_bfvl: $Z1)                                               ///
+>     instruments(eq_pork: $Z1)                                               ///
+>     instruments(eq_fish: $Z1)                                               ///
+>     winitial(unadjusted, independent) wmatrix(unadjusted) twostep nolog     // Estima o sistema com homogeneidade por GMM em dois passos.
+
+Final GMM criterion Q(b) = .3703761
+
+GMM estimation 
+
+Number of parameters =  15
+Number of moments    =  18
+Initial weight matrix: Unadjusted                 Number of obs   =         40
+GMM weight matrix:     Unadjusted
+
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     /a_bfvl |   .4067851   .2359861     1.72   0.085    -.0557391    .8693093
+ /gbfvl_bfvl |   .1084361   .0785521     1.38   0.167    -.0455233    .2623954
+ /gbfvl_pork |    .287288   .2306187     1.25   0.213    -.1647163    .7392923
+ /gbfvl_fish |  -.3287455   .0547383    -6.01   0.000    -.4360306   -.2214603
+     /b_bfvl |   .0460442   .1755732     0.26   0.793     -.298073    .3901613
+     /a_pork |   .3758175   .0971834     3.87   0.000     .1853416    .5662934
+ /gpork_bfvl |  -.1006682   .0323492    -3.11   0.002    -.1640715   -.0372649
+ /gpork_pork |  -.0190292    .094973    -0.20   0.841    -.2051729    .1671144
+ /gpork_fish |  -.0060563   .0225422    -0.27   0.788    -.0502383    .0381256
+     /b_pork |  -.0995702   .0723043    -1.38   0.168     -.241284    .0421435
+     /a_fish |   .1877553   .0703391     2.67   0.008     .0498933    .3256173
+ /gfish_bfvl |  -.0517766   .0234136    -2.21   0.027    -.0976664   -.0058868
+ /gfish_pork |  -.1194428   .0687392    -1.74   0.082    -.2541692    .0152836
+ /gfish_fish |   .1545446   .0163155     9.47   0.000     .1225667    .1865225
+     /b_fish |  -.0532982   .0523321    -1.02   0.308    -.1558673    .0492709
+------------------------------------------------------------------------------
+Instruments for equation eq_bfvl: ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish _cons
+Instruments for equation eq_pork: ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish _cons
+Instruments for equation eq_fish: ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish _cons
+
+. 
+. estimates store aids_homogeneity                                             // Guarda o modelo com homogeneidade.
+
+. estimates save "$MODELS/aids_homogeneity.ster", replace                      // Salva o modelo com homogeneidade em arquivo.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/models/aids_homogeneity.ster saved
+
+. estat overid                                                                 // Mostra teste de sobreidentificação, quando aplicável.
+
+  Test of overidentifying restriction:
+
+  Hansen's J chi2(3) =  14.815 (p = 0.0020)
+
+. 
+. ********************************************************************************
+. * Modelo 3: com homogeneidade e simetria.
+. * A simetria é imposta fazendo gamma_bfvl,pork = gamma_pork,bfvl,
+. * gamma_bfvl,fish = gamma_fish,bfvl e gamma_pork,fish = gamma_fish,pork.
+. ********************************************************************************
+. 
+. gmm                                                                          ///
+>     (eq_bfvl: w_bfvl - {a_bfvl} - {g11}*(lngp_bfvl-lngp_poult) - {g12}*(lngp_pork-lngp_poult) - {g14}*(lngp_fish-lngp_poult) - {b_bfvl}*ln_real_x) ///
+>     (eq_pork: w_pork - {a_pork} - {g12}*(lngp_bfvl-lngp_poult) - {g22}*(lngp_pork-lngp_poult) - {g24}*(lngp_fish-lngp_poult) - {b_pork}*ln_real_x) ///
+>     (eq_fish: w_fish - {a_fish} - {g14}*(lngp_bfvl-lngp_poult) - {g24}*(lngp_pork-lngp_poult) - {g44}*(lngp_fish-lngp_poult) - {b_fish}*ln_real_x), ///
+>     instruments(eq_bfvl: $Z1)                                               ///
+>     instruments(eq_pork: $Z1)                                               ///
+>     instruments(eq_fish: $Z1)                                               ///
+>     winitial(unadjusted, independent) wmatrix(unadjusted) twostep nolog     // Estima o sistema com homogeneidade e simetria.
+
+Final GMM criterion Q(b) = .9101264
+
+GMM estimation 
+
+Number of parameters =  12
+Number of moments    =  18
+Initial weight matrix: Unadjusted                 Number of obs   =         40
+GMM weight matrix:     Unadjusted
+
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     /a_bfvl |   .2924222   .2728471     1.07   0.284    -.2423482    .8271926
+        /g11 |  -.1072271   .0642449    -1.67   0.095    -.2331447    .0186906
+        /g12 |  -.1023288   .0324542    -3.15   0.002    -.1659379   -.0387198
+        /g14 |  -.1495251   .0259872    -5.75   0.000     -.200459   -.0985911
+     /b_bfvl |   .1307326   .2030335     0.64   0.520    -.2672057    .5286709
+     /a_pork |   .3756636   .0980486     3.83   0.000     .1834919    .5678353
+        /g22 |  -.0165287   .0955957    -0.17   0.863    -.2038929    .1708356
+        /g24 |  -.0059634   .0226273    -0.26   0.792    -.0503121    .0383854
+     /b_pork |  -.0994567    .072948    -1.36   0.173    -.2424321    .0435188
+     /a_fish |   .1742442    .147043     1.18   0.236    -.1139548    .4624432
+        /g44 |   .1679034   .0167835    10.00   0.000     .1350084    .2007983
+     /b_fish |  -.0433144   .1094093    -0.40   0.692    -.2577528     .171124
+------------------------------------------------------------------------------
+Instruments for equation eq_bfvl: ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish _cons
+Instruments for equation eq_pork: ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish _cons
+Instruments for equation eq_fish: ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish _cons
+
+. 
+. estimates store aids_hsym                                                    // Guarda o modelo final com homogeneidade e simetria.
+
+. estimates save "$MODELS/aids_hsym.ster", replace                             // Salva o modelo final em arquivo.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/models/aids_hsym.ster saved
+
+. estat overid                                                                 // Mostra teste de sobreidentificação do modelo final.
+
+  Test of overidentifying restriction:
+
+  Hansen's J chi2(6) = 36.4051 (p = 0.0000)
+
+. 
+. ********************************************************************************
+. * Modelo 3 alternativo: homogeneidade e simetria com instrumentos L1 e L2.
+. * Esta estimação responde à questão 9, que pede uma versão com segunda defasagem.
+. ********************************************************************************
+. 
+. preserve                                                                     // Preserva a amostra usada até aqui.
+
+. drop if missing(L2_lngp_bfvl, L2_lngp_pork, L2_lngp_poult, L2_lngp_fish)     // Remove anos sem segunda defasagem.
+(1 observation deleted)
+
+. 
+. gmm                                                                          ///
+>     (eq_bfvl: w_bfvl - {a_bfvl} - {g11}*(lngp_bfvl-lngp_poult) - {g12}*(lngp_pork-lngp_poult) - {g14}*(lngp_fish-lngp_poult) - {b_bfvl}*ln_real_x) ///
+>     (eq_pork: w_pork - {a_pork} - {g12}*(lngp_bfvl-lngp_poult) - {g22}*(lngp_pork-lngp_poult) - {g24}*(lngp_fish-lngp_poult) - {b_pork}*ln_real_x) ///
+>     (eq_fish: w_fish - {a_fish} - {g14}*(lngp_bfvl-lngp_poult) - {g24}*(lngp_pork-lngp_poult) - {g44}*(lngp_fish-lngp_poult) - {b_fish}*ln_real_x), ///
+>     instruments(eq_bfvl: $Z2)                                               ///
+>     instruments(eq_pork: $Z2)                                               ///
+>     instruments(eq_fish: $Z2)                                               ///
+>     winitial(unadjusted, independent) wmatrix(unadjusted) twostep nolog     // Estima o modelo final com instrumentos ampliados.
+
+Final GMM criterion Q(b) = 1.560852
+
+GMM estimation 
+
+Number of parameters =  12
+Number of moments    =  30
+Initial weight matrix: Unadjusted                 Number of obs   =         39
+GMM weight matrix:     Unadjusted
+
+------------------------------------------------------------------------------
+             | Coefficient  Std. err.      z    P>|z|     [95% conf. interval]
+-------------+----------------------------------------------------------------
+     /a_bfvl |   .2091403   .2819186     0.74   0.458      -.34341    .7616905
+        /g11 |  -.1106433   .0626061    -1.77   0.077    -.2333489    .0120624
+        /g12 |  -.0982363   .0290136    -3.39   0.001    -.1551019   -.0413707
+        /g14 |  -.1452787   .0258982    -5.61   0.000    -.1960383   -.0945191
+     /b_bfvl |   .1932208   .2099427     0.92   0.357    -.2182593     .604701
+     /a_pork |   .3779742   .0975019     3.88   0.000      .186874    .5690744
+        /g22 |  -.0150136   .0684874    -0.22   0.826    -.1492464    .1192192
+        /g24 |   .0034449    .016054     0.21   0.830    -.0280203    .0349102
+     /b_pork |  -.1015418   .0726224    -1.40   0.162    -.2438791    .0407956
+     /a_fish |   .1941035   .1509356     1.29   0.198    -.1017249    .4899319
+        /g44 |   .1664643     .01713     9.72   0.000     .1328902    .2000385
+     /b_fish |  -.0582971   .1123867    -0.52   0.604    -.2785711    .1619768
+------------------------------------------------------------------------------
+Instruments for equation eq_bfvl: ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish L2_lngp_bfvl L2_lngp_pork L2_lngp_poult L2_lngp_fish _cons
+Instruments for equation eq_pork: ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish L2_lngp_bfvl L2_lngp_pork L2_lngp_poult L2_lngp_fish _cons
+Instruments for equation eq_fish: ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish L2_lngp_bfvl L2_lngp_pork L2_lngp_poult L2_lngp_fish _cons
+
+. 
+. estimates store aids_hsym_L2                                                 // Guarda o modelo com segunda defasagem.
+
+. estimates save "$MODELS/aids_hsym_L2.ster", replace                          // Salva o modelo com segunda defasagem.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/models/aids_hsym_L2.ster saved
+
+. estat overid                                                                 // Mostra teste de sobreidentificação da versão ampliada.
+
+  Test of overidentifying restriction:
+
+  Hansen's J chi2(18) = 60.8732 (p = 0.0000)
+
+. restore                                                                      // Restaura a amostra com apenas primeira defasagem.
+
+. 
+. ********************************************************************************
+. * Exportação das tabelas de coeficientes estimados.
+. ********************************************************************************
+. 
+. tempname postcoef                                                            // Cria nome temporário para o arquivo de postagem.
+
+. postfile `postcoef' str20 modelo str30 parametro double estimativa erro_padrao estat_t using "$TABLES/coeficientes_stata.dta", replace // Abre arquivo temporário de coeficientes.
+
+. 
+. estimates restore aids_unrestricted                                          // Ativa o modelo irrestrito.
+(results aids_unrestricted are active now)
+
+. local p_unres a_bfvl gbfvl_bfvl gbfvl_pork gbfvl_poult gbfvl_fish b_bfvl a_pork gpork_bfvl gpork_pork gpork_poult gpork_fish b_pork a_fish gfish_bfvl gfish_pork gfish_poult gfish_fish b_fish // Lista parâmetros do modelo irrestrito.
+
+. foreach p of local p_unres {                                                 // Percorre cada parâmetro do modelo irrestrito.
+  2.     scalar coef = _b[/`p']                                                   // Extrai a estimativa pontual.
+  3.     scalar se = _se[/`p']                                                    // Extrai o erro-padrão.
+  4.     scalar tt = coef / se                                                    // Calcula a estatística t.
+  5.     post `postcoef' ("irrestrito") ("`p'") (coef) (se) (tt)                  // Grava linha da tabela.
+  6. }                                                                            // Fecha o loop de parâmetros.
+
+. 
+. estimates restore aids_homogeneity                                           // Ativa o modelo com homogeneidade.
+(results aids_homogeneity are active now)
+
+. local p_hom a_bfvl gbfvl_bfvl gbfvl_pork gbfvl_fish b_bfvl a_pork gpork_bfvl gpork_pork gpork_fish b_pork a_fish gfish_bfvl gfish_pork gfish_fish b_fish // Lista parâmetros do modelo homogêneo.
+
+. foreach p of local p_hom {                                                   // Percorre cada parâmetro do modelo homogêneo.
+  2.     scalar coef = _b[/`p']                                                   // Extrai a estimativa pontual.
+  3.     scalar se = _se[/`p']                                                    // Extrai o erro-padrão.
+  4.     scalar tt = coef / se                                                    // Calcula a estatística t.
+  5.     post `postcoef' ("homogeneidade") ("`p'") (coef) (se) (tt)               // Grava linha da tabela.
+  6. }                                                                            // Fecha o loop de parâmetros.
+
+. 
+. estimates restore aids_hsym                                                  // Ativa o modelo com homogeneidade e simetria.
+(results aids_hsym are active now)
+
+. local p_hsym a_bfvl g11 g12 g14 b_bfvl a_pork g22 g24 b_pork a_fish g44 b_fish // Lista parâmetros livres do modelo final.
+
+. foreach p of local p_hsym {                                                  // Percorre cada parâmetro do modelo final.
+  2.     scalar coef = _b[/`p']                                                   // Extrai a estimativa pontual.
+  3.     scalar se = _se[/`p']                                                    // Extrai o erro-padrão.
+  4.     scalar tt = coef / se                                                    // Calcula a estatística t.
+  5.     post `postcoef' ("homog_simetria") ("`p'") (coef) (se) (tt)              // Grava linha da tabela.
+  6. }                                                                            // Fecha o loop de parâmetros.
+
+. 
+. postclose `postcoef'                                                         // Fecha o arquivo temporário de coeficientes.
+
+. use "$TABLES/coeficientes_stata.dta", clear                                   // Abre a tabela de coeficientes em formato Stata.
+
+. export delimited using "$TABLES/coeficientes_stata.csv", replace              // Exporta a tabela de coeficientes para CSV.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/coeficientes_stata.csv saved
+
+. save "$TABLES/coeficientes_stata.dta", replace                                // Salva novamente a tabela em formato Stata.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/coeficientes_stata.dta saved
+
+. 
+. log close                                                                     // Fecha o log da estimação.
+      name:  <unnamed>
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/02_estimate_aids_stata.log
+  log type:  text
+ closed on:   1 Jun 2026, 09:34:54
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

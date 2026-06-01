@@ -1,0 +1,17 @@
+linha,coluna,correlacao
+Carne bovina e vitela,Carne bovina e vitela,1
+Carne bovina e vitela,Carne suína,0.4785919435089568
+Carne bovina e vitela,Frango,-0.9476169131341904
+Carne bovina e vitela,Pescados,-0.9296112047047088
+Carne suína,Carne bovina e vitela,0.4785919435089568
+Carne suína,Carne suína,1
+Carne suína,Frango,-0.6464128279962001
+Carne suína,Pescados,-0.5643934211245517
+Frango,Carne bovina e vitela,-0.9476169131341904
+Frango,Carne suína,-0.6464128279962001
+Frango,Frango,1
+Frango,Pescados,0.8313987920963453
+Pescados,Carne bovina e vitela,-0.9296112047047088
+Pescados,Carne suína,-0.5643934211245517
+Pescados,Frango,0.8313987920963453
+Pescados,Pescados,1

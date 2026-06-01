@@ -1,0 +1,276 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/04_tests_diagnostics_aids_stata.log
+  log type:  text
+ opened on:   1 Jun 2026, 09:34:55
+
+. 
+. use "$PROC_DTA", clear                             // Abre dados processados.
+
+. 
+. drop if missing(w_bfvl, w_pork, w_fish, lngp_bfvl, lngp_pork, lngp_poult, lngp_fish, ln_real_x, L1_lngp_bfvl, L1_lngp_pork, L1_lngp_poult, L1_lngp_fish) // Mantém amostra com instrumentos L1.
+(1 observation deleted)
+
+. 
+. ********************************************************************************
+. * Testes de homogeneidade e simetria usando o modelo irrestrito.
+. ********************************************************************************
+. 
+. estimates use "$MODELS/aids_unrestricted.ster"     // Carrega o modelo sem restrições.
+
+. 
+. test (_b[/gbfvl_bfvl] + _b[/gbfvl_pork] + _b[/gbfvl_poult] + _b[/gbfvl_fish] = 0) ///
+>      (_b[/gpork_bfvl] + _b[/gpork_pork] + _b[/gpork_poult] + _b[/gpork_fish] = 0) ///
+>      (_b[/gfish_bfvl] + _b[/gfish_pork] + _b[/gfish_poult] + _b[/gfish_fish] = 0) // Testa homogeneidade nas equações estimadas.
+
+ ( 1)  [gbfvl_bfvl]_cons + [gbfvl_pork]_cons + [gbfvl_poult]_cons + [gbfvl_fish]_cons = 0
+ ( 2)  [gpork_bfvl]_cons + [gpork_pork]_cons + [gpork_poult]_cons + [gpork_fish]_cons = 0
+ ( 3)  [gfish_bfvl]_cons + [gfish_pork]_cons + [gfish_poult]_cons + [gfish_fish]_cons = 0
+
+           chi2(  3) =   78.23
+         Prob > chi2 =    0.0000
+
+. 
+. scalar Wald_hom = r(chi2)                          // Guarda estatística qui-quadrado do teste de homogeneidade.
+
+. scalar df_hom = r(df)                              // Guarda graus de liberdade do teste de homogeneidade.
+
+. scalar p_hom = r(p)                                // Guarda p-valor do teste de homogeneidade.
+
+. 
+. test (_b[/gbfvl_pork] = _b[/gpork_bfvl]) ///
+>      (_b[/gbfvl_fish] = _b[/gfish_bfvl]) ///
+>      (_b[/gpork_fish] = _b[/gfish_pork])            // Testa simetria entre as equações estimadas.
+
+ ( 1)  [gbfvl_pork]_cons - [gpork_bfvl]_cons = 0
+ ( 2)  [gbfvl_fish]_cons - [gfish_bfvl]_cons = 0
+ ( 3)  [gpork_fish]_cons - [gfish_pork]_cons = 0
+
+           chi2(  3) =    8.23
+         Prob > chi2 =    0.0414
+
+. 
+. scalar Wald_sym = r(chi2)                          // Guarda estatística qui-quadrado do teste de simetria.
+
+. scalar df_sym = r(df)                              // Guarda graus de liberdade do teste de simetria.
+
+. scalar p_sym = r(p)                                // Guarda p-valor do teste de simetria.
+
+. 
+. preserve                                           // Preserva dados para criar tabela de testes.
+
+. clear                                              // Limpa a base.
+
+. set obs 2                                          // Cria duas linhas para os testes.
+Number of observations (_N) was 0, now 2.
+
+. gen str30 teste = ""                               // Cria nome do teste.
+(2 missing values generated)
+
+. replace teste = "Homogeneidade" in 1               // Nomeia o teste de homogeneidade.
+(1 real change made)
+
+. replace teste = "Simetria" in 2                    // Nomeia o teste de simetria.
+(1 real change made)
+
+. gen double estatistica = .                         // Cria coluna da estatística.
+(2 missing values generated)
+
+. replace estatistica = scalar(Wald_hom) in 1        // Salva estatística de homogeneidade.
+(1 real change made)
+
+. replace estatistica = scalar(Wald_sym) in 2        // Salva estatística de simetria.
+(1 real change made)
+
+. gen double gl = .                                  // Cria coluna de graus de liberdade.
+(2 missing values generated)
+
+. replace gl = scalar(df_hom) in 1                   // Salva graus de liberdade de homogeneidade.
+(1 real change made)
+
+. replace gl = scalar(df_sym) in 2                   // Salva graus de liberdade de simetria.
+(1 real change made)
+
+. gen double p_valor = .                             // Cria coluna de p-valor.
+(2 missing values generated)
+
+. replace p_valor = scalar(p_hom) in 1               // Salva p-valor de homogeneidade.
+(1 real change made)
+
+. replace p_valor = scalar(p_sym) in 2               // Salva p-valor de simetria.
+(1 real change made)
+
+. export delimited using "$TABLES/testes_wald_restricoes_stata.csv", replace // Exporta testes de Wald.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/testes_wald_restricoes_stata.csv saved
+
+. restore                                            // Restaura dados originais.
+
+. 
+. ********************************************************************************
+. * Diagnóstico de primeira etapa com instrumentos L1.
+. ********************************************************************************
+. 
+. tempname postfs                                    // Cria nome temporário para arquivo de primeira etapa.
+
+. postfile `postfs' str8 preco str12 instrumento double F_excluidos p_valor r2_full r2_reduzido r2_parcial N using "$TABLES/diagnostico_primeira_etapa_stata.dta", replace // Abre arquivo para resultados.
+
+. 
+. foreach g in bfvl pork poult fish {                // Percorre cada preço potencialmente endógeno.
+  2.     quietly regress lngp_`g' ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish // Estima primeira etapa completa com L1.
+  3.     scalar r2_full = e(r2)                         // Guarda R2 do modelo completo.
+  4.     scalar n_full = e(N)                           // Guarda número de observações.
+  5.     test L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish // Testa significância conjunta dos instrumentos excluídos.
+  6.     scalar F_ex = r(F)                             // Guarda F da primeira etapa.
+  7.     scalar p_ex = r(p)                             // Guarda p-valor do F.
+  8.     quietly regress lngp_`g' ln_real_x             // Estima modelo reduzido apenas com variável incluída.
+  9.     scalar r2_red = e(r2)                          // Guarda R2 do modelo reduzido.
+ 10.     scalar r2_par = (r2_full - r2_red)/(1 - r2_red) // Calcula R2 parcial dos instrumentos.
+ 11.     post `postfs' ("`g'") ("L1") (F_ex) (p_ex) (r2_full) (r2_red) (r2_par) (n_full) // Grava diagnóstico L1.
+ 12. }                                                  // Fecha loop de preços.
+
+ ( 1)  L1_lngp_bfvl = 0
+ ( 2)  L1_lngp_pork = 0
+ ( 3)  L1_lngp_poult = 0
+ ( 4)  L1_lngp_fish = 0
+
+       F(  4,    34) =  462.55
+            Prob > F =    0.0000
+
+ ( 1)  L1_lngp_bfvl = 0
+ ( 2)  L1_lngp_pork = 0
+ ( 3)  L1_lngp_poult = 0
+ ( 4)  L1_lngp_fish = 0
+
+       F(  4,    34) =  360.07
+            Prob > F =    0.0000
+
+ ( 1)  L1_lngp_bfvl = 0
+ ( 2)  L1_lngp_pork = 0
+ ( 3)  L1_lngp_poult = 0
+ ( 4)  L1_lngp_fish = 0
+
+       F(  4,    34) =  358.50
+            Prob > F =    0.0000
+
+ ( 1)  L1_lngp_bfvl = 0
+ ( 2)  L1_lngp_pork = 0
+ ( 3)  L1_lngp_poult = 0
+ ( 4)  L1_lngp_fish = 0
+
+       F(  4,    34) = 4722.92
+            Prob > F =    0.0000
+
+. 
+. foreach g in bfvl pork poult fish {                // Percorre cada preço para diagnóstico alternativo.
+  2.     quietly regress lngp_`g' ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish L2_lngp_bfvl L2_lngp_pork L2_lngp_poult L2_lngp_fish // Estima primeira etapa com L1 e L2.
+  3.     scalar r2_full = e(r2)                         // Guarda R2 do modelo completo.
+  4.     scalar n_full = e(N)                           // Guarda número de observações.
+  5.     test L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish L2_lngp_bfvl L2_lngp_pork L2_lngp_poult L2_lngp_fish // Testa instrumentos L1 e L2.
+  6.     scalar F_ex = r(F)                             // Guarda F da primeira etapa ampliada.
+  7.     scalar p_ex = r(p)                             // Guarda p-valor da primeira etapa ampliada.
+  8.     quietly regress lngp_`g' ln_real_x             // Estima modelo reduzido apenas com variável incluída.
+  9.     scalar r2_red = e(r2)                          // Guarda R2 do modelo reduzido.
+ 10.     scalar r2_par = (r2_full - r2_red)/(1 - r2_red) // Calcula R2 parcial dos instrumentos ampliados.
+ 11.     post `postfs' ("`g'") ("L1_L2") (F_ex) (p_ex) (r2_full) (r2_red) (r2_par) (n_full) // Grava diagnóstico L1+L2.
+ 12. }                                                  // Fecha loop de preços.
+
+ ( 1)  L1_lngp_bfvl = 0
+ ( 2)  L1_lngp_pork = 0
+ ( 3)  L1_lngp_poult = 0
+ ( 4)  L1_lngp_fish = 0
+ ( 5)  L2_lngp_bfvl = 0
+ ( 6)  L2_lngp_pork = 0
+ ( 7)  L2_lngp_poult = 0
+ ( 8)  L2_lngp_fish = 0
+
+       F(  8,    29) =  252.53
+            Prob > F =    0.0000
+
+ ( 1)  L1_lngp_bfvl = 0
+ ( 2)  L1_lngp_pork = 0
+ ( 3)  L1_lngp_poult = 0
+ ( 4)  L1_lngp_fish = 0
+ ( 5)  L2_lngp_bfvl = 0
+ ( 6)  L2_lngp_pork = 0
+ ( 7)  L2_lngp_poult = 0
+ ( 8)  L2_lngp_fish = 0
+
+       F(  8,    29) =  275.29
+            Prob > F =    0.0000
+
+ ( 1)  L1_lngp_bfvl = 0
+ ( 2)  L1_lngp_pork = 0
+ ( 3)  L1_lngp_poult = 0
+ ( 4)  L1_lngp_fish = 0
+ ( 5)  L2_lngp_bfvl = 0
+ ( 6)  L2_lngp_pork = 0
+ ( 7)  L2_lngp_poult = 0
+ ( 8)  L2_lngp_fish = 0
+
+       F(  8,    29) =  161.61
+            Prob > F =    0.0000
+
+ ( 1)  L1_lngp_bfvl = 0
+ ( 2)  L1_lngp_pork = 0
+ ( 3)  L1_lngp_poult = 0
+ ( 4)  L1_lngp_fish = 0
+ ( 5)  L2_lngp_bfvl = 0
+ ( 6)  L2_lngp_pork = 0
+ ( 7)  L2_lngp_poult = 0
+ ( 8)  L2_lngp_fish = 0
+
+       F(  8,    29) = 2805.65
+            Prob > F =    0.0000
+
+. 
+. postclose `postfs'                                 // Fecha arquivo de diagnósticos.
+
+. use "$TABLES/diagnostico_primeira_etapa_stata.dta", clear // Abre resultados de primeira etapa.
+
+. export delimited using "$TABLES/diagnostico_primeira_etapa_stata.csv", replace // Exporta diagnóstico para CSV.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/diagnostico_primeira_etapa_stata.csv saved
+
+. 
+. ********************************************************************************
+. * Comparação simples de estatísticas armazenadas dos modelos.
+. ********************************************************************************
+. 
+. tempname postmod                                   // Cria arquivo temporário de comparação de modelos.
+
+. postfile `postmod' str20 modelo double N parametros momentos df_overid J_obj using "$TABLES/comparacao_modelos_stata.dta", replace // Abre arquivo de comparação.
+
+. 
+. foreach m in aids_unrestricted aids_homogeneity aids_hsym aids_hsym_L2 { // Percorre modelos salvos.
+  2.     estimates use "$MODELS/`m'.ster"                // Carrega um modelo salvo.
+  3.     scalar Nmod = e(N)                              // Guarda número de observações.
+  4.     scalar kmod = e(k)                              // Guarda número de parâmetros.
+  5.     capture scalar jmod = e(J)                      // Tenta guardar estatística J.
+  6.     if _rc {                                        // Entra se e(J) não existir.
+  7.         scalar jmod = .                             // Usa missing quando a estatística não estiver armazenada.
+  8.     }                                               // Fecha condição.
+  9.     capture scalar dfj = e(J_df)                    // Tenta guardar graus de liberdade do teste J.
+ 10.     if _rc {                                        // Entra se e(J_df) não existir.
+ 11.         scalar dfj = .                              // Usa missing se não existir.
+ 12.     }                                               // Fecha condição.
+ 13.     capture scalar moments = e(k_eq_model)          // Tenta guardar quantidade de equações/momentos.
+ 14.     if _rc {                                        // Entra se a informação não existir.
+ 15.         scalar moments = .                          // Usa missing se não existir.
+ 16.     }                                               // Fecha condição.
+ 17.     post `postmod' ("`m'") (Nmod) (kmod) (moments) (dfj) (jmod) // Grava linha do modelo.
+ 18. }                                                   // Fecha loop de modelos.
+
+. 
+. postclose `postmod'                                // Fecha arquivo temporário.
+
+. use "$TABLES/comparacao_modelos_stata.dta", clear   // Abre comparação de modelos.
+
+. export delimited using "$TABLES/comparacao_modelos_stata.csv", replace // Exporta comparação para CSV.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/comparacao_modelos_stata.csv saved
+
+. 
+. log close                                          // Fecha log dos diagnósticos.
+      name:  <unnamed>
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/04_tests_diagnostics_aids_stata.log
+  log type:  text
+ closed on:   1 Jun 2026, 09:34:55
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

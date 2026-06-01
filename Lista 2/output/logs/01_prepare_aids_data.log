@@ -1,0 +1,276 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/01_prepare_aids_data.log
+  log type:  text
+ opened on:   1 Jun 2026, 09:34:50
+
+. 
+. import delimited using "$RAW_CSV", clear varnames(1) case(lower) // Importa o CSV e coloca nomes em minúsculas.
+(encoding automatically selected: UTF-8)
+(23 vars, 41 obs)
+
+. 
+. describe                                          // Mostra estrutura da base importada.
+
+Contains data
+ Observations:            41                  
+    Variables:            23                  
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Variable      Storage   Display    Value
+    name         type    format    label      Variable label
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+year            int     %8.0g                 
+beefq           float   %9.0g                 
+vealq           float   %9.0g                 
+bfvlq           float   %9.0g                 
+porkq           float   %9.0g                 
+poultq          float   %9.0g                 
+fishq           float   %9.0g                 
+cbfvlq          float   %9.0g                 
+cporkq          float   %9.0g                 
+cpoultq         float   %9.0g                 
+cfishq          float   %9.0g                 
+bfvlp           float   %9.0g                 
+porkp           float   %9.0g                 
+poultp          float   %9.0g                 
+fishp           float   %9.0g                 
+cpi             float   %9.0g                 
+pop             float   %9.0g                 
+pce             float   %9.0g                 
+xbfvl           float   %9.0g                 
+xpork           float   %9.0g                 
+xpoult          float   %9.0g                 
+xfish           float   %9.0g                 
+xtotal          float   %9.0g                 
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Sorted by: 
+     Note: Dataset has changed since last saved.
+
+. summarize                                         // Mostra estatísticas descritivas gerais.
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+        year |         41        1990    11.97915       1970       2010
+       beefq |         41    72.97321    9.163552   59.35648   94.12567
+       vealq |         41    1.348738    .8159395   .3961367   3.451072
+       bfvlq |         41    74.32195    9.942434   59.75735   97.40948
+       porkq |         41    50.63957    3.123864   42.89965   60.55896
+-------------+---------------------------------------------------------
+      poultq |         41    61.78222    16.31193   38.68585   86.93333
+       fishq |         41    14.34752    1.488513   11.48988   16.52798
+      cbfvlq |         41    182.0888    24.35896   146.4055   238.6532
+      cporkq |         41    94.69599    5.841626   80.22235   113.2453
+     cpoultq |         41    64.87133    17.12753   40.62014      91.28
+-------------+---------------------------------------------------------
+      cfishq |         41    42.03823    4.361342   33.66535     48.427
+       bfvlp |         41    124.4977    51.65182       43.5    224.511
+       porkp |         41    121.4525    42.87678       41.1    189.957
+      poultp |         41    127.9326    44.21081       53.2     204.22
+       fishp |         41     136.646    62.10003       31.3    243.229
+-------------+---------------------------------------------------------
+         cpi |         41    127.4091    55.82246   38.84167    218.056
+         pop |         41    254.4077     32.0195    205.052   309.3302
+         pce |         41    4425.956    3061.956      648.3    10215.7
+       xbfvl |         41    215.7635    67.77402   92.59121   338.4692
+       xpork |         41    114.2962    39.39778    46.5438    170.352
+-------------+---------------------------------------------------------
+      xpoult |         41     90.1793    50.92205   22.41452   177.3082
+       xfish |         41    59.75559    30.77791   10.76972   112.4629
+      xtotal |         41    479.9946    186.6868   172.7966   792.5945
+
+. 
+. isid year                                         // Verifica se o ano identifica unicamente cada observação.
+
+. sort year                                         // Ordena a base cronologicamente.
+
+. tsset year                                        // Declara a base como série temporal anual.
+
+Time variable: year, 1970 to 2010
+        Delta: 1 unit
+
+. 
+. foreach g in bfvl pork poult fish {               // Percorre cada produto usado no sistema.
+  2.     capture confirm variable x`g'                 // Verifica se a variável de dispêndio do produto já existe.
+  3.     if _rc {                                      // Entra neste bloco se a variável de dispêndio não existir.
+  4.         gen double x`g' = `g'p * `g'q             // Cria dispêndio como preço vezes quantidade se necessário.
+  5.     }                                             // Fecha a condição de criação do dispêndio.
+  6.     label variable x`g' "Dispendio com `g'"       // Rotula o dispêndio do produto.
+  7. }                                                 // Fecha o loop dos produtos.
+
+. 
+. egen double xtotal_calc = rowtotal(xbfvl xpork xpoult xfish) // Soma os dispêndios dos quatro produtos.
+
+. label variable xtotal_calc "Dispendio total condicional com carnes" // Rotula o dispêndio total calculado.
+
+. 
+. capture confirm variable xtotal                   // Verifica se a base já contém uma variável xtotal.
+
+. if !_rc {                                         // Entra se xtotal existir na base original.
+.     gen double diff_xtotal = xtotal_calc - xtotal // Calcula diferença entre xtotal reconstruído e xtotal original.
+.     label variable diff_xtotal "xtotal_calc - xtotal original" // Rotula a diferença.
+.     summarize diff_xtotal                         // Mostra se há divergências numéricas relevantes.
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+ diff_xtotal |         41    2.16e-06    .0000174  -.0000381   .0000381
+. }                                                 // Fecha a condição para xtotal original.
+
+. 
+. foreach g in bfvl pork poult fish {               // Percorre cada produto para calcular participação.
+  2.     gen double w_`g' = x`g' / xtotal_calc          // Calcula participação do produto no dispêndio total de carnes.
+  3.     label variable w_`g' "Participacao no dispendio: `g'" // Rotula a participação calculada.
+  4. }                                                 // Fecha o loop das participações.
+
+. 
+. egen double share_sum = rowtotal(w_bfvl w_pork w_poult w_fish) // Soma as participações em cada ano.
+
+. label variable share_sum "Soma das participacoes dos quatro produtos" // Rotula a soma das participações.
+
+. 
+. gen double share_gap = share_sum - 1              // Calcula desvio da soma das participações em relação a 1.
+
+. label variable share_gap "Desvio da soma das participacoes em relacao a 1" // Rotula o desvio.
+
+. 
+. gen byte share_problem = abs(share_gap) > 1e-8    // Marca anos com problema numérico maior que tolerância.
+
+. label variable share_problem "Indicador de soma das participacoes diferente de 1" // Rotula o indicador.
+
+. 
+. summarize share_sum share_gap share_problem       // Resume a checagem da restrição de adding-up nos dados.
+
+    Variable |        Obs        Mean    Std. dev.       Min        Max
+-------------+---------------------------------------------------------
+   share_sum |         41           1    3.93e-17          1          1
+   share_gap |         41    2.71e-18    3.92e-17  -1.11e-16   2.22e-16
+share_prob~m |         41           0           0          0          0
+
+. 
+. foreach g in bfvl pork poult fish {               // Percorre os quatro preços do sistema.
+  2.     gen double ln_p_`g' = ln(`g'p)                 // Calcula o logaritmo natural do preço do produto.
+  3.     label variable ln_p_`g' "Log do preco de `g'"  // Rotula o log-preço.
+  4.     quietly summarize ln_p_`g', meanonly          // Calcula a média temporal do log-preço.
+  5.     scalar mean_ln_p_`g' = r(mean)                // Guarda a média temporal em um escalar.
+  6.     gen double lngp_`g' = ln_p_`g' - scalar(mean_ln_p_`g') // Normaliza o log-preço retirando sua média.
+  7.     label variable lngp_`g' "Log-preco normalizado de `g'" // Rotula o log-preço normalizado.
+  8. }                                                 // Fecha o loop dos preços.
+
+. 
+. foreach g in bfvl pork poult fish {               // Percorre os quatro produtos para obter participação média.
+  2.     quietly summarize w_`g', meanonly             // Calcula a média temporal da participação no dispêndio.
+  3.     scalar wbar_`g' = r(mean)                     // Guarda a participação média em escalar.
+  4.     gen double wbar_`g' = scalar(wbar_`g')        // Cria uma variável constante com a participação média.
+  5.     label variable wbar_`g' "Participacao media no dispendio: `g'" // Rotula a participação média.
+  6. }                                                 // Fecha o loop das participações médias.
+
+. 
+. gen double lnP_stone = scalar(wbar_bfvl)*ln_p_bfvl + scalar(wbar_pork)*ln_p_pork + scalar(wbar_poult)*ln_p_poult + scalar(wbar_fish)*ln_p_fish // Calcula o índice de Stone com pesos médios.
+
+. label variable lnP_stone "Indice de Stone em log com participacoes medias" // Rotula o índice de Stone.
+
+. 
+. gen double ln_xtotal = ln(xtotal_calc)            // Calcula o log do dispêndio total com carnes.
+
+. label variable ln_xtotal "Log do dispendio total com carnes" // Rotula o log do dispêndio total.
+
+. 
+. gen double ln_real_x = ln_xtotal - lnP_stone      // Calcula log(x/P^S), isto é, dispêndio real.
+
+. label variable ln_real_x "Log do dispendio real: ln(x/P^S)" // Rotula o dispêndio real.
+
+. 
+. capture confirm variable pce                      // Verifica se a base contém despesa total de consumo.
+
+. if !_rc {                                         // Entra se a variável pce existir.
+.     gen double meat_pce_share = xtotal_calc / pce // Calcula peso do dispêndio com carnes no consumo agregado.
+.     label variable meat_pce_share "Peso das carnes no PCE" // Rotula a razão carnes/PCE.
+. }                                                 // Fecha a condição associada ao PCE.
+
+. 
+. foreach g in bfvl pork poult fish {               // Percorre os produtos para criar diferenças de preço.
+  2.     gen double d_`g'_poult = lngp_`g' - lngp_poult // Cria diferença de log-preço contra frango.
+  3.     label variable d_`g'_poult "lngp_`g' - lngp_poult" // Rotula a diferença de preço.
+  4. }                                                 // Fecha o loop das diferenças.
+
+. 
+. foreach g in bfvl pork poult fish {               // Percorre os produtos para criar instrumentos defasados.
+  2.     gen double L1_lngp_`g' = L1.lngp_`g'           // Cria a primeira defasagem do log-preço normalizado.
+  3.     gen double L2_lngp_`g' = L2.lngp_`g'           // Cria a segunda defasagem do log-preço normalizado.
+  4.     label variable L1_lngp_`g' "Defasagem 1 de lngp_`g'" // Rotula a primeira defasagem.
+  5.     label variable L2_lngp_`g' "Defasagem 2 de lngp_`g'" // Rotula a segunda defasagem.
+  6. }                                                 // Fecha o loop dos instrumentos defasados.
+(1 missing value generated)
+(2 missing values generated)
+(1 missing value generated)
+(2 missing values generated)
+(1 missing value generated)
+(2 missing values generated)
+(1 missing value generated)
+(2 missing values generated)
+
+. 
+. foreach g in bfvl pork fish {                     // Percorre as equações estimadas.
+  2.     gen double y_`g' = w_`g'                       // Cria alias da variável dependente da equação.
+  3.     label variable y_`g' "Variavel dependente AIDS: w_`g'" // Rotula a variável dependente.
+  4. }                                                 // Fecha o loop das variáveis dependentes.
+
+. 
+. order year bfvlp porkp poultp fishp bfvlq porkq poultq fishq xbfvl xpork xpoult xfish xtotal_calc w_bfvl w_pork w_poult w_fish share_sum lnP_stone ln_real_x // Organiza variáveis principais.
+
+. 
+. export delimited using "$PROC/meatdata_aids_preparado.csv", replace // Exporta dados processados em CSV.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/data/processed/meatdata_aids_preparado.csv saved
+
+. save "$PROC_DTA", replace                          // Salva dados processados em formato Stata.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/data/processed/meatdata_aids_preparado.dta saved
+
+. 
+. preserve                                           // Preserva a base em memória para criar tabela de médias.
+
+. clear                                              // Limpa a base temporariamente.
+
+. set obs 4                                          // Cria quatro linhas, uma para cada produto.
+Number of observations (_N) was 0, now 4.
+
+. gen str10 produto = ""                             // Cria variável de nome do produto.
+(4 missing values generated)
+
+. replace produto = "bfvl" in 1                      // Escreve o produto bfvl na primeira linha.
+(1 real change made)
+
+. replace produto = "pork" in 2                      // Escreve o produto pork na segunda linha.
+(1 real change made)
+
+. replace produto = "poult" in 3                     // Escreve o produto poult na terceira linha.
+(1 real change made)
+
+. replace produto = "fish" in 4                      // Escreve o produto fish na quarta linha.
+(1 real change made)
+
+. gen double wbar = .                                // Cria coluna para a participação média.
+(4 missing values generated)
+
+. replace wbar = scalar(wbar_bfvl) in 1              // Salva participação média de bfvl.
+(1 real change made)
+
+. replace wbar = scalar(wbar_pork) in 2              // Salva participação média de pork.
+(1 real change made)
+
+. replace wbar = scalar(wbar_poult) in 3             // Salva participação média de poult.
+(1 real change made)
+
+. replace wbar = scalar(wbar_fish) in 4              // Salva participação média de fish.
+(1 real change made)
+
+. export delimited using "$TABLES/participacoes_medias_stata.csv", replace // Exporta participações médias.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/participacoes_medias_stata.csv saved
+
+. restore                                            // Restaura a base processada.
+
+. 
+. log close                                          // Fecha o log da preparação.
+      name:  <unnamed>
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/01_prepare_aids_data.log
+  log type:  text
+ closed on:   1 Jun 2026, 09:34:50
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

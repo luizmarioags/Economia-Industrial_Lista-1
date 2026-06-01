@@ -1,0 +1,5 @@
+modelo,N,parametros,momentos,df_overid,J_obj
+aids_unrestricted,40,18,0,0,8.9221276e-28
+aids_homogeneity,40,15,0,3,14.815043
+aids_hsym,40,12,0,6,36.405056
+aids_hsym_L2,39,12,0,18,60.873222

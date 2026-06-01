@@ -1,0 +1,5 @@
+produto,elasticidade_dispendio,marshalliana_propria,compensada_propria,problema_dispendio_negativo,problema_preco_proprio_marshalliano_positivo,problema_preco_proprio_compensado_positivo
+bfvl,1.2798582666934475,-1.3602727467690354,-0.7624014490759513,FALSE,FALSE,FALSE
+pork,0.5895537727331724,-0.9687559826656744,-0.8258992080210293,FALSE,FALSE,FALSE
+poult,1.0691109811013992,-3.7187511253575067,-3.5325207603532642,FALSE,FALSE,FALSE
+fish,0.6277414148188981,0.486327046834361,0.5593686094923891,FALSE,TRUE,TRUE

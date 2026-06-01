@@ -1,0 +1,8 @@
+grupo,modelo,max_abs_dif_estimativa,max_abs_dif_erro_padrao,max_abs_dif_estat_t,objeto,max_abs_dif
+coeficientes,homog_simetria,2.2815757708127826e-7,4.45061572040828e-8,2.672800405278952e-6,NA,NA
+coeficientes,homog_simetria_L2,-Inf,-Inf,-Inf,NA,NA
+coeficientes,homogeneidade,4.997000379591832e-7,2.9953727678777575e-8,2.27735342228641e-6,NA,NA
+coeficientes,irrestrito,2.231424678367233e-7,2.0056286020864178e-7,2.246614647205547e-6,NA,NA
+elasticidade_dispendio,NA,NA,NA,NA,elasticidade_dispendio,1.4597545067163151e-6
+marshallianas,NA,NA,NA,NA,marshallianas,1.317345460272179e-6
+compensadas,NA,NA,NA,NA,compensadas,1.2336436316928712e-6

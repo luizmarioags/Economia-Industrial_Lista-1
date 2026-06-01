@@ -1,0 +1,406 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/03_elasticities_aids_stata.log
+  log type:  text
+ opened on:   1 Jun 2026, 09:34:54
+
+. 
+. use "$PROC_DTA", clear                             // Abre dados processados para recuperar participações médias.
+
+. 
+. foreach g in bfvl pork poult fish {                // Percorre os quatro produtos.
+  2.     quietly summarize w_`g', meanonly              // Calcula a participação média do produto.
+  3.     scalar wbar_`g' = r(mean)                      // Guarda a participação média em escalar.
+  4. }                                                  // Fecha o loop das médias.
+
+. 
+. estimates use "$MODELS/aids_hsym.ster"             // Carrega o modelo final com homogeneidade e simetria.
+
+. 
+. scalar a_bfvl = _b[/a_bfvl]                        // Recupera o intercepto estimado da equação bfvl.
+
+. scalar a_pork = _b[/a_pork]                        // Recupera o intercepto estimado da equação pork.
+
+. scalar a_fish = _b[/a_fish]                        // Recupera o intercepto estimado da equação fish.
+
+. scalar a_poult = 1 - a_bfvl - a_pork - a_fish      // Recupera o intercepto de poult por adding-up.
+
+. 
+. scalar b_bfvl = _b[/b_bfvl]                        // Recupera beta da equação bfvl.
+
+. scalar b_pork = _b[/b_pork]                        // Recupera beta da equação pork.
+
+. scalar b_fish = _b[/b_fish]                        // Recupera beta da equação fish.
+
+. scalar b_poult = - b_bfvl - b_pork - b_fish        // Recupera beta de poult por adding-up.
+
+. 
+. scalar g11 = _b[/g11]                              // Recupera gamma bfvl,bfvl.
+
+. scalar g12 = _b[/g12]                              // Recupera gamma bfvl,pork = gamma pork,bfvl.
+
+. scalar g14 = _b[/g14]                              // Recupera gamma bfvl,fish = gamma fish,bfvl.
+
+. scalar g22 = _b[/g22]                              // Recupera gamma pork,pork.
+
+. scalar g24 = _b[/g24]                              // Recupera gamma pork,fish = gamma fish,pork.
+
+. scalar g44 = _b[/g44]                              // Recupera gamma fish,fish.
+
+. 
+. scalar g13 = -(g11 + g12 + g14)                    // Recupera gamma bfvl,poult por homogeneidade.
+
+. scalar g21 = g12                                   // Impõe simetria gamma pork,bfvl.
+
+. scalar g23 = -(g21 + g22 + g24)                    // Recupera gamma pork,poult por homogeneidade.
+
+. scalar g31 = g13                                   // Recupera gamma poult,bfvl por simetria e adding-up.
+
+. scalar g32 = g23                                   // Recupera gamma poult,pork por simetria e adding-up.
+
+. scalar g34 = -(g14 + g24 + g44)                    // Recupera gamma poult,fish por adding-up.
+
+. scalar g41 = g14                                   // Impõe simetria gamma fish,bfvl.
+
+. scalar g42 = g24                                   // Impõe simetria gamma fish,pork.
+
+. scalar g43 = g34                                   // Recupera gamma fish,poult por simetria.
+
+. scalar g33 = -(g31 + g32 + g34)                    // Recupera gamma poult,poult por homogeneidade.
+
+. scalar g45 = .                                     // Escalar vazio sem uso; mantém bloco legível.
+
+. 
+. matrix ALPHA = (a_bfvl \ a_pork \ a_poult \ a_fish) // Cria vetor de alfas completos.
+
+. matrix rownames ALPHA = bfvl pork poult fish       // Nomeia as linhas do vetor de alfas.
+
+. matrix colnames ALPHA = alpha                      // Nomeia a coluna do vetor de alfas.
+
+. 
+. matrix BETA = (b_bfvl \ b_pork \ b_poult \ b_fish) // Cria vetor de betas completos.
+
+. matrix rownames BETA = bfvl pork poult fish        // Nomeia as linhas do vetor de betas.
+
+. matrix colnames BETA = beta                        // Nomeia a coluna do vetor de betas.
+
+. 
+. matrix GAMMA = J(4,4,.)                            // Cria matriz 4x4 para os gammas.
+
+. matrix rownames GAMMA = bfvl pork poult fish       // Nomeia linhas da matriz gamma.
+
+. matrix colnames GAMMA = bfvl pork poult fish       // Nomeia colunas da matriz gamma.
+
+. matrix GAMMA[1,1] = g11                            // Preenche gamma bfvl,bfvl.
+
+. matrix GAMMA[1,2] = g12                            // Preenche gamma bfvl,pork.
+
+. matrix GAMMA[1,3] = g13                            // Preenche gamma bfvl,poult.
+
+. matrix GAMMA[1,4] = g14                            // Preenche gamma bfvl,fish.
+
+. matrix GAMMA[2,1] = g21                            // Preenche gamma pork,bfvl.
+
+. matrix GAMMA[2,2] = g22                            // Preenche gamma pork,pork.
+
+. matrix GAMMA[2,3] = g23                            // Preenche gamma pork,poult.
+
+. matrix GAMMA[2,4] = g24                            // Preenche gamma pork,fish.
+
+. matrix GAMMA[3,1] = g31                            // Preenche gamma poult,bfvl.
+
+. matrix GAMMA[3,2] = g32                            // Preenche gamma poult,pork.
+
+. matrix GAMMA[3,3] = g33                            // Preenche gamma poult,poult.
+
+. matrix GAMMA[3,4] = g34                            // Preenche gamma poult,fish.
+
+. matrix GAMMA[4,1] = g41                            // Preenche gamma fish,bfvl.
+
+. matrix GAMMA[4,2] = g42                            // Preenche gamma fish,pork.
+
+. matrix GAMMA[4,3] = g43                            // Preenche gamma fish,poult.
+
+. matrix GAMMA[4,4] = g44                            // Preenche gamma fish,fish.
+
+. 
+. matrix WBAR = (scalar(wbar_bfvl) \ scalar(wbar_pork) \ scalar(wbar_poult) \ scalar(wbar_fish)) // Cria vetor de participações médias.
+
+. matrix rownames WBAR = bfvl pork poult fish        // Nomeia linhas das participações médias.
+
+. matrix colnames WBAR = wbar                        // Nomeia coluna das participações médias.
+
+. 
+. matrix ETA = J(4,1,.)                              // Cria vetor de elasticidades-dispêndio.
+
+. matrix rownames ETA = bfvl pork poult fish         // Nomeia linhas de ETA.
+
+. matrix colnames ETA = eta                          // Nomeia coluna de ETA.
+
+. matrix ETA[1,1] = 1 + b_bfvl/scalar(wbar_bfvl)     // Calcula elasticidade-dispêndio de bfvl.
+
+. matrix ETA[2,1] = 1 + b_pork/scalar(wbar_pork)     // Calcula elasticidade-dispêndio de pork.
+
+. matrix ETA[3,1] = 1 + b_poult/scalar(wbar_poult)   // Calcula elasticidade-dispêndio de poult.
+
+. matrix ETA[4,1] = 1 + b_fish/scalar(wbar_fish)     // Calcula elasticidade-dispêndio de fish.
+
+. 
+. matrix EM = J(4,4,.)                               // Cria matriz de elasticidades Marshallianas.
+
+. matrix EH = J(4,4,.)                               // Cria matriz de elasticidades compensadas.
+
+. matrix rownames EM = bfvl pork poult fish          // Nomeia linhas da matriz Marshalliana.
+
+. matrix colnames EM = bfvl pork poult fish          // Nomeia colunas da matriz Marshalliana.
+
+. matrix rownames EH = bfvl pork poult fish          // Nomeia linhas da matriz compensada.
+
+. matrix colnames EH = bfvl pork poult fish          // Nomeia colunas da matriz compensada.
+
+. 
+. forvalues i = 1/4 {                                // Percorre cada produto demandado na linha.
+  2.     forvalues j = 1/4 {                            // Percorre cada preço na coluna.
+  3.         scalar indicator = (`i' == `j')             // Cria indicador para elasticidade própria.
+  4.         scalar wi = WBAR[`i',1]                    // Recupera participação média do produto da linha.
+  5.         scalar wj = WBAR[`j',1]                    // Recupera participação média do produto da coluna.
+  6.         scalar bi = BETA[`i',1]                    // Recupera beta do produto da linha.
+  7.         scalar etai = ETA[`i',1]                   // Recupera elasticidade-dispêndio do produto da linha.
+  8.         matrix EM[`i',`j'] = -indicator + GAMMA[`i',`j']/wi - (bi*wj)/wi // Calcula elasticidade Marshalliana.
+  9.         matrix EH[`i',`j'] = EM[`i',`j'] + etai*wj // Calcula elasticidade compensada por Slutsky.
+ 10.     }                                              // Fecha loop das colunas.
+ 11. }                                                  // Fecha loop das linhas.
+
+. 
+. matrix list ALPHA                                  // Mostra vetor de alfas completos.
+
+ALPHA[4,1]
+           alpha
+ bfvl   .2924222
+ pork  .37566362
+poult  .15766998
+ fish   .1742442
+
+. matrix list BETA                                   // Mostra vetor de betas completos.
+
+BETA[4,1]
+             beta
+ bfvl   .13073259
+ pork  -.09945668
+poult   .01203848
+ fish   -.0433144
+
+. matrix list GAMMA                                  // Mostra matriz gamma completa.
+
+symmetric GAMMA[4,4]
+             bfvl        pork       poult        fish
+ bfvl  -.10722706
+ pork  -.10232884  -.01652865
+poult   .35908098   .12482086  -.47148691
+ fish  -.14952508  -.00596337  -.01241492   .16790337
+
+. matrix list ETA                                    // Mostra elasticidades-dispêndio.
+
+ETA[4,1]
+             eta
+ bfvl  1.2798582
+ pork  .58955353
+poult  1.0691105
+ fish  .62774287
+
+. matrix list EM                                     // Mostra matriz de elasticidades Marshallianas.
+
+EM[4,4]
+             bfvl        pork       poult        fish
+ bfvl  -1.3602727  -.28686791   .71993275  -.35265035
+ pork  -.23056414   -.9687552   .58661798   .02314782
+poult   2.0291273   .69982497  -3.7187498    -.079313
+ fish  -1.1111683   .03895189  -.04185348   .48632704
+
+. matrix list EH                                     // Mostra matriz de elasticidades compensadas.
+
+EH[4,4]
+             bfvl        pork       poult        fish
+ bfvl  -.76240143   .02325887   .94287356    -.203731
+ pork   .04483912  -.82589848   .68931337   .09174599
+poult   2.5285502   .95888476  -3.5325195   .04508456
+ fish  -.81792534    .1910624   .06749418   .55936877
+
+. 
+. putexcel set "$TABLES/matrizes_parametros_elasticidades_stata.xlsx", replace // Cria planilha Excel para matrizes.
+note: file will be replaced when the first putexcel command is issued.
+
+. putexcel A1 = matrix(ALPHA), names             // Exporta alfas para Excel.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/matrizes_parametros_elasticidades_stata.xlsx saved
+
+. putexcel D1 = matrix(BETA), names              // Exporta betas para Excel.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/matrizes_parametros_elasticidades_stata.xlsx saved
+
+. putexcel G1 = matrix(WBAR), names              // Exporta participações médias para Excel.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/matrizes_parametros_elasticidades_stata.xlsx saved
+
+. putexcel A8 = matrix(GAMMA), names             // Exporta gamma para Excel.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/matrizes_parametros_elasticidades_stata.xlsx saved
+
+. putexcel A16 = matrix(ETA), names              // Exporta elasticidades-dispêndio para Excel.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/matrizes_parametros_elasticidades_stata.xlsx saved
+
+. putexcel A24 = matrix(EM), names               // Exporta elasticidades Marshallianas para Excel.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/matrizes_parametros_elasticidades_stata.xlsx saved
+
+. putexcel A33 = matrix(EH), names               // Exporta elasticidades compensadas para Excel.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/matrizes_parametros_elasticidades_stata.xlsx saved
+
+. 
+. preserve                                           // Preserva os dados em memória.
+
+. clear                                              // Limpa a base para exportar alpha.
+
+. svmat double ALPHA, names(col)                     // Converte matriz ALPHA em variáveis.
+number of observations will be reset to 4
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 4.
+
+. gen str10 produto = ""                             // Cria coluna com nome do produto.
+(4 missing values generated)
+
+. replace produto = "bfvl" in 1                      // Nomeia primeira linha.
+(1 real change made)
+
+. replace produto = "pork" in 2                      // Nomeia segunda linha.
+(1 real change made)
+
+. replace produto = "poult" in 3                     // Nomeia terceira linha.
+(1 real change made)
+
+. replace produto = "fish" in 4                      // Nomeia quarta linha.
+(1 real change made)
+
+. order produto alpha                                // Ordena colunas.
+
+. export delimited using "$TABLES/alpha_hsym_stata.csv", replace // Exporta alfas.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/alpha_hsym_stata.csv saved
+
+. restore                                            // Restaura dados.
+
+. 
+. preserve                                           // Preserva os dados em memória.
+
+. clear                                              // Limpa a base para exportar beta.
+
+. svmat double BETA, names(col)                      // Converte matriz BETA em variáveis.
+number of observations will be reset to 4
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 4.
+
+. gen str10 produto = ""                             // Cria coluna com nome do produto.
+(4 missing values generated)
+
+. replace produto = "bfvl" in 1                      // Nomeia primeira linha.
+(1 real change made)
+
+. replace produto = "pork" in 2                      // Nomeia segunda linha.
+(1 real change made)
+
+. replace produto = "poult" in 3                     // Nomeia terceira linha.
+(1 real change made)
+
+. replace produto = "fish" in 4                      // Nomeia quarta linha.
+(1 real change made)
+
+. order produto beta                                 // Ordena colunas.
+
+. export delimited using "$TABLES/beta_hsym_stata.csv", replace // Exporta betas.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/beta_hsym_stata.csv saved
+
+. restore                                            // Restaura dados.
+
+. 
+. preserve                                           // Preserva os dados em memória.
+
+. clear                                              // Limpa a base para exportar ETA.
+
+. svmat double ETA, names(col)                       // Converte matriz ETA em variáveis.
+number of observations will be reset to 4
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 4.
+
+. gen str10 produto = ""                             // Cria coluna com nome do produto.
+(4 missing values generated)
+
+. replace produto = "bfvl" in 1                      // Nomeia primeira linha.
+(1 real change made)
+
+. replace produto = "pork" in 2                      // Nomeia segunda linha.
+(1 real change made)
+
+. replace produto = "poult" in 3                     // Nomeia terceira linha.
+(1 real change made)
+
+. replace produto = "fish" in 4                      // Nomeia quarta linha.
+(1 real change made)
+
+. order produto eta                                  // Ordena colunas.
+
+. export delimited using "$TABLES/elasticidade_dispendio_hsym_stata.csv", replace // Exporta elasticidades-dispêndio.
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/elasticidade_dispendio_hsym_stata.csv saved
+
+. restore                                            // Restaura dados.
+
+. 
+. foreach M in GAMMA EM EH {                         // Percorre matrizes quadradas a exportar.
+  2.     preserve                                       // Preserva dados em memória.
+  3.     clear                                          // Limpa a base para converter matriz em dataset.
+  4.     svmat double `M', names(col)                   // Converte a matriz em colunas.
+  5.     gen str10 produto_linha = ""                   // Cria coluna com produto da linha.
+  6.     replace produto_linha = "bfvl" in 1            // Nomeia linha 1.
+  7.     replace produto_linha = "pork" in 2            // Nomeia linha 2.
+  8.     replace produto_linha = "poult" in 3           // Nomeia linha 3.
+  9.     replace produto_linha = "fish" in 4            // Nomeia linha 4.
+ 10.     order produto_linha bfvl pork poult fish       // Organiza a matriz em formato largo.
+ 11.     if "`M'" == "GAMMA" {                          // Verifica se a matriz é GAMMA.
+ 12.         export delimited using "$TABLES/gamma_hsym_stata.csv", replace // Exporta gamma.
+ 13.     }                                              // Fecha condição GAMMA.
+ 14.     if "`M'" == "EM" {                             // Verifica se a matriz é EM.
+ 15.         export delimited using "$TABLES/elasticidades_marshallianas_hsym_stata.csv", replace // Exporta Marshallianas.
+ 16.     }                                              // Fecha condição EM.
+ 17.     if "`M'" == "EH" {                             // Verifica se a matriz é EH.
+ 18.         export delimited using "$TABLES/elasticidades_compensadas_hsym_stata.csv", replace // Exporta compensadas.
+ 19.     }                                              // Fecha condição EH.
+ 20.     restore                                        // Restaura dados originais.
+ 21. }                                                  // Fecha loop das matrizes.
+number of observations will be reset to 4
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 4.
+(4 missing values generated)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/gamma_hsym_stata.csv saved
+number of observations will be reset to 4
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 4.
+(4 missing values generated)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/elasticidades_marshallianas_hsym_stata.csv saved
+number of observations will be reset to 4
+Press any key to continue, or Break to abort
+Number of observations (_N) was 0, now 4.
+(4 missing values generated)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+(1 real change made)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/elasticidades_compensadas_hsym_stata.csv saved
+
+. 
+. log close                                          // Fecha log das elasticidades.
+      name:  <unnamed>
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/03_elasticities_aids_stata.log
+  log type:  text
+ closed on:   1 Jun 2026, 09:34:55
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

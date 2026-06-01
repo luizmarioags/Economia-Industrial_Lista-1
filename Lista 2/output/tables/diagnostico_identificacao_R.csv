@@ -1,0 +1,5 @@
+modelo,N_empilhado,parametros,momentos,rank_Z,rank_ZX,identificado
+irrestrito,120,18,18,18,18,TRUE
+homogeneidade,120,15,18,18,15,TRUE
+homog_simetria,120,12,18,18,12,TRUE
+homog_simetria_L2,117,12,30,30,12,TRUE
