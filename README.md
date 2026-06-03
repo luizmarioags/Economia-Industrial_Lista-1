@@ -1,149 +1,218 @@
-# Lista 1 de Economia Industrial — Pacote de Replicação
+# Economia Industrial — Pacote de Replicação das Listas 1, 2 e 3
 
-Este pacote replica a **Lista 1: Estimação de Demanda, 2SLS e Instrumentos Fracos** usando a base `chicken` fornecida em `data/raw/`.
+Este repositório reúne três pacotes de replicação para exercícios de Economia Industrial. A organização foi pensada para permitir a execução independente de cada lista, com versões em **Stata**, **R** e **Python** sempre que disponíveis, além de saídas padronizadas em tabelas, gráficos e logs.
 
-O modelo estrutural é:
+O fio condutor das três listas é a estimação empírica de demanda e seu uso em Economia Industrial: elasticidades, endogeneidade de preços, instrumentos, GMM, modelos de produtos homogêneos, sistemas multiproduto e demanda por produtos diferenciados. Como referencial teórico, o pacote segue a apostila **Introdução à Economia Industrial e ao Antitruste**, em especial os capítulos sobre consumidores e elasticidades, estimação da demanda com variáveis instrumentais e GMM, demanda por produtos diferenciados, AIDS/Berry/BLP e markups.
 
-$$
-q_t = \beta_0 + \beta_p p^{ch}_t + \beta_y y_t + \beta_b p^b_t + u_t,
-$$
+## Visão geral das listas
 
-onde:
+| Diretório | Tema | Objeto empírico | Principais métodos |
+|---|---|---|---|
+| `Lista 1/` | Demanda por produto homogêneo, 2SLS e instrumentos fracos | Demanda anual por frango nos EUA | MQO, 2SLS, primeiro estágio, GMM, Hansen J, Montiel Olea-Pflueger, Anderson-Rubin/CLR, simulação de instrumentos fracos |
+| `Lista 2/` | Sistema de demanda AIDS | Demanda condicional por carnes nos EUA | Sistema AIDS linear aproximado, índice de Stone, IV/GMM, homogeneidade, simetria, elasticidades Marshallianas e compensadas |
+| `Lista 3/` | Demanda por produtos diferenciados à la Berry/BLP | Cereais matinais nos EUA em 1992 | Logit simples, instrumentos BLP, 2SLS, GMM estrutural, nested logit, elasticidades, markups e diagnóstico de instrumentos |
 
-- `ln_q = ln(Q)` é o log do consumo per capita de frango;
-- `ln_pch = ln(PCHICK/CPI)` é o log do preço real do frango;
-- `ln_y = ln(Y)` é o log da renda real per capita;
-- `ln_pb = ln(PBEEF/CPI)` é o log do preço real da carne bovina;
-- `z = ln(PCOR/CPI)` é o log do preço real do milho, usado como instrumento excluído.
-
-## Mudanças em relação à versão anterior
-
-A versão anterior do pacote estava orientada à lista antiga, com dez instrumentos incluindo transformações exponenciais. A lista nova pede sete especificações:
-
-- `Z1 = {z}`;
-- `Z2 = {z, z^2}`;
-- `Z3 = {z, z^2, z^3}`;
-- `Z4 = {z(t-1)}`;
-- `Z5 = {z(t-1), z(t-1)^2}`;
-- `Z6 = {z, z(t-1)}`;
-- `Z7 = {z, z^2, z(t-1), z(t-1)^2}`.
-
-Esta versão também adiciona GMM, Hansen J, intervalos Anderson-Rubin e simulação de instrumentos fracos.
-
-## Estrutura
+## Estrutura geral do repositório
 
 ```text
-lista1EI_26_replication_package/
-├── data/
-│   ├── raw/                 # chicken.dta e chicken.csv originais
-│   └── processed/           # bases tratadas por software
-├── output/
-│   ├── tables/              # resultados em CSV
-│   ├── figures/             # gráficos
-│   └── logs/                # logs de execução
-├── Stata/                   # scripts .do
-├── R/                       # scripts .R
-├── Python/                  # scripts Python
-└── docs/                    # diagnóstico e guia de interpretação
+Economia Industrial_Lista 1/
+├── README.md                 # este guia geral
+├── Lista 1/
+│   ├── README.md             # guia específico da lista 1
+│   ├── data/                 # dados brutos e tratados
+│   ├── Stata/                # scripts Stata da lista 1
+│   ├── R/                    # scripts R da lista 1
+│   ├── Python/               # scripts Python da lista 1
+│   ├── Comparativo/          # comparação Stata/R/Python
+│   ├── docs/                 # notas técnicas, mapas de questões e relatórios
+│   └── output/               # tabelas, figuras e logs
+├── Lista 2/
+│   ├── README.md             # guia específico da lista 2
+│   ├── data/                 # dados brutos e tratados
+│   ├── stata/                # scripts Stata da lista 2
+│   ├── R/                    # scripts R da lista 2
+│   ├── Python/               # pacote Python da lista 2
+│   ├── docs/                 # enunciado e notas técnicas
+│   └── output/               # tabelas, figuras, logs e modelos
+└── Lista 3/
+    ├── README.md             # guia específico da lista 3
+    ├── data/                 # base de cereais
+    ├── stata/                # scripts Stata da lista 3
+    ├── R/                    # scripts R da lista 3
+    ├── python/               # scripts Python da lista 3
+    ├── run_all.sh            # execução agregada em ambiente Unix-like
+    └── outputs/              # saídas separadas por linguagem
 ```
 
-## Como rodar no Stata
+## Referencial teórico mínimo
 
-Abra o Stata na raiz do pacote e execute:
+A apostila organiza o conteúdo do pacote em três blocos.
+
+1. **Demanda, elasticidades e poder de mercado.** A análise de Economia Industrial parte da mensuração da sensibilidade da demanda a preços, renda e características dos produtos. A elasticidade-preço é central para interpretar poder de mercado, margens e perda crítica.
+
+2. **Endogeneidade de preços e variáveis instrumentais.** Em equações de demanda, preços podem reagir a choques não observados de qualidade, preferência ou demanda. Por isso, as listas 1 e 3 tratam preços como potencialmente endógenos e usam instrumentos que deslocam oferta/custos ou variação estratégica de características dos produtos.
+
+3. **Modelos multiproduto e produtos diferenciados.** A lista 2 usa o modelo AIDS para estimar um sistema de demanda no espaço dos produtos. A lista 3 usa a inversão de Berry para transformar market shares em utilidade média e estimar modelos logit/nested logit com momentos de GMM.
+
+## Equações centrais por lista
+
+### Lista 1: demanda log-log por frango
+
+\begin{equation}
+q_t = \beta_0 + \beta_p p^{ch}_t + \beta_y y_t + \beta_b p^b_t + u_t.
+\end{equation}
+
+O preço do frango, $p^{ch}_t$, é tratado como endógeno. O instrumento principal é o preço real do milho, $z_t = \ln(P\!COR_t/CPI_t)$, que desloca custos de produção do setor de frango.
+
+### Lista 2: sistema AIDS linear aproximado
+
+\begin{equation}
+w_{gt} = \alpha_g + \sum_{k \in G} \gamma_{gk}\ln p_{kt} + \beta_g\ln\left(\frac{x_t}{P_t}\right) + u_{gt}.
+\end{equation}
+
+O pacote usa o índice de Stone com participações médias:
+
+\begin{equation}
+\ln P_t^S = \sum_{k \in G} \bar{w}_k \ln p_{kt}.
+\end{equation}
+
+As restrições teóricas avaliadas são adding-up, homogeneidade e simetria.
+
+### Lista 3: logit de Berry/BLP
+
+\begin{equation}
+\delta_j = \ln(s_j) - \ln(s_0) = X'_j\beta - \alpha p_j + \xi_j.
+\end{equation}
+
+A estimação estrutural usa momentos de GMM:
+
+\begin{equation}
+g_N(\theta) = \frac{1}{N}\sum_{j=1}^N Z_j \xi_j(\theta), \qquad
+\hat{\theta}_{GMM} = \arg\min_{\theta} g_N(\theta)'W_N g_N(\theta).
+\end{equation}
+
+No nested logit, acrescenta-se o termo de participação dentro do nest:
+
+\begin{equation}
+\ln(s_j) - \ln(s_0) = X'_j\beta - \alpha p_j + \sigma\ln(s_{j|g}) + \xi_j.
+\end{equation}
+
+## Guia rápido de execução
+
+### 1. Lista 1
+
+```bash
+cd "Lista 1"
+```
+
+Stata:
 
 ```stata
 do "Stata/00_master.do"
 ```
 
-O Stata é a referência principal para `weakivtest`, porque a lista pede o F efetivo de Montiel Olea-Pflueger.
-
-## Como rodar no R
-
-No R/RStudio, defina o diretório de trabalho na raiz do pacote e execute:
+R:
 
 ```r
 source("R/00_run_all.R")
 ```
 
-A versão em R calcula MQO, 2SLS, primeiro estágio, GMM, Hansen J, intervalos Anderson-Rubin, gráficos e simulação. O F efetivo MOP oficial continua sendo o do Stata.
-
-## Como rodar no Python
-
-No terminal, a partir da raiz do pacote:
+Python:
 
 ```bash
 python -m venv .venv
-# Windows:
+# Windows
 .venv\Scripts\activate
-# Linux/Mac:
+# Linux/Mac
 # source .venv/bin/activate
-
 pip install -r Python/requirements.txt
 python Python/src/run_all.py
 ```
 
-A versão em Python usa implementação matricial própria para MQO, 2SLS, GMM e Hansen J, evitando dependência de `linearmodels`.
-
-
-## Plots comparativos entre Stata, R e Python
-
-Depois de rodar os três ambientes, gere os gráficos comparativos com:
+Comparação entre linguagens:
 
 ```bash
 python Comparativo/01_plots_comparativos_software.py
 ```
 
-O script lê as tabelas da questão 9 produzidas por Stata, R e Python. Ele procura tanto em `output/tables/` quanto em subpastas como `output/tables/Stata/`, `output/tables/R/` e `output/tables/Python/`. Isso evita que os gráficos apareçam apenas com Python quando as tabelas de R ou Stata foram salvas em subdiretórios.
+### 2. Lista 2
 
-A tabela consolidada sai em:
-
-```text
-output/tables/comparative_software_results.csv
+```bash
+cd "Lista 2"
 ```
 
-Os gráficos saem em:
+Stata:
 
-```text
-output/figures/comparative_software/
+```stata
+do stata/run_all_aids_stata.do
 ```
 
-O diagnóstico das tabelas encontradas sai em:
+R:
 
-```text
-docs/relatorio_plots_comparativos.md
-output/logs/comparative_software_plots.log
+```r
+source("R/run_all_aids_R.R")
 ```
 
-Os gráficos comparam `βp`, intervalos de confiança, erros-padrão, F usual do primeiro estágio, F efetivo MOP quando disponível e p-valores do teste J de Hansen. O F efetivo MOP oficial continua sendo o do Stata/`weakivtest`.
+Python:
 
-## Saídas principais
-
-- `output/tables/stata_question_01_ols.csv`
-- `output/tables/stata_question_03_iv_z1.csv`
-- `output/tables/stata_question_04_first_stage.csv`
-- `output/tables/stata_question_05_gmm.csv`
-- `output/tables/stata_question_09_comparative.csv`
-- `output/tables/stata_question_11_ar_intervals.csv`
-- `output/tables/stata_question_14_simulation.csv`
-
-Os scripts em R e Python salvam arquivos equivalentes com prefixos `r_` e `python_`.
-
-## Marcações no console
-
-Esta versão inclui mensagens de acompanhamento nos scripts de Stata, R, Python e no comparativo. Durante a execução, os códigos imprimem:
-
-- qual questão está sendo resolvida;
-- qual modelo está sendo estimado;
-- qual variável é dependente, qual é endógena e quais são controles;
-- quais instrumentos excluídos entram em cada especificação `Z1` a `Z7`;
-- quais variáveis foram calculadas na preparação da base;
-- onde cada tabela e gráfico foi salvo;
-- resumos rápidos de resultados centrais, como `beta_p`, erro-padrão, F usual, Hansen J e F efetivo MOP quando disponível.
-
-No Stata, essas mensagens também ficam registradas em:
-
-```text
-output/logs/stata_master.log
+```bash
+pip install -r Python/requirements.txt
+python Python/run_all_aids_py.py
 ```
 
-No R e no Python, elas aparecem diretamente no console/terminal durante a execução.
+### 3. Lista 3
+
+```bash
+cd "Lista 3"
+```
+
+Python:
+
+```bash
+python python/run_all_python.py
+python python/07_extra_visualizations.py
+```
+
+R:
+
+```r
+source("R/run_all_R.R")
+```
+
+Stata:
+
+```stata
+do stata/run_all_stata.do
+```
+
+Ambiente Unix-like, quando desejado:
+
+```bash
+bash run_all.sh
+```
+
+## Convenção de saídas
+
+- **Dados tratados:** `data/processed/` ou `outputs/<linguagem>/data/`.
+- **Tabelas:** `output/tables/` ou `outputs/<linguagem>/tables/csv` e `outputs/<linguagem>/tables/tex`.
+- **Figuras:** `output/figures/` ou `outputs/<linguagem>/figures/png` e `outputs/<linguagem>/figures/pdf`.
+- **Logs:** `output/logs/` ou `outputs/<linguagem>/logs/`.
+- **Modelos salvos:** `output/models/`, quando aplicável.
+
+## Ordem recomendada para replicação completa
+
+1. Rode cada lista isoladamente, começando pelo Stata quando a lista exigir testes específicos, como `weakivtest`/MO-P.
+2. Rode a versão R e a versão Python para comparação de resultados e gráficos.
+3. Confira os logs em `output/logs/` ou `outputs/<linguagem>/logs/`.
+4. Compare tabelas e figuras geradas com os arquivos já existentes no pacote.
+5. Use os documentos em `docs/` para interpretação econômica e mapeamento das questões.
+
+## Dependências gerais
+
+- **Stata:** recomendado para os testes de instrumentos fracos, especialmente Montiel Olea-Pflueger, quando implementado por `weakivtest`.
+- **R:** base R e pacotes instalados pelos próprios scripts quando necessário. Em algumas rotinas, os pacotes de tabelas/gráficos podem ser requeridos.
+- **Python:** `numpy`, `pandas`, `scipy`, `matplotlib`, `statsmodels` e dependências específicas listadas em `requirements.txt`.
+
+## Observação sobre reprodutibilidade
+
+Os diretórios foram estruturados para separar código, dados brutos, dados tratados e resultados. A regra de ouro é: **não editar manualmente arquivos em `data/processed/`, `output/` ou `outputs/`**. Esses arquivos devem ser regeneráveis a partir dos scripts `run_all` de cada linguagem.

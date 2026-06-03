@@ -1,0 +1,26 @@
+\begin{table}[!htbp]
+\centering
+\caption{Comparação do parâmetro de preço}
+\label{tab:price-compare}
+\small
+\begin{tabular}{lrrrrr}
+\toprule
+model & price_coef & alpha & std_error_price & gmm_objective & sigma_nested \\
+\midrule
+Q1_MQO_logit_simples & -0.2240 & 0.2240 & 0.1987 & NaN & NaN \\
+Q2_2SLS_own_firm & 1.3030 & -1.3030 & 0.8963 & NaN & NaN \\
+Q2_2SLS_rival_firms & 1.3030 & -1.3030 & 0.8963 & NaN & NaN \\
+Q2_2SLS_both & 1.3030 & -1.3030 & 0.8963 & NaN & NaN \\
+Q3_GMM_own_firm_step1 & 1.3030 & -1.3030 & 0.8963 & 0.2056 & NaN \\
+Q3_GMM_own_firm_2step & 1.1764 & -1.1764 & 0.8040 & 0.3234 & NaN \\
+Q3_GMM_rival_firms_step1 & 1.3030 & -1.3030 & 0.8963 & 0.2056 & NaN \\
+Q3_GMM_rival_firms_2step & 1.1764 & -1.1764 & 0.8040 & 0.3234 & NaN \\
+Q3_GMM_both_step1 & 1.3030 & -1.3030 & 0.8963 & 0.2056 & NaN \\
+Q3_GMM_both_2step & 1.1764 & -1.1764 & 0.8040 & 0.3234 & NaN \\
+Q4_2SLS_nested_reference & -0.3414 & 0.3414 & 0.2142 & NaN & 0.4126 \\
+Q4_nested_GMM_step1 & -0.3414 & 0.3414 & 0.2142 & 2.8362 & 0.4126 \\
+Q4_nested_GMM_2step & -0.4848 & 0.4848 & 0.2216 & 11.6977 & 0.3733 \\
+\bottomrule
+\end{tabular}
+
+\end{table}

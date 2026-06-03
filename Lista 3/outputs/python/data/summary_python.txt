@@ -1,0 +1,8 @@
+Pacote de replicação - Python
+
+N produtos internos: 50
+Soma dos shares internos: 0.7577; s0 usado: 0.2429
+Especificação principal: Q3_GMM_both_2step; alpha = -1.176422
+Nested logit: sigma = 0.373310; intervalo teórico 0 <= sigma < 1
+
+Arquivos principais em outputs/python/tables, outputs/python/figures e outputs/python/logs.

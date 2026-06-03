@@ -1,0 +1,4 @@
+"endogenous_variable","excluded_instruments","partial_F_homoskedastic","robust_Wald_F_manual","first_stage_R2","specification"
+"price",6,0.581922880585835,31.6989685758487,0.181237715055897,"simple_logit_both"
+"price",14,0.710986695226894,185.555715379649,0.320982246458836,"nested_logit"
+"log_share_within_nest",14,1.95737136608706,288.220804885318,0.525294688741909,"nested_logit"

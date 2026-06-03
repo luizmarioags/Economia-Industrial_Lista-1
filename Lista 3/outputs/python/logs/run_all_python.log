@@ -1,0 +1,69 @@
+#########################################################################
+#                            INÍCIO                                     #
+#             Lista 3 - Modelo BLP.                                    #
+#             Grupo: Luiz Mario Andrade (Matrícula: 252029360)          #
+#                    Felipe Santos (Matrícula: 232010719)               #
+#                    Luiza Nodari (Matrícula: 242011335)                #
+#                    Diogo Martins (Matrícula: 232001578)               #
+#                    Sarah Moura (Matrícula: 211060316)                 #
+#                    Pedro Bijos (Matrícula: 241003849)                 #
+#########################################################################
+[python] Preparando dados...
+[python] Estimando MQO, 2SLS e GMM...
+[python] Salvando tabelas padronizadas...
+[python] Calculando elasticidades e markups...
+[python] Calculando diagnósticos de primeiro estágio...
+[python] Gerando gráficos principais...
+[python] salvando gráfico 01_share_vs_transaction_price
+[python] salvando gráfico 02_top15_market_shares
+[python] salvando gráfico 03_price_by_segment
+[python] salvando gráfico 04_delta_vs_price
+[python] salvando gráfico 05_price_coefficient_comparison
+[python] salvando gráfico 06_elasticity_matrix_subset
+[python] salvando gráfico 07_own_price_elasticities
+[python] salvando gráfico 18_own_elasticity_hist_density
+[python] salvando gráfico 20_own_elasticity_boxplot
+[python] salvando gráfico 08_markups_mono_vs_multi
+[python] salvando gráfico 09_price_vs_multiproduct_markup
+[python] salvando gráfico 19_markup_multiproduct_hist_density
+[python] salvando gráfico 21_markup_multiproduct_boxplot
+[python] salvando gráfico 10_first_stage_robust_f
+[python] Gerando visualizações extras...
+[python] extra 01 concentração por firma
+[python] salvando gráfico extra_01_firm_share_concentration
+[python] extra 02 nests
+[python] salvando gráfico extra_02_nest_sizes
+[python] extra 03 características
+[python] salvando gráfico extra_03_mean_cals_by_segment
+[python] salvando gráfico extra_03_mean_fat_by_segment
+[python] salvando gráfico extra_03_mean_sugar_by_segment
+[python] extra 04 correlação instrumentos
+[python] salvando gráfico extra_04_instrument_correlation_matrix
+[python] extra 05 resíduos
+[python] salvando gráfico extra_05_structural_residuals_vs_price
+[python] extra 05 scatter concluído
+[python] salvando gráfico extra_06_structural_residuals_by_firm
+[python] extra 06 box concluído
+[python] extra 07 primeiro estágio
+[python] salvando gráfico extra_07_first_stage_price_fit
+[python] extra 07 concluído
+[python] Gerando gráficos clássicos e diagnósticos do logit...
+[python] salvando gráfico 11_classic_logit_curve_share_vs_utility
+[python] salvando gráfico 12_focal_product_share_vs_price
+[python] salvando gráfico 13_focal_product_marginal_effect_vs_price
+[python] salvando gráfico 14_observed_vs_predicted_shares_simple_logit
+[python] salvando gráfico 15_structural_residual_hist_density
+[python] salvando gráfico 16_structural_residual_qqplot
+[python] salvando gráfico 17_price_response_curves_top5_products
+Pacote de replicação - Python
+
+N produtos internos: 50
+Soma dos shares internos: 0.7577; s0 usado: 0.2429
+Especificação principal: Q3_GMM_both_2step; alpha = -1.176422
+Nested logit: sigma = 0.373310; intervalo teórico 0 <= sigma < 1
+
+Arquivos principais em outputs/python/tables, outputs/python/figures e outputs/python/logs.
+#########################################################################
+#                            FIM                                        #
+#                                                                       #
+#########################################################################
