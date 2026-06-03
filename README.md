@@ -58,44 +58,44 @@ A apostila organiza o conteúdo do pacote em três blocos.
 
 ### Lista 1: demanda log-log por frango
 
-\begin{equation}
+$$
 q_t = \beta_0 + \beta_p p^{ch}_t + \beta_y y_t + \beta_b p^b_t + u_t.
-\end{equation}
+$$
 
 O preço do frango, $p^{ch}_t$, é tratado como endógeno. O instrumento principal é o preço real do milho, $z_t = \ln(P\!COR_t/CPI_t)$, que desloca custos de produção do setor de frango.
 
 ### Lista 2: sistema AIDS linear aproximado
 
-\begin{equation}
+$$
 w_{gt} = \alpha_g + \sum_{k \in G} \gamma_{gk}\ln p_{kt} + \beta_g\ln\left(\frac{x_t}{P_t}\right) + u_{gt}.
-\end{equation}
+$$
 
 O pacote usa o índice de Stone com participações médias:
 
-\begin{equation}
+$$
 \ln P_t^S = \sum_{k \in G} \bar{w}_k \ln p_{kt}.
-\end{equation}
+$$
 
 As restrições teóricas avaliadas são adding-up, homogeneidade e simetria.
 
 ### Lista 3: logit de Berry/BLP
 
-\begin{equation}
+$$
 \delta_j = \ln(s_j) - \ln(s_0) = X'_j\beta - \alpha p_j + \xi_j.
-\end{equation}
+$$
 
 A estimação estrutural usa momentos de GMM:
 
-\begin{equation}
+$$
 g_N(\theta) = \frac{1}{N}\sum_{j=1}^N Z_j \xi_j(\theta), \qquad
 \hat{\theta}_{GMM} = \arg\min_{\theta} g_N(\theta)'W_N g_N(\theta).
-\end{equation}
+$$
 
 No nested logit, acrescenta-se o termo de participação dentro do nest:
 
-\begin{equation}
+$$
 \ln(s_j) - \ln(s_0) = X'_j\beta - \alpha p_j + \sigma\ln(s_{j|g}) + \xi_j.
-\end{equation}
+$$
 
 ## Guia rápido de execução
 
