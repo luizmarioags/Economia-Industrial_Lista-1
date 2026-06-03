@@ -8,9 +8,9 @@ A lista parte da ideia central da estimação de demanda em produto homogêneo: 
 
 A equação estrutural estimada é:
 
-\begin{equation}
+$$
 q_t = \beta_0 + \beta_p p^{ch}_t + \beta_y y_t + \beta_b p^b_t + u_t,
-\end{equation}
+$$
 
 em que:
 
@@ -23,9 +23,9 @@ em que:
 
 O instrumento principal é:
 
-\begin{equation}
+$$
 z_t = \ln\left(\frac{PCOR_t}{CPI_t}\right),
-\end{equation}
+$$
 
 interpretado como deslocador de custo da produção de frango, pois o milho é insumo relevante da cadeia produtiva.
 
@@ -49,9 +49,9 @@ A preparação dos dados cria, pelo menos, as seguintes variáveis:
 
 Estima a equação estrutural tratando o preço do frango como exógeno. Serve como referência inicial:
 
-\begin{equation}
+$$
 \widehat{\beta}^{OLS} = (X'X)^{-1}X'q.
-\end{equation}
+$$
 
 O pacote reporta o coeficiente de preço, erro-padrão robusto à heterocedasticidade, intervalo de confiança de 95% e interpretação econômica.
 
@@ -59,9 +59,9 @@ O pacote reporta o coeficiente de preço, erro-padrão robusto à heterocedastic
 
 O primeiro estágio básico é:
 
-\begin{equation}
+$$
 p^{ch}_t = \pi_0 + \pi_z z_t + \pi_y y_t + \pi_b p^b_t + v_t.
-\end{equation}
+$$
 
 São calculados coeficientes, $R^2$ parcial do instrumento excluído e estatística F para relevância do instrumento.
 
@@ -69,25 +69,25 @@ São calculados coeficientes, $R^2$ parcial do instrumento excluído e estatíst
 
 O estimador IV/2SLS usa instrumentos excluídos para `ln_pch` e mantém `ln_y` e `ln_pb` como controles exógenos:
 
-\begin{equation}
+$$
 \widehat{\beta}^{2SLS} = (X'P_ZX)^{-1}X'P_Zq,
 \qquad
 P_Z = Z(Z'Z)^{-1}Z'.
-\end{equation}
+$$
 
 ### 4. GMM e Hansen J
 
 O pacote estima especificações GMM exatamente identificadas e sobreidentificadas. Os momentos têm a forma:
 
-\begin{equation}
+$$
 g_T(\beta) = \frac{1}{T}\sum_{t=1}^T Z_t u_t(\beta).
-\end{equation}
+$$
 
 A função objetivo é:
 
-\begin{equation}
+$$
 Q_T(\beta) = g_T(\beta)'W_Tg_T(\beta).
-\end{equation}
+$$
 
 Nos modelos sobreidentificados, o teste J de Hansen avalia a validade conjunta das restrições de sobreidentificação.
 
