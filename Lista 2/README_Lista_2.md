@@ -19,6 +19,8 @@ w_{gt} = \frac{p_{gt}q_{gt}}{x_t},
 \qquad
 x_t = \sum_{k \in G}p_{kt}q_{kt}.
 $$
+
+
 Como a lista estima uma demanda condicional por carnes, $x_t$ é o dispêndio total com os quatro produtos de carne, e não o consumo total da economia.
 
 A versão linear aproximada do AIDS é:
