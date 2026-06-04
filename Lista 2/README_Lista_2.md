@@ -8,45 +8,46 @@ A lista se conecta ao bloco de demanda multiproduto da Economia Industrial: cons
 
 Considere o conjunto de bens:
 
-\begin{equation}
+$$
 G = \{\text{carne bovina e vitela}, \text{suína}, \text{frango}, \text{pescados}\}.
-\end{equation}
+$$
 
 A participação no dispêndio do bem $g$ é:
 
-\begin{equation}
+$$
 w_{gt} = \frac{p_{gt}q_{gt}}{x_t},
 \qquad
 x_t = \sum_{k \in G}p_{kt}q_{kt}.
-\end{equation}
+$$
+
 
 Como a lista estima uma demanda condicional por carnes, $x_t$ é o dispêndio total com os quatro produtos de carne, e não o consumo total da economia.
 
 A versão linear aproximada do AIDS é:
 
-\begin{equation}
+$$
 w_{gt} = \alpha_g + \sum_{k \in G}\gamma_{gk}\ln p_{kt} + \beta_g\ln\left(\frac{x_t}{P_t}\right) + u_{gt}.
-\end{equation}
+$$
 
 O índice de Stone é calculado com participações médias:
 
-\begin{equation}
+$$
 \ln P_t^S = \sum_{k \in G}\bar{w}_k\ln p_{kt}.
-\end{equation}
+$$
 
 A variável de dispêndio real usada nas equações é:
 
-\begin{equation}
+$$
 \ln\left(\frac{x_t}{P_t^S}\right)=\ln x_t-\ln P_t^S.
-\end{equation}
+$$
 
 ## Normalização dos preços
 
 Os logaritmos de preços são normalizados pela média temporal:
 
-\begin{equation}
+$$
 lngp_{kt} = \ln p_{kt} - \frac{1}{T}\sum_{s=1}^{T}\ln p_{ks}.
-\end{equation}
+$$
 
 Essa normalização melhora a interpretação dos interceptos e a estabilidade numérica, sem alterar as elasticidades.
 
@@ -56,25 +57,25 @@ O pacote implementa as restrições usuais do AIDS.
 
 ### Adding-up
 
-\begin{equation}
+$$
 \sum_{g\in G}\alpha_g = 1,
 \qquad
 \sum_{g\in G}\gamma_{gk}=0 \; \forall k,
 \qquad
 \sum_{g\in G}\beta_g=0.
-\end{equation}
+$$
 
 ### Homogeneidade
 
-\begin{equation}
+$$
 \sum_{k\in G}\gamma_{gk}=0 \; \forall g.
-\end{equation}
+$$
 
 ### Simetria
 
-\begin{equation}
+$$
 \gamma_{gk}=\gamma_{kg} \; \forall g,k.
-\end{equation}
+$$
 
 Na estimação, a equação do frango é omitida para evitar singularidade, mas o frango permanece no cálculo de $x_t$, do índice de Stone e das restrições. Os parâmetros da equação omitida são recuperados por adding-up.
 
@@ -110,9 +111,9 @@ Também são produzidos:
 
 A elasticidade-dispêndio é:
 
-\begin{equation}
+$$
 \eta_g = 1 + \frac{\beta_g}{\bar{w}_g}.
-\end{equation}
+$$
 
 A elasticidade-preço Marshalliana é:
 
@@ -122,9 +123,9 @@ A elasticidade-preço Marshalliana é:
 
 A elasticidade compensada, quando calculada, usa a relação de Slutsky:
 
-\begin{equation}
+$$
 \varepsilon^H_{gk} = \varepsilon^M_{gk} + \eta_g\bar{w}_k.
-\end{equation}
+$$
 
 ## Estrutura do diretório
 

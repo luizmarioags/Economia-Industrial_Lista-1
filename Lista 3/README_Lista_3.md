@@ -8,29 +8,29 @@ A lista se conecta diretamente aos capítulos da apostila sobre demanda por prod
 
 A utilidade indireta do consumidor $i$ ao comprar o produto $j$ é:
 
-\begin{equation}
+$$
 u_{ij}=X'_j\beta - \alpha p_j + \xi_j + \varepsilon_{ij},
-\end{equation}
+$$
 
 em que $X_j$ são características observadas, $p_j$ é o preço, $\xi_j$ é qualidade não observada pelo econometrista e $\varepsilon_{ij}$ é choque idiossincrático com distribuição valor extremo tipo I.
 
 A utilidade média é:
 
-\begin{equation}
+$$
 \delta_j = X'_j\beta - \alpha p_j + \xi_j.
-\end{equation}
+$$
 
 Com bem externo de share $s_0=0{,}2429$, a inversão logit de Berry gera:
 
-\begin{equation}
+$$
 \delta_j = \ln(s_j)-\ln(s_0).
-\end{equation}
+$$
 
 Logo, a equação linear do logit simples é:
 
-\begin{equation}
+$$
 \ln(s_j)-\ln(s_0)=X'_j\beta-\alpha p_j+\xi_j.
-\end{equation}
+$$
 
 O coeficiente estimado sobre preço corresponde a $-\alpha$. Sob demanda decrescente, espera-se $\alpha>0$ e coeficiente de preço negativo.
 
@@ -38,15 +38,15 @@ O coeficiente estimado sobre preço corresponde a $-\alpha$. Sob demanda decresc
 
 O preço pode ser endógeno porque firmas escolhem preços conhecendo componentes de qualidade observados pelos consumidores, mas não observados pelo econometrista. Assim, em geral:
 
-\begin{equation}
+$$
 E[p_j\xi_j]\neq 0.
-\end{equation}
+$$
 
 A identificação exige instrumentos $Z_j$ tais que:
 
-\begin{equation}
+$$
 E[Z_j\xi_j]=0
-\end{equation}
+$$
 
 com relevância para explicar $p_j$.
 
@@ -54,33 +54,33 @@ Os instrumentos de diferenciação construídos no pacote são:
 
 ### Instrumentos da própria firma
 
-\begin{equation}
+$$
 Z^{own}_{jk}=\sum_{\ell\neq j:f(\ell)=f(j)}x_{\ell k}.
-\end{equation}
+$$
 
 Para firmas monoproduto, esses instrumentos são tratados como zero.
 
 ### Instrumentos de firmas rivais
 
-\begin{equation}
+$$
 Z^{rival}_{jk}=\sum_{\ell:f(\ell)\neq f(j)}x_{\ell k}.
-\end{equation}
+$$
 
 ## GMM estrutural
 
 A estimação estrutural minimiza momentos dos erros de demanda:
 
-\begin{equation}
+$$
 g_N(\theta)=\frac{1}{N}\sum_{j=1}^{N}Z_j\xi_j(\theta),
 \qquad
 \hat{\theta}_{GMM}=\arg\min_\theta g_N(\theta)'W_Ng_N(\theta).
-\end{equation}
+$$
 
 No logit simples:
 
-\begin{equation}
+$$
 \xi_j(\theta)=\ln(s_j)-\ln(s_0)-X'_j\beta+\alpha p_j.
-\end{equation}
+$$
 
 O pacote reporta GMM de primeira etapa e GMM eficiente de duas etapas.
 
@@ -88,23 +88,23 @@ O pacote reporta GMM de primeira etapa e GMM eficiente de duas etapas.
 
 Os produtos são agrupados em nests por segmentação economicamente defensável. Para o produto $j$ no grupo $g$:
 
-\begin{equation}
+$$
 s_{j|g}=\frac{s_j}{s_g},
 \qquad
 s_g=\sum_{\ell\in g}s_\ell.
-\end{equation}
+$$
 
 A equação estimável é:
 
-\begin{equation}
+$$
 \ln(s_j)-\ln(s_0)=X'_j\beta-\alpha p_j+\sigma\ln(s_{j|g})+\xi_j.
-\end{equation}
+$$
 
 O parâmetro $\sigma$ mede a correlação de preferências dentro do nest. O intervalo compatível com o modelo é:
 
-\begin{equation}
+$$
 0 \leq \sigma < 1.
-\end{equation}
+$$
 
 Como $\ln(s_{j|g})$ também pode ser endógeno, o pacote constrói instrumentos adicionais baseados no número e nas características de produtos dentro do mesmo nest e em nests rivais.
 
@@ -125,45 +125,45 @@ Como $\ln(s_{j|g})$ também pode ser endógeno, o pacote constrói instrumentos 
 
 A elasticidade-preço própria é:
 
-\begin{equation}
+$$
 \varepsilon_{jj}=-\alpha p_j(1-s_j).
-\end{equation}
+$$
 
 A elasticidade-preço cruzada, para $k\neq j$, é:
 
-\begin{equation}
+$$
 \varepsilon_{jk}=\alpha p_k s_k.
-\end{equation}
+$$
 
 ## Markups implícitos
 
 Sob firmas monoproduto:
 
-\begin{equation}
+$$
 p_j-mc_j=\frac{1}{\alpha(1-s_j)}.
-\end{equation}
+$$
 
 Com propriedade multiproduto, define-se:
 
-\begin{equation}
+$$
 O_{jk}=\mathbf{1}\{f(j)=f(k)\},
 \qquad
 \Delta_{jk}=-O_{jk}\frac{\partial s_k}{\partial p_j}.
-\end{equation}
+$$
 
 No logit simples:
 
-\begin{equation}
+$$
 \Delta_{jj}=\alpha s_j(1-s_j),
 \qquad
 \Delta_{jk}=-O_{jk}\alpha s_js_k \quad (j\neq k).
-\end{equation}
+$$
 
 Os markups multiproduto são:
 
-\begin{equation}
+$$
 p-mc=\Delta^{-1}s.
-\end{equation}
+$$
 
 ## Estrutura do diretório
 
