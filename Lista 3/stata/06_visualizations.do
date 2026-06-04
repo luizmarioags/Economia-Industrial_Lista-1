@@ -9,7 +9,7 @@ COMENTÁRIOS DETALHADOS
 - O gráfico 10 reestima regressões de primeiro estágio e resume os F/Wald-F dos instrumentos.
 ****************************************************************************************/
 /****************************************************************************************
-06 - Gráficos principais em PDF e PNG
+06 - Gráficos principais em PDF e PNG com tema visual aplicado
 ****************************************************************************************/
 
 
@@ -31,39 +31,70 @@ local L_DSDP `"d{it:s}{subscript:j}/d{it:p}{subscript:j}"'
 local L_PRICEJ `"{it:p}{subscript:j} simulado"'
 local L_SHARE `"Market share ({it:s}{subscript:j})"'
 
+/****************************************************************************************
+Tema visual dos gráficos
+- Inspirado no arquivo de referência enviado: fundo branco, grade cinza clara tracejada,
+  pontos azul-escuro, linhas de ajuste em vermelho/cranberry e legenda à direita quando útil.
+- As macros abaixo são usadas em todos os gráficos deste script.
+****************************************************************************************/
+set scheme s1color
+capture graph set window fontface "Arial"
+
+* Template visual fixo, copiado do padrão do gráfico de referência:
+* fundo branco, grade cinza clara tracejada, pontos navy,
+* linha de ajuste cranberry e linha zero preta tracejada.
+local GBASE `"scheme(s1color) graphregion(color(white)) plotregion(color(white) lcolor(none)) bgcolor(white)"'
+local GRIDXY `"xlabel(, labsize(small) grid glcolor(gs14) glpattern(dash)) ylabel(, labsize(small) angle(horizontal) grid glcolor(gs14) glpattern(dash))"'
+local GRIDHBAR `"ylabel(, labsize(small) grid glcolor(gs14) glpattern(dash))"'
+local GRIDY  `"ylabel(, labsize(small) angle(horizontal) grid glcolor(gs14) glpattern(dash))"'
+local GRIDX  `"xlabel(, labsize(small) grid glcolor(gs14) glpattern(dash))"'
+local LEGEND_RIGHT `"legend(position(3) ring(1) cols(1) region(lcolor(none) fcolor(none)) size(small))"'
+local LEGEND_BOTTOM `"legend(rows(1) region(lcolor(none) fcolor(none)) size(small))"'
+local ZERO_LINE `"lcolor(black) lpattern(dash) lwidth(medthin)"'
+
+
 * 1. Share vs preço, com rótulos de produto para inspeção de outliers.
 use "$OUTDATA/prepared_data_stata.dta", clear
-twoway (scatter share price, mlabel(product) mlabsize(vsmall)), ///
-    title("Share e preço por segmento") ///
+twoway (scatter share price, mlabel(product) mlabsize(vsmall) msymbol(circle) mcolor(navy)), ///
+    title("Share e preço por segmento", size(medsmall) color(black)) ///
     xtitle("Preço de transação") ///
     ytitle("`L_SHARE'") ///
-    legend(off)
+    legend(off) ///
+    `GBASE' `GRIDXY'
 graph export "$FIGPDF/01_share_vs_transaction_price.pdf", replace
-graph export "$FIGPNG/01_share_vs_transaction_price.png", replace width(2400)
+graph export "$FIGPNG/01_share_vs_transaction_price.png", replace width(2800)
 
 * 2. Top 15 produtos por market share.
 gsort -share
 graph hbar share in 1/15, over(product, sort(share) descending label(labsize(vsmall))) ///
-    title("Maiores produtos por market share") ytitle("Market share")
+    title("Maiores produtos por market share", size(medsmall) color(black)) ///
+    ytitle("Market share") ///
+    bar(1, fcolor(navy) lcolor(navy)) ///
+    `GBASE' `GRIDHBAR'
 graph export "$FIGPDF/02_top15_market_shares.pdf", replace
-graph export "$FIGPNG/02_top15_market_shares.png", replace width(2400)
+graph export "$FIGPNG/02_top15_market_shares.png", replace width(2800)
 
 * 3. Distribuição de preço por segmento/nest.
 use "$OUTDATA/prepared_data_stata.dta", clear
 graph box price, over(segment) ///
-    title("Distribuição de preços por nest/segmento") ///
-    ytitle("Preço de transação")
+    title("Distribuição de preços por nest/segmento", size(medsmall) color(black)) ///
+    ytitle("Preço de transação") ///
+    box(1, fcolor(navy) lcolor(navy)) ///
+    marker(1, mcolor(navy)) ///
+    `GBASE' `GRIDY'
 graph export "$FIGPDF/03_price_by_segment.pdf", replace
-graph export "$FIGPNG/03_price_by_segment.png", replace width(2400)
+graph export "$FIGPNG/03_price_by_segment.png", replace width(2800)
 
 * 4. Relação entre delta de Berry e preço, com ajuste linear auxiliar.
-twoway (scatter delta price) (lfit delta price), ///
-    title("Inversão logit de Berry e preço") ///
+twoway (scatter delta price, msymbol(circle) mcolor(navy)) ///
+       (lfit delta price, lcolor(cranberry) lwidth(medthick)), ///
+    title("Inversão logit de Berry e preço", size(medsmall) color(black)) ///
     xtitle("Preço de transação") ///
     ytitle("`L_DELTA'") ///
-    legend(off)
+    legend(off) ///
+    `GBASE' `GRIDXY'
 graph export "$FIGPDF/04_delta_vs_price.pdf", replace
-graph export "$FIGPNG/04_delta_vs_price.png", replace width(2400)
+graph export "$FIGPNG/04_delta_vs_price.png", replace width(2800)
 
 * 5. Comparação dos coeficientes de preço entre especificações.
 tempfile pricecomp
@@ -86,10 +117,13 @@ postclose pc
 use `pricecomp', clear
 export delimited using "$OUTDATA/price_parameter_comparison_stata_graph.csv", replace
 graph hbar price_coef, over(model, label(labsize(tiny))) ///
-    title("Comparação das estimativas de preço") ///
-    ytitle("`L_PRICECOEF'")
+    yline(0, `ZERO_LINE') ///
+    title("Comparação das estimativas de preço", size(medsmall) color(black)) ///
+    ytitle("`L_PRICECOEF'") ///
+    bar(1, fcolor(navy) lcolor(navy)) ///
+    `GBASE' `GRIDHBAR'
 graph export "$FIGPDF/05_price_coefficient_comparison.pdf", replace
-graph export "$FIGPNG/05_price_coefficient_comparison.png", replace width(2400)
+graph export "$FIGPNG/05_price_coefficient_comparison.png", replace width(2800)
 
 * 6. Matriz de elasticidades para os 12 maiores produtos.
 use "$OUTDATA/stata_after_simple_gmm.dta", clear
@@ -123,73 +157,97 @@ svmat Egraph, names(e)
 gen row = _n
 reshape long e, i(row) j(col)
 gen label_e = string(e, "%4.2f")
-twoway (scatter row col, msymbol(square) msize(large)) ///
-       (scatter row col, msymbol(none) mlabel(label_e) mlabsize(tiny)), ///
-       title("Matriz de elasticidades-preço ({&epsilon}{subscript:jk})") ///
+twoway (scatter row col, msymbol(square) msize(large) mcolor(navy)) ///
+       (scatter row col, msymbol(none) mlabel(label_e) mlabsize(tiny) mlabcolor(white)), ///
+       title("Matriz de elasticidades-preço ({&epsilon}{subscript:jk})", size(medsmall) color(black)) ///
        xtitle("Produto {it:k}") ytitle("Produto {it:j}") ///
-       xlabel(1(1)12, labsize(vsmall)) ylabel(1(1)12, labsize(vsmall)) ///
-       legend(off)
+       xlabel(1(1)12, labsize(vsmall) grid glcolor(gs14) glpattern(dash)) ///
+       ylabel(1(1)12, labsize(vsmall) grid glcolor(gs14) glpattern(dash)) ///
+       legend(off) ///
+       `GBASE'
 graph export "$FIGPDF/06_elasticity_matrix_subset.pdf", replace
-graph export "$FIGPNG/06_elasticity_matrix_subset.png", replace width(2400)
+graph export "$FIGPNG/06_elasticity_matrix_subset.png", replace width(2800)
 
 * 7. Elasticidades próprias mais intensas.
 import delimited "$TABCsv/05_own_elasticities_simple_logit.csv", clear varnames(1)
 gsort own_elasticity_simple_logit
 graph hbar own_elasticity_simple_logit in 1/15, over(product, label(labsize(vsmall))) ///
-    title("Elasticidades próprias mais intensas ({&epsilon}{subscript:jj})") ///
-    ytitle("`L_EJJ'")
+    yline(0, `ZERO_LINE') ///
+    title("Elasticidades próprias mais intensas ({&epsilon}{subscript:jj})", size(medsmall) color(black)) ///
+    ytitle("`L_EJJ'") ///
+    bar(1, fcolor(navy) lcolor(navy)) ///
+    `GBASE' `GRIDHBAR'
 graph export "$FIGPDF/07_own_price_elasticities.pdf", replace
-graph export "$FIGPNG/07_own_price_elasticities.png", replace width(2400)
+graph export "$FIGPNG/07_own_price_elasticities.png", replace width(2800)
 
 * 18. Distribuição das elasticidades próprias: histograma + densidade kernel.
 histogram own_elasticity_simple_logit, density kdensity ///
-    xline(0) ///
-    title("Distribuição das elasticidades próprias ({&epsilon}{subscript:jj})") ///
+    fcolor(navy) lcolor(white) ///
+    kdenopts(lcolor(cranberry) lwidth(medthick)) ///
+    xline(0, `ZERO_LINE') ///
+    title("Distribuição das elasticidades próprias ({&epsilon}{subscript:jj})", size(medsmall) color(black)) ///
     xtitle("`L_EJJ'") ///
-    ytitle("Densidade")
+    ytitle("Densidade") ///
+    `GBASE' `GRIDXY'
 graph export "$FIGPDF/18_own_elasticity_hist_density.pdf", replace
-graph export "$FIGPNG/18_own_elasticity_hist_density.png", replace width(2400)
+graph export "$FIGPNG/18_own_elasticity_hist_density.png", replace width(2800)
 
 * 20. Boxplot das elasticidades próprias.
 graph box own_elasticity_simple_logit, ///
-    title("Boxplot das elasticidades próprias ({&epsilon}{subscript:jj})") ///
-    ytitle("`L_EJJ'")
+    yline(0, `ZERO_LINE') ///
+    title("Boxplot das elasticidades próprias ({&epsilon}{subscript:jj})", size(medsmall) color(black)) ///
+    ytitle("`L_EJJ'") ///
+    box(1, fcolor(navy) lcolor(navy)) ///
+    marker(1, mcolor(navy)) ///
+    `GBASE' `GRIDY'
 graph export "$FIGPDF/20_own_elasticity_boxplot.pdf", replace
-graph export "$FIGPNG/20_own_elasticity_boxplot.png", replace width(2400)
+graph export "$FIGPNG/20_own_elasticity_boxplot.png", replace width(2800)
 
 * 8. Markups monoproduto versus multiproduto para os maiores markups multiproduto.
 import delimited "$TABCsv/08_markups.csv", clear varnames(1)
 gsort -markup_multiproduct
 graph hbar markup_monoproduct markup_multiproduct in 1/15, ///
     over(product, label(labsize(vsmall))) ///
-    title("Comparação de markups implícitos") ///
+    title("Comparação de markups implícitos", size(medsmall) color(black)) ///
     ytitle("Markup implícito") ///
-    legend(order(1 "Monoproduto" 2 "Multiproduto") rows(1))
+    bar(1, fcolor(navy) lcolor(navy)) ///
+    bar(2, fcolor(cranberry) lcolor(cranberry)) ///
+    legend(order(1 "Monoproduto" 2 "Multiproduto") position(3) ring(1) cols(1) region(lcolor(none) fcolor(none)) size(small)) ///
+    `GBASE' `GRIDHBAR'
 graph export "$FIGPDF/08_markups_mono_vs_multi.pdf", replace
-graph export "$FIGPNG/08_markups_mono_vs_multi.png", replace width(2400)
+graph export "$FIGPNG/08_markups_mono_vs_multi.png", replace width(2800)
 
 * 9. Preço observado versus markup multiproduto.
-twoway (scatter markup_multiproduct price), ///
-    title("Preço observado e markup multiproduto") ///
-    xtitle("Preço observado") ytitle("Markup multiproduto")
+twoway (scatter markup_multiproduct price, msymbol(circle) mcolor(navy)), ///
+    title("Preço observado e markup multiproduto", size(medsmall) color(black)) ///
+    xtitle("Preço observado") ytitle("Markup multiproduto") ///
+    legend(off) ///
+    `GBASE' `GRIDXY'
 graph export "$FIGPDF/09_price_vs_multiproduct_markup.pdf", replace
-graph export "$FIGPNG/09_price_vs_multiproduct_markup.png", replace width(2400)
+graph export "$FIGPNG/09_price_vs_multiproduct_markup.png", replace width(2800)
 
 * 19. Distribuição dos markups multiproduto: histograma + densidade kernel.
 histogram markup_multiproduct, density kdensity ///
-    xline(0) ///
-    title("Distribuição dos markups multiproduto") ///
+    fcolor(navy) lcolor(white) ///
+    kdenopts(lcolor(cranberry) lwidth(medthick)) ///
+    xline(0, `ZERO_LINE') ///
+    title("Distribuição dos markups multiproduto", size(medsmall) color(black)) ///
     xtitle("Markup multiproduto") ///
-    ytitle("Densidade")
+    ytitle("Densidade") ///
+    `GBASE' `GRIDXY'
 graph export "$FIGPDF/19_markup_multiproduct_hist_density.pdf", replace
-graph export "$FIGPNG/19_markup_multiproduct_hist_density.png", replace width(2400)
+graph export "$FIGPNG/19_markup_multiproduct_hist_density.png", replace width(2800)
 
 * 21. Boxplot dos markups multiproduto.
 graph box markup_multiproduct, ///
-    title("Boxplot dos markups multiproduto") ///
-    ytitle("Markup multiproduto")
+    yline(0, `ZERO_LINE') ///
+    title("Boxplot dos markups multiproduto", size(medsmall) color(black)) ///
+    ytitle("Markup multiproduto") ///
+    box(1, fcolor(navy) lcolor(navy)) ///
+    marker(1, mcolor(navy)) ///
+    `GBASE' `GRIDY'
 graph export "$FIGPDF/21_markup_multiproduct_boxplot.pdf", replace
-graph export "$FIGPNG/21_markup_multiproduct_boxplot.png", replace width(2400)
+graph export "$FIGPNG/21_markup_multiproduct_boxplot.png", replace width(2800)
 
 * 10. Diagnóstico de força dos instrumentos: F/Wald-F robusto dos primeiros estágios.
 use "$OUTDATA/prepared_data_stata.dta", clear
@@ -219,11 +277,13 @@ replace robust_Wald_F_manual = F_nested_price in 2
 replace robust_Wald_F_manual = F_nested_lnsjg in 3
 export delimited using "$OUTDATA/first_stage_diagnostics_for_graph_stata.csv", replace
 graph bar robust_Wald_F_manual, over(endogenous_variable, label(labsize(small))) ///
-    yline(10, lpattern(dash)) ///
-    title("Diagnóstico de força dos instrumentos") ///
-    ytitle("F/Wald-F robusto")
+    yline(10, `ZERO_LINE') ///
+    title("Diagnóstico de força dos instrumentos", size(medsmall) color(black)) ///
+    ytitle("F/Wald-F robusto") ///
+    bar(1, fcolor(navy) lcolor(navy)) ///
+    `GBASE' `GRIDY'
 graph export "$FIGPDF/10_first_stage_robust_f.pdf", replace
-graph export "$FIGPNG/10_first_stage_robust_f.png", replace width(2400)
+graph export "$FIGPNG/10_first_stage_robust_f.png", replace width(2800)
 
 /****************************************************************************************
 11--17 - Gráficos clássicos e diagnósticos estatísticos do logit simples
@@ -299,12 +359,14 @@ preserve
     set obs 250
     gen rel_grid = -6 + (_n - 1)*(12/249)
     gen share_pred = 1/(1 + exp(-rel_grid))
-    twoway (line share_pred rel_grid), ///
-        title("Curva clássica do logit - produto focal") ///
+    twoway (line share_pred rel_grid, lcolor(navy) lwidth(medthick)), ///
+        title("Curva clássica do logit - produto focal", size(medsmall) color(black)) ///
         xtitle("`L_VREL'") ///
-        ytitle("`L_SJ'")
+        ytitle("`L_SJ'") ///
+        legend(off) ///
+        `GBASE' `GRIDXY'
     graph export "$FIGPDF/11_classic_logit_curve_share_vs_utility.pdf", replace
-    graph export "$FIGPNG/11_classic_logit_curve_share_vs_utility.png", replace width(2400)
+    graph export "$FIGPNG/11_classic_logit_curve_share_vs_utility.png", replace width(2800)
 restore
 
 * 12. Share previsto contra preço simulado do produto focal.
@@ -316,13 +378,15 @@ preserve
     gen price_grid = p_low + (_n - 1)*((p_high - p_low)/249)
     gen v_price = focal_v_intercept_plot + price_slope_plot*price_grid
     gen share_pred = exp(v_price)/(C_focal + exp(v_price))
-    twoway (line share_pred price_grid), ///
-        title("Resposta do share ao preço - produto focal") ///
+    twoway (line share_pred price_grid, lcolor(navy) lwidth(medthick)), ///
+        title("Resposta do share ao preço - produto focal", size(medsmall) color(black)) ///
         xtitle("`L_PRICEJ'") ///
         ytitle("`L_SJ'") ///
-        note("`note_slope'", size(vsmall))
+        note("`note_slope'", size(vsmall)) ///
+        legend(off) ///
+        `GBASE' `GRIDXY'
     graph export "$FIGPDF/12_focal_product_share_vs_price.pdf", replace
-    graph export "$FIGPNG/12_focal_product_share_vs_price.png", replace width(2400)
+    graph export "$FIGPNG/12_focal_product_share_vs_price.png", replace width(2800)
 restore
 
 * 13. Efeito marginal ds_j/dp_j ao longo da curva simulada de preço.
@@ -337,14 +401,16 @@ preserve
     * Como price_slope_plot = -alpha_plot_logit < 0, a curva fica abaixo de zero.
     gen marginal_effect = price_slope_plot*share_pred*(1-share_pred)
 
-    twoway (line marginal_effect price_grid), ///
-        yline(0, lpattern(dash)) ///
-        title("Efeito marginal do preço - produto focal") ///
+    twoway (line marginal_effect price_grid, lcolor(cranberry) lwidth(medthick)), ///
+        yline(0, `ZERO_LINE') ///
+        title("Efeito marginal do preço - produto focal", size(medsmall) color(black)) ///
         xtitle("`L_PRICEJ'") ///
         ytitle("`L_DSDP'") ///
-        note("`note_slope'", size(vsmall))
+        note("`note_slope'", size(vsmall)) ///
+        legend(off) ///
+        `GBASE' `GRIDXY'
     graph export "$FIGPDF/13_focal_product_marginal_effect_vs_price.pdf", replace
-    graph export "$FIGPNG/13_focal_product_marginal_effect_vs_price.png", replace width(2400)
+    graph export "$FIGPNG/13_focal_product_marginal_effect_vs_price.png", replace width(2800)
 restore
 
 * 14. Share observado versus share previsto pelo logit simples.
@@ -358,30 +424,38 @@ local min_pred = r(min)
 local max_pred = r(max)
 local lo = min(`min_obs', `min_pred')
 local hi = max(`max_obs', `max_pred')
-twoway (scatter share share_pred_logit) (function y=x, range(`lo' `hi')), ///
-    title("Share observado versus previsto") ///
+twoway (scatter share share_pred_logit, msymbol(circle) mcolor(navy)) ///
+       (function y=x, range(`lo' `hi') lcolor(cranberry) lpattern(dash) lwidth(medthick)), ///
+    title("Share observado versus previsto", size(medsmall) color(black)) ///
     xtitle("`L_SJ'") ///
     ytitle("`L_SOBS'") ///
-    legend(off)
+    legend(off) ///
+    `GBASE' `GRIDXY'
 graph export "$FIGPDF/14_observed_vs_predicted_shares_simple_logit.pdf", replace
-graph export "$FIGPNG/14_observed_vs_predicted_shares_simple_logit.png", replace width(2400)
+graph export "$FIGPNG/14_observed_vs_predicted_shares_simple_logit.png", replace width(2800)
 
 * 15. Histograma dos resíduos estruturais com curva de densidade kernel.
 histogram xi_gmm_both, density kdensity ///
-    xline(0) ///
-    title("Distribuição dos resíduos estruturais ({&xi}{subscript:j})") ///
+    fcolor(navy) lcolor(white) ///
+    kdenopts(lcolor(cranberry) lwidth(medthick)) ///
+    xline(0, `ZERO_LINE') ///
+    title("Distribuição dos resíduos estruturais ({&xi}{subscript:j})", size(medsmall) color(black)) ///
     xtitle("`L_XI'") ///
-    ytitle("Densidade")
+    ytitle("Densidade") ///
+    `GBASE' `GRIDXY'
 graph export "$FIGPDF/15_structural_residual_hist_density.pdf", replace
-graph export "$FIGPNG/15_structural_residual_hist_density.png", replace width(2400)
+graph export "$FIGPNG/15_structural_residual_hist_density.png", replace width(2800)
 
 * 16. QQ plot dos resíduos estruturais.
 qnorm xi_gmm_both, ///
-    title("QQ plot dos resíduos estruturais ({&xi}{subscript:j})") ///
+    mcolor(navy) msymbol(circle) ///
+    rlopts(lcolor(cranberry) lwidth(medthick)) ///
+    title("QQ plot dos resíduos estruturais ({&xi}{subscript:j})", size(medsmall) color(black)) ///
     ytitle("Quantis de {&xi}{subscript:j}") ///
-    xtitle("Quantis teóricos normais")
+    xtitle("Quantis teóricos normais") ///
+    `GBASE' `GRIDXY'
 graph export "$FIGPDF/16_structural_residual_qqplot.pdf", replace
-graph export "$FIGPNG/16_structural_residual_qqplot.png", replace width(2400)
+graph export "$FIGPNG/16_structural_residual_qqplot.png", replace width(2800)
 
 * 17. Curvas de resposta ao preço dos cinco maiores produtos.
 preserve
@@ -407,16 +481,17 @@ preserve
     gen share_grid = exp(v_grid)/(C_i + exp(v_grid))
 
     twoway ///
-        (line share_grid price_grid if id==1, sort) ///
-        (line share_grid price_grid if id==2, sort) ///
-        (line share_grid price_grid if id==3, sort) ///
-        (line share_grid price_grid if id==4, sort) ///
-        (line share_grid price_grid if id==5, sort), ///
-        title("Curvas de resposta ao preço - top 5 produtos") ///
+        (line share_grid price_grid if id==1, sort lcolor(navy) lwidth(medthick)) ///
+        (line share_grid price_grid if id==2, sort lcolor(cranberry) lwidth(medthick)) ///
+        (line share_grid price_grid if id==3, sort lcolor(forest_green) lwidth(medthick)) ///
+        (line share_grid price_grid if id==4, sort lcolor(dkorange) lwidth(medthick)) ///
+        (line share_grid price_grid if id==5, sort lcolor(purple) lwidth(medthick)), ///
+        title("Curvas de resposta ao preço - top 5 produtos", size(medsmall) color(black)) ///
         xtitle("Preço simulado ({it:p}{subscript:j})") ///
         ytitle("`L_SJ'") ///
         note("`note_slope'", size(vsmall)) ///
-        legend(order(1 "Produto 1" 2 "Produto 2" 3 "Produto 3" 4 "Produto 4" 5 "Produto 5") rows(1))
+        legend(order(1 "Produto 1" 2 "Produto 2" 3 "Produto 3" 4 "Produto 4" 5 "Produto 5") position(3) ring(1) cols(1) region(lcolor(none) fcolor(none)) size(small)) ///
+        `GBASE' `GRIDXY'
     graph export "$FIGPDF/17_price_response_curves_top5_products.pdf", replace
-    graph export "$FIGPNG/17_price_response_curves_top5_products.png", replace width(2400)
+    graph export "$FIGPNG/17_price_response_curves_top5_products.png", replace width(2800)
 restore

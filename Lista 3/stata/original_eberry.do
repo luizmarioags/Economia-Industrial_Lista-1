@@ -17,7 +17,7 @@ quietly run b_program.do
 local bigreps=1000
 global ols=0
 
-/* * organização da base de dados
+/* * organizaï¿½ï¿½o da base de dados
 insheet using exemplo.csv, delimiter(,)
 rename suger sugar
 rename v1 idProduct

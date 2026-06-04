@@ -9,7 +9,7 @@ COMENTÁRIOS DETALHADOS
 - O bloco final imprime o encerramento e log close fecha o arquivo de log.
 ****************************************************************************************/
 /****************************************************************************************
-Run all - Lista Berry/BLP em Stata
+Run all - Lista Berry/BLP em Stata | gráficos com tema aplicado
 Execute a partir da raiz do pacote:
     do stata/run_all_stata.do
 Saídas: outputs/stata/logs, outputs/stata/figures/{pdf,png}, outputs/stata/tables/{csv,tex}
@@ -49,6 +49,16 @@ foreach f of local oldtex {
     capture erase "$TABTEX/`f'"
 }
 
+* Limpa figuras antigas para evitar confundir arquivos gerados antes da aplicação do template.
+local oldpdf : dir "$FIGPDF" files "*.pdf"
+foreach f of local oldpdf {
+    capture erase "$FIGPDF/`f'"
+}
+local oldpng : dir "$FIGPNG" files "*.png"
+foreach f of local oldpng {
+    capture erase "$FIGPNG/`f'"
+}
+
 capture log close _all
 log using "$LOG/run_all_stata.log", text replace
 
@@ -64,6 +74,9 @@ display "#                    Pedro Bijos (Matrícula: 241003849)               
 display "#########################################################################"
 
 do "$ROOT/stata/00_config.do"
+
+* Aplica o template gráfico antes de qualquer rotina de visualização.
+do "$ROOT/stata/stata_graph_theme_snippet.do"
 do "$ROOT/stata/01_prepare_data.do"
 do "$ROOT/stata/02_estimate_logit_iv_gmm.do"
 do "$ROOT/stata/03_nested_gmm.do"

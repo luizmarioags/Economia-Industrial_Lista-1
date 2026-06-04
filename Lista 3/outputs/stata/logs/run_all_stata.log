@@ -1,9 +1,8 @@
 ------------------------------------------------------------------------------------------------------------------------
       name:  <unnamed>
-       log:  C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/logs/run_all_
-> stata.log
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/logs/run_all_stata.log
   log type:  text
- opened on:   4 Jun 2026, 11:57:43
+ opened on:   4 Jun 2026, 12:55:03
 
 . 
 . display "#########################################################################"
@@ -42,7 +41,7 @@
 . /****************************************************************************************
 > COMENTÁRIOS DETALHADOS
 > - clear matrix limpa matrizes antigas para evitar contaminação entre execuções.
-> - set scheme define o tema visual padrão dos gráficos exportados pelo Stata.
+> - set scheme s1color o tema visual padrão dos gráficos exportados pelo Stata.
 > - set linesize e set matsize ajustam a exibição e o tamanho máximo das matrizes.
 > - As globals S0, XVARS, PRICE, DELTA e ENDOG_* padronizam os nomes usados nos scripts seguintes.
 > - capture which verifica se um comando/pacote existe; se não existir, capture ssc install tenta instalar.
@@ -52,8 +51,17 @@
 > ****************************************************************************************/
 . clear matrix
 
-. set scheme s2color
+. set scheme s1color
 
+. capture graph set window fontface "Arial"
+
+. 
+. * Template visual padrão dos gráficos:
+. * - fundo branco;
+. * - grade cinza clara tracejada;
+. * - pontos azul-escuro;
+. * - linhas de ajuste em cranberry/vermelho;
+. * - legenda à direita quando necessário.
 . set linesize 120
 
 . set matsize 11000
@@ -87,6 +95,85 @@ set matsize ignored.
 . capture which weakivtest
 
 . if _rc capture ssc install weakivtest, replace
+
+. 
+. 
+. /****************************************************************************************
+> Template gráfico nativo usado por 06_visualizations.do e 07_extra_visualizations.do.
+> Este bloco NÃO depende de pacote externo. Ele replica o padrão visual do gráfico-modelo:
+> fundo branco, área de plotagem branca, grade cinza clara tracejada, pontos azul-escuro,
+> linhas de ajuste em cranberry e legenda à direita quando útil.
+> ****************************************************************************************/
+. set scheme s1color
+
+. capture graph set window fontface "Arial"
+
+. global GRAPH_BASE   `"graphregion(color(white)) plotregion(color(white))"'
+
+. global GRAPH_GRIDXY `"xlabel(, labsize(small) grid glcolor(gs14) glpattern(dash)) ylabel(, labsize(small) angle(horizo
+> ntal) grid glcolor(gs14) glpattern(dash))"'
+
+. global GRAPH_GRIDX  `"xlabel(, labsize(small) grid glcolor(gs14) glpattern(dash))"'
+
+. global GRAPH_GRIDY  `"ylabel(, labsize(small) angle(horizontal) grid glcolor(gs14) glpattern(dash))"'
+
+. global GRAPH_LEGEND_RIGHT `"legend(position(3) ring(1) cols(1) size(small) region(lcolor(none) fcolor(none)))"'
+
+. global GRAPH_LEGEND_BOTTOM `"legend(rows(1) size(small) region(lcolor(none) fcolor(none)))"'
+
+. global GRAPH_ZERO   `"lcolor(black) lpattern(dash) lwidth(medthin)"'
+
+. global GRAPH_POINT_COLOR "navy"
+
+. global GRAPH_FIT_COLOR "cranberry"
+
+. 
+end of do-file
+
+. 
+. * Aplica o template gráfico antes de qualquer rotina de visualização.
+. do "$ROOT/stata/stata_graph_theme_snippet.do"
+
+. /****************************************************************************************
+> Template visual dos gráficos - Lista 3 Berry/BLP
+> 
+> Use quando quiser aplicar o mesmo padrão visual do gráfico de referência:
+>     do "$ROOT/stata/stata_graph_theme_snippet.do"
+> 
+> Observação:
+> - Este arquivo define GLOBALS para que o template sobreviva ao fim do .do.
+> - Não depende de pacote externo; usa apenas opções nativas do Stata.
+> ****************************************************************************************/
+. 
+. set scheme s1color
+
+. capture graph set window fontface "Arial"
+
+. 
+. global GRAPH_BASE   `"graphregion(color(white)) plotregion(color(white))"'
+
+. global GRAPH_GRIDXY `"xlabel(, labsize(small) grid glcolor(gs14) glpattern(dash)) ylabel(, labsize(small) angle(horizo
+> ntal) grid glcolor(gs14) glpattern(dash))"'
+
+. global GRAPH_GRIDX  `"xlabel(, labsize(small) grid glcolor(gs14) glpattern(dash))"'
+
+. global GRAPH_GRIDY  `"ylabel(, labsize(small) angle(horizontal) grid glcolor(gs14) glpattern(dash))"'
+
+. global GRAPH_LEGEND_RIGHT `"legend(position(3) ring(1) cols(1) size(small) region(lcolor(none) fcolor(none)))"'
+
+. global GRAPH_LEGEND_BOTTOM `"legend(rows(1) size(small) region(lcolor(none) fcolor(none)))"'
+
+. global GRAPH_ZERO   `"lcolor(black) lpattern(dash) lwidth(medthin)"'
+
+. global GRAPH_POINT_COLOR "navy"
+
+. global GRAPH_FIT_COLOR "cranberry"
+
+. global GRAPH_AUX1_COLOR "forest_green"
+
+. global GRAPH_AUX2_COLOR "orange"
+
+. global GRAPH_AUX3_COLOR "purple"
 
 . 
 end of do-file
@@ -253,12 +340,10 @@ sugar: all characters numeric; replaced as double
 . order idProduct firm product segment price share delta cals fat sugar
 
 . save "$OUTDATA/prepared_data_stata.dta", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/data/prepared_data_stata.dta saved
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/prepared_data_stata.dta saved
 
 . export delimited using "$OUTDATA/prepared_data_stata.csv", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/data/prepared_data_st
-> ata.csv saved
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/prepared_data_stata.csv saved
 
 . 
 end of do-file
@@ -593,8 +678,7 @@ Instruments for equation 1: cals fat sugar own_cals own_fat own_sugar o.rival_ca
 . gen xi_gmm_both = delta - _b[/b0] - _b[/bcals]*cals - _b[/bfat]*fat - _b[/bsugar]*sugar - _b[/bp]*price
 
 . save "$OUTDATA/stata_after_simple_gmm.dta", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/data/stata_after_simple_gmm.dta saved
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/stata_after_simple_gmm.dta saved
 
 . 
 . * Exportação padronizada transferida para 08_standard_tables.do.
@@ -752,8 +836,7 @@ Sigma nested =    0.3733 ; intervalo teórico: 0 <= sigma < 1
 > _share_within_nest
 
 . save "$OUTDATA/stata_after_nested_gmm.dta", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/data/stata_after_nested_gmm.dta saved
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/stata_after_nested_gmm.dta saved
 
 . 
 . * Exportação padronizada transferida para 08_standard_tables.do.
@@ -849,8 +932,8 @@ Alpha do logit simples usado nas elasticidades/markups =  -1.17642
 
 . 
 . save "$OUTDATA/stata_elasticities_markups_work.dta", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/data/stata_elasticities_markups_work.dta saved
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/stata_elasticities_markups_work.dta
+    saved
 
 . 
 end of do-file
@@ -1204,7 +1287,7 @@ end of do-file
 
 . postfile coefh str48 model str32 parameter double estimate std_error t_stat p_value gmm_objective sigma_nested using `
 > coefpost', replace
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000001.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_000001.tmp not found)
 
 . 
 . local allmodels "OLS IV_own IV_rival IV_both GMM_own_1 GMM_own_2 GMM_rival_1 GMM_rival_2 GMM_both_1 GMM_both_2 IV_nest
@@ -1272,14 +1355,12 @@ end of do-file
 
 . export_csv_tex, csv("$TABCsv/01_all_coefficients.csv") tex("$TABTEX/01_all_coefficients.tex") caption("Coeficientes es
 > timados") label("tab:all-coef")
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/csv/01_all_coefficients.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/01_all_coe
-> fficients.csv saved
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/tex/01_all_coefficients.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/01_all_coe
-> fficients.tex saved
+(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/01_all_coefficients.csv not
+    found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/01_all_coefficients.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/01_all_coefficients.tex not
+    found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/01_all_coefficients.tex saved
 
 . 
 . * -------------------------
@@ -1302,14 +1383,16 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 
 .     export_csv_tex, csv("$TABCsv/02_price_parameter_comparison.csv") tex("$TABTEX/02_price_parameter_comparison.tex") 
 > caption("Comparação do parâmetro de preço") label("tab:price-compare")
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/csv/02_price_parameter_comparison.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/02_price_p
-> arameter_comparison.csv saved
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/tex/02_price_parameter_comparison.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/02_price_p
-> arameter_comparison.tex saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/02_price_parameter_comparison.
+    > csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/02_price_parameter_comparison.c
+> sv saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/02_price_parameter_comparison.
+    > tex not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/02_price_parameter_comparison.t
+> ex saved
 
 . restore
 
@@ -1345,7 +1428,7 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 .     tempfile rows_all
 
 .     save `rows_all'
-file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000004.tmp saved as .dta format
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_000004.tmp saved as .dta format
 
 . restore
 
@@ -1364,7 +1447,7 @@ file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000004.tmp saved as .dta f
 .     tempfile cols_all
 
 .     save `cols_all'
-file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000006.tmp saved as .dta format
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_000006.tmp saved as .dta format
 
 . restore
 
@@ -1378,14 +1461,16 @@ file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000006.tmp saved as .dta f
 
 . export_csv_tex, csv("$TABCsv/03_elasticity_matrix_simple_logit.csv") tex("$TABTEX/03_elasticity_matrix_simple_logit.te
 > x") caption("Matriz de elasticidades - logit simples") label("tab:elas-simple")
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/csv/03_elasticity_matrix_simple_logit.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/03_elastic
-> ity_matrix_simple_logit.csv saved
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/tex/03_elasticity_matrix_simple_logit.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/03_elastic
-> ity_matrix_simple_logit.tex saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/03_elasticity_matrix_simple_lo
+    > git.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/03_elasticity_matrix_simple_log
+> it.csv saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/03_elasticity_matrix_simple_lo
+    > git.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/03_elasticity_matrix_simple_log
+> it.tex saved
 
 . 
 . use "$OUTDATA/prepared_data_stata.dta", clear
@@ -1410,7 +1495,7 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 .     tempfile rows_sub
 
 .     save `rows_sub'
-file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000008.tmp saved as .dta format
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_000008.tmp saved as .dta format
 
 . restore
 
@@ -1429,7 +1514,7 @@ file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000008.tmp saved as .dta f
 .     tempfile cols_sub
 
 .     save `cols_sub'
-file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_00000a.tmp saved as .dta format
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_00000a.tmp saved as .dta format
 
 . restore
 
@@ -1443,14 +1528,16 @@ file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_00000a.tmp saved as .dta f
 
 . export_csv_tex, csv("$TABCsv/04_elasticity_matrix_simple_logit_subset.csv") tex("$TABTEX/04_elasticity_matrix_simple_l
 > ogit_subset.tex") caption("Matriz de elasticidades - logit simples - subconjunto") label("tab:elas-simple-subset")
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/csv/04_elasticity_matrix_simple_logit_subset.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/04_elastic
-> ity_matrix_simple_logit_subset.csv saved
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/tex/04_elasticity_matrix_simple_logit_subset.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/04_elastic
-> ity_matrix_simple_logit_subset.tex saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/04_elasticity_matrix_simple_lo
+    > git_subset.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/04_elasticity_matrix_simple_log
+> it_subset.csv saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/04_elasticity_matrix_simple_lo
+    > git_subset.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/04_elasticity_matrix_simple_log
+> it_subset.tex saved
 
 . 
 . * -------------------------
@@ -1466,14 +1553,16 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 
 . export_csv_tex, csv("$TABCsv/05_own_elasticities_simple_logit.csv") tex("$TABTEX/05_own_elasticities_simple_logit.tex"
 > ) caption("Elasticidades próprias - logit simples") label("tab:own-elas-simple")
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/csv/05_own_elasticities_simple_logit.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/05_own_ela
-> sticities_simple_logit.csv saved
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/tex/05_own_elasticities_simple_logit.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/05_own_ela
-> sticities_simple_logit.tex saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/05_own_elasticities_simple_log
+    > it.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/05_own_elasticities_simple_logi
+> t.csv saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/05_own_elasticities_simple_log
+    > it.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/05_own_elasticities_simple_logi
+> t.tex saved
 
 . 
 . * -------------------------
@@ -1589,7 +1678,7 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 .     tempfile nrows
 
 .     save `nrows'
-file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_00000c.tmp saved as .dta format
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_00000c.tmp saved as .dta format
 
 . restore
 
@@ -1604,7 +1693,7 @@ file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_00000c.tmp saved as .dta f
 .     tempfile ncols
 
 .     save `ncols'
-file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_00000e.tmp saved as .dta format
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_00000e.tmp saved as .dta format
 
 . restore
 
@@ -1636,14 +1725,16 @@ file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_00000e.tmp saved as .dta f
 
 . export_csv_tex, csv("$TABCsv/06_elasticity_matrix_nested_logit.csv") tex("$TABTEX/06_elasticity_matrix_nested_logit.te
 > x") caption("Matriz de elasticidades - nested logit") label("tab:elas-nested")
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/csv/06_elasticity_matrix_nested_logit.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/06_elastic
-> ity_matrix_nested_logit.csv saved
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/tex/06_elasticity_matrix_nested_logit.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/06_elastic
-> ity_matrix_nested_logit.tex saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/06_elasticity_matrix_nested_lo
+    > git.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/06_elasticity_matrix_nested_log
+> it.csv saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/06_elasticity_matrix_nested_lo
+    > git.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/06_elasticity_matrix_nested_log
+> it.tex saved
 
 . 
 . use "$OUTDATA/prepared_data_stata.dta", clear
@@ -1668,14 +1759,16 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 
 . export_csv_tex, csv("$TABCsv/07_own_elasticities_nested_logit.csv") tex("$TABTEX/07_own_elasticities_nested_logit.tex"
 > ) caption("Elasticidades próprias - nested logit") label("tab:own-elas-nested")
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/csv/07_own_elasticities_nested_logit.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/07_own_ela
-> sticities_nested_logit.csv saved
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/tex/07_own_elasticities_nested_logit.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/07_own_ela
-> sticities_nested_logit.tex saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/07_own_elasticities_nested_log
+    > it.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/07_own_elasticities_nested_logi
+> t.csv saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/07_own_elasticities_nested_log
+    > it.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/07_own_elasticities_nested_logi
+> t.tex saved
 
 . 
 . * -------------------------
@@ -1731,14 +1824,10 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 
 . export_csv_tex, csv("$TABCsv/08_markups.csv") tex("$TABTEX/08_markups.tex") caption("Markups implícitos - logit simple
 > s") label("tab:markups")
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/csv/08_markups.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/08_markups
-> .csv saved
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/tex/08_markups.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/08_markups
-> .tex saved
+(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/08_markups.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/08_markups.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/08_markups.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/08_markups.tex saved
 
 . 
 . * -------------------------
@@ -1748,7 +1837,7 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 
 . postfile fsh str32 endogenous_variable double excluded_instruments partial_F_homoskedastic robust_Wald_F_manual first_
 > stage_R2 str24 specification using `fspost', replace
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_00000f.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_00000f.tmp not found)
 
 . use "$OUTDATA/prepared_data_stata.dta", clear
 
@@ -2151,14 +2240,16 @@ n_same_nest_other |          0  (omitted)
 
 . export_csv_tex, csv("$TABCsv/09_first_stage_diagnostics.csv") tex("$TABTEX/09_first_stage_diagnostics.tex") caption("D
 > iagnóstico de primeiro estágio") label("tab:first-stage")
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/csv/09_first_stage_diagnostics.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/09_first_s
-> tage_diagnostics.csv saved
-(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/tables/tex/09_first_stage_diagnostics.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/09_first_s
-> tage_diagnostics.tex saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/09_first_stage_diagnostics.csv
+    not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/09_first_stage_diagnostics.csv 
+> saved
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/09_first_stage_diagnostics.tex
+    not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/09_first_stage_diagnostics.tex 
+> saved
 
 . 
 end of do-file
@@ -2176,7 +2267,7 @@ end of do-file
 > - O gráfico 10 reestima regressões de primeiro estágio e resume os F/Wald-F dos instrumentos.
 > ****************************************************************************************/
 . /****************************************************************************************
-> 06 - Gráficos principais em PDF e PNG
+> 06 - Gráficos principais em PDF e PNG com tema visual aplicado
 > ****************************************************************************************/
 . 
 . 
@@ -2209,76 +2300,129 @@ end of do-file
 . local L_SHARE `"Market share ({it:s}{subscript:j})"'
 
 . 
+. /****************************************************************************************
+> Tema visual dos gráficos
+> - Inspirado no arquivo de referência enviado: fundo branco, grade cinza clara tracejada,
+>   pontos azul-escuro, linhas de ajuste em vermelho/cranberry e legenda à direita quando útil.
+> - As macros abaixo são usadas em todos os gráficos deste script.
+> ****************************************************************************************/
+. set scheme s1color
+
+. capture graph set window fontface "Arial"
+
+. 
+. * Template visual fixo, copiado do padrão do gráfico de referência:
+. * fundo branco, grade cinza clara tracejada, pontos navy,
+. * linha de ajuste cranberry e linha zero preta tracejada.
+. local GBASE `"scheme(s1color) graphregion(color(white)) plotregion(color(white) lcolor(none)) bgcolor(white)"'
+
+. local GRIDXY `"xlabel(, labsize(small) grid glcolor(gs14) glpattern(dash)) ylabel(, labsize(small) angle(horizontal) g
+> rid glcolor(gs14) glpattern(dash))"'
+
+. local GRIDHBAR `"ylabel(, labsize(small) grid glcolor(gs14) glpattern(dash))"'
+
+. local GRIDY  `"ylabel(, labsize(small) angle(horizontal) grid glcolor(gs14) glpattern(dash))"'
+
+. local GRIDX  `"xlabel(, labsize(small) grid glcolor(gs14) glpattern(dash))"'
+
+. local LEGEND_RIGHT `"legend(position(3) ring(1) cols(1) region(lcolor(none) fcolor(none)) size(small))"'
+
+. local LEGEND_BOTTOM `"legend(rows(1) region(lcolor(none) fcolor(none)) size(small))"'
+
+. local ZERO_LINE `"lcolor(black) lpattern(dash) lwidth(medthin)"'
+
+. 
+. 
 . * 1. Share vs preço, com rótulos de produto para inspeção de outliers.
 . use "$OUTDATA/prepared_data_stata.dta", clear
 
-. twoway (scatter share price, mlabel(product) mlabsize(vsmall)), ///
->     title("Share e preço por segmento") ///
+. twoway (scatter share price, mlabel(product) mlabsize(vsmall) msymbol(circle) mcolor(navy)), ///
+>     title("Share e preço por segmento", size(medsmall) color(black)) ///
 >     xtitle("Preço de transação") ///
 >     ytitle("`L_SHARE'") ///
->     legend(off)
+>     legend(off) ///
+>     `GBASE' `GRIDXY'
 
 . graph export "$FIGPDF/01_share_vs_transaction_price.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/01_share_vs_transaction_price.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/01_share_vs_transaction_price
+    > .pdf saved as PDF format
 
-. graph export "$FIGPNG/01_share_vs_transaction_price.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/01_share_vs_transaction_price.png saved as PNG format
+. graph export "$FIGPNG/01_share_vs_transaction_price.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/01_share_vs_transaction_price
+    > .png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/01_share_vs_transaction_price
+    > .png saved as PNG format
 
 . 
 . * 2. Top 15 produtos por market share.
 . gsort -share
 
 . graph hbar share in 1/15, over(product, sort(share) descending label(labsize(vsmall))) ///
->     title("Maiores produtos por market share") ytitle("Market share")
+>     title("Maiores produtos por market share", size(medsmall) color(black)) ///
+>     ytitle("Market share") ///
+>     bar(1, fcolor(navy) lcolor(navy)) ///
+>     `GBASE' `GRIDHBAR'
 
 . graph export "$FIGPDF/02_top15_market_shares.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/02_top15_market_shares.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/02_top15_market_shares.pdf
+    saved as PDF format
 
-. graph export "$FIGPNG/02_top15_market_shares.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/02_top15_market_shares.png saved as PNG format
+. graph export "$FIGPNG/02_top15_market_shares.png", replace width(2800)
+(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/02_top15_market_shares.png
+    not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/02_top15_market_shares.png
+    saved as PNG format
 
 . 
 . * 3. Distribuição de preço por segmento/nest.
 . use "$OUTDATA/prepared_data_stata.dta", clear
 
 . graph box price, over(segment) ///
->     title("Distribuição de preços por nest/segmento") ///
->     ytitle("Preço de transação")
+>     title("Distribuição de preços por nest/segmento", size(medsmall) color(black)) ///
+>     ytitle("Preço de transação") ///
+>     box(1, fcolor(navy) lcolor(navy)) ///
+>     marker(1, mcolor(navy)) ///
+>     `GBASE' `GRIDY'
 
 . graph export "$FIGPDF/03_price_by_segment.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/03_price_by_segment.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/03_price_by_segment.pdf
+    saved as PDF format
 
-. graph export "$FIGPNG/03_price_by_segment.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/03_price_by_segment.png saved as PNG format
+. graph export "$FIGPNG/03_price_by_segment.png", replace width(2800)
+(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/03_price_by_segment.png not
+    found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/03_price_by_segment.png
+    saved as PNG format
 
 . 
 . * 4. Relação entre delta de Berry e preço, com ajuste linear auxiliar.
-. twoway (scatter delta price) (lfit delta price), ///
->     title("Inversão logit de Berry e preço") ///
+. twoway (scatter delta price, msymbol(circle) mcolor(navy)) ///
+>        (lfit delta price, lcolor(cranberry) lwidth(medthick)), ///
+>     title("Inversão logit de Berry e preço", size(medsmall) color(black)) ///
 >     xtitle("Preço de transação") ///
 >     ytitle("`L_DELTA'") ///
->     legend(off)
+>     legend(off) ///
+>     `GBASE' `GRIDXY'
 
 . graph export "$FIGPDF/04_delta_vs_price.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/04_delta_vs_price.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/04_delta_vs_price.pdf saved
+    as PDF format
 
-. graph export "$FIGPNG/04_delta_vs_price.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/04_delta_vs_price.png saved as PNG format
+. graph export "$FIGPNG/04_delta_vs_price.png", replace width(2800)
+(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/04_delta_vs_price.png not
+    found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/04_delta_vs_price.png saved
+    as PNG format
 
 . 
 . * 5. Comparação dos coeficientes de preço entre especificações.
 . tempfile pricecomp
 
 . postfile pc str32 model double price_coef using `pricecomp', replace
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000001.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_000001.tmp not found)
 
 . foreach m in OLS IV_own IV_rival IV_both IV_nested {
   2.     capture estimates restore `m'
@@ -2301,20 +2445,28 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 . use `pricecomp', clear
 
 . export delimited using "$OUTDATA/price_parameter_comparison_stata_graph.csv", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/data/price_parameter_
-> comparison_stata_graph.csv saved
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/price_parameter_comparison_stata_grap
+> h.csv saved
 
 . graph hbar price_coef, over(model, label(labsize(tiny))) ///
->     title("Comparação das estimativas de preço") ///
->     ytitle("`L_PRICECOEF'")
+>     yline(0, `ZERO_LINE') ///
+>     title("Comparação das estimativas de preço", size(medsmall) color(black)) ///
+>     ytitle("`L_PRICECOEF'") ///
+>     bar(1, fcolor(navy) lcolor(navy)) ///
+>     `GBASE' `GRIDHBAR'
 
 . graph export "$FIGPDF/05_price_coefficient_comparison.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/05_price_coefficient_comparison.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/05_price_coefficient_comparis
+    > on.pdf saved as PDF format
 
-. graph export "$FIGPNG/05_price_coefficient_comparison.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/05_price_coefficient_comparison.png saved as PNG format
+. graph export "$FIGPNG/05_price_coefficient_comparison.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/05_price_coefficient_comparis
+    > on.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/05_price_coefficient_comparis
+    > on.png saved as PNG format
 
 . 
 . * 6. Matriz de elasticidades para os 12 maiores produtos.
@@ -2384,20 +2536,27 @@ xij variables:
 
 . gen label_e = string(e, "%4.2f")
 
-. twoway (scatter row col, msymbol(square) msize(large)) ///
->        (scatter row col, msymbol(none) mlabel(label_e) mlabsize(tiny)), ///
->        title("Matriz de elasticidades-preço ({&epsilon}{subscript:jk})") ///
+. twoway (scatter row col, msymbol(square) msize(large) mcolor(navy)) ///
+>        (scatter row col, msymbol(none) mlabel(label_e) mlabsize(tiny) mlabcolor(white)), ///
+>        title("Matriz de elasticidades-preço ({&epsilon}{subscript:jk})", size(medsmall) color(black)) ///
 >        xtitle("Produto {it:k}") ytitle("Produto {it:j}") ///
->        xlabel(1(1)12, labsize(vsmall)) ylabel(1(1)12, labsize(vsmall)) ///
->        legend(off)
+>        xlabel(1(1)12, labsize(vsmall) grid glcolor(gs14) glpattern(dash)) ///
+>        ylabel(1(1)12, labsize(vsmall) grid glcolor(gs14) glpattern(dash)) ///
+>        legend(off) ///
+>        `GBASE'
 
 . graph export "$FIGPDF/06_elasticity_matrix_subset.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/06_elasticity_matrix_subset.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/06_elasticity_matrix_subset.p
+    > df saved as PDF format
 
-. graph export "$FIGPNG/06_elasticity_matrix_subset.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/06_elasticity_matrix_subset.png saved as PNG format
+. graph export "$FIGPNG/06_elasticity_matrix_subset.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/06_elasticity_matrix_subset.p
+    > ng not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/06_elasticity_matrix_subset.p
+    > ng saved as PNG format
 
 . 
 . * 7. Elasticidades próprias mais intensas.
@@ -2408,47 +2567,72 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 . gsort own_elasticity_simple_logit
 
 . graph hbar own_elasticity_simple_logit in 1/15, over(product, label(labsize(vsmall))) ///
->     title("Elasticidades próprias mais intensas ({&epsilon}{subscript:jj})") ///
->     ytitle("`L_EJJ'")
+>     yline(0, `ZERO_LINE') ///
+>     title("Elasticidades próprias mais intensas ({&epsilon}{subscript:jj})", size(medsmall) color(black)) ///
+>     ytitle("`L_EJJ'") ///
+>     bar(1, fcolor(navy) lcolor(navy)) ///
+>     `GBASE' `GRIDHBAR'
 
 . graph export "$FIGPDF/07_own_price_elasticities.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/07_own_price_elasticities.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/07_own_price_elasticities.pdf
+    saved as PDF format
 
-. graph export "$FIGPNG/07_own_price_elasticities.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/07_own_price_elasticities.png saved as PNG format
+. graph export "$FIGPNG/07_own_price_elasticities.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/07_own_price_elasticities.png
+    not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/07_own_price_elasticities.png
+    saved as PNG format
 
 . 
 . * 18. Distribuição das elasticidades próprias: histograma + densidade kernel.
 . histogram own_elasticity_simple_logit, density kdensity ///
->     xline(0) ///
->     title("Distribuição das elasticidades próprias ({&epsilon}{subscript:jj})") ///
+>     fcolor(navy) lcolor(white) ///
+>     kdenopts(lcolor(cranberry) lwidth(medthick)) ///
+>     xline(0, `ZERO_LINE') ///
+>     title("Distribuição das elasticidades próprias ({&epsilon}{subscript:jj})", size(medsmall) color(black)) ///
 >     xtitle("`L_EJJ'") ///
->     ytitle("Densidade")
+>     ytitle("Densidade") ///
+>     `GBASE' `GRIDXY'
 (bin=7, start=2.0085902, width=.37105662)
 
 . graph export "$FIGPDF/18_own_elasticity_hist_density.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/18_own_elasticity_hist_density.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/18_own_elasticity_hist_densit
+    > y.pdf saved as PDF format
 
-. graph export "$FIGPNG/18_own_elasticity_hist_density.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/18_own_elasticity_hist_density.png saved as PNG format
+. graph export "$FIGPNG/18_own_elasticity_hist_density.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/18_own_elasticity_hist_densit
+    > y.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/18_own_elasticity_hist_densit
+    > y.png saved as PNG format
 
 . 
 . * 20. Boxplot das elasticidades próprias.
 . graph box own_elasticity_simple_logit, ///
->     title("Boxplot das elasticidades próprias ({&epsilon}{subscript:jj})") ///
->     ytitle("`L_EJJ'")
+>     yline(0, `ZERO_LINE') ///
+>     title("Boxplot das elasticidades próprias ({&epsilon}{subscript:jj})", size(medsmall) color(black)) ///
+>     ytitle("`L_EJJ'") ///
+>     box(1, fcolor(navy) lcolor(navy)) ///
+>     marker(1, mcolor(navy)) ///
+>     `GBASE' `GRIDY'
 
 . graph export "$FIGPDF/20_own_elasticity_boxplot.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/20_own_elasticity_boxplot.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/20_own_elasticity_boxplot.pdf
+    saved as PDF format
 
-. graph export "$FIGPNG/20_own_elasticity_boxplot.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/20_own_elasticity_boxplot.png saved as PNG format
+. graph export "$FIGPNG/20_own_elasticity_boxplot.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/20_own_elasticity_boxplot.png
+    not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/20_own_elasticity_boxplot.png
+    saved as PNG format
 
 . 
 . * 8. Markups monoproduto versus multiproduto para os maiores markups multiproduto.
@@ -2460,62 +2644,93 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 
 . graph hbar markup_monoproduct markup_multiproduct in 1/15, ///
 >     over(product, label(labsize(vsmall))) ///
->     title("Comparação de markups implícitos") ///
+>     title("Comparação de markups implícitos", size(medsmall) color(black)) ///
 >     ytitle("Markup implícito") ///
->     legend(order(1 "Monoproduto" 2 "Multiproduto") rows(1))
+>     bar(1, fcolor(navy) lcolor(navy)) ///
+>     bar(2, fcolor(cranberry) lcolor(cranberry)) ///
+>     legend(order(1 "Monoproduto" 2 "Multiproduto") position(3) ring(1) cols(1) region(lcolor(none) fcolor(none)) size(
+> small)) ///
+>     `GBASE' `GRIDHBAR'
 
 . graph export "$FIGPDF/08_markups_mono_vs_multi.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/08_markups_mono_vs_multi.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/08_markups_mono_vs_multi.pdf
+    saved as PDF format
 
-. graph export "$FIGPNG/08_markups_mono_vs_multi.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/08_markups_mono_vs_multi.png saved as PNG format
+. graph export "$FIGPNG/08_markups_mono_vs_multi.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/08_markups_mono_vs_multi.png
+    not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/08_markups_mono_vs_multi.png
+    saved as PNG format
 
 . 
 . * 9. Preço observado versus markup multiproduto.
-. twoway (scatter markup_multiproduct price), ///
->     title("Preço observado e markup multiproduto") ///
->     xtitle("Preço observado") ytitle("Markup multiproduto")
+. twoway (scatter markup_multiproduct price, msymbol(circle) mcolor(navy)), ///
+>     title("Preço observado e markup multiproduto", size(medsmall) color(black)) ///
+>     xtitle("Preço observado") ytitle("Markup multiproduto") ///
+>     legend(off) ///
+>     `GBASE' `GRIDXY'
 
 . graph export "$FIGPDF/09_price_vs_multiproduct_markup.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/09_price_vs_multiproduct_markup.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/09_price_vs_multiproduct_mark
+    > up.pdf saved as PDF format
 
-. graph export "$FIGPNG/09_price_vs_multiproduct_markup.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/09_price_vs_multiproduct_markup.png saved as PNG format
+. graph export "$FIGPNG/09_price_vs_multiproduct_markup.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/09_price_vs_multiproduct_mark
+    > up.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/09_price_vs_multiproduct_mark
+    > up.png saved as PNG format
 
 . 
 . * 19. Distribuição dos markups multiproduto: histograma + densidade kernel.
 . histogram markup_multiproduct, density kdensity ///
->     xline(0) ///
->     title("Distribuição dos markups multiproduto") ///
+>     fcolor(navy) lcolor(white) ///
+>     kdenopts(lcolor(cranberry) lwidth(medthick)) ///
+>     xline(0, `ZERO_LINE') ///
+>     title("Distribuição dos markups multiproduto", size(medsmall) color(black)) ///
 >     xtitle("Markup multiproduto") ///
->     ytitle("Densidade")
+>     ytitle("Densidade") ///
+>     `GBASE' `GRIDXY'
 (bin=1, start=0, width=1)
 
 . graph export "$FIGPDF/19_markup_multiproduct_hist_density.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/19_markup_multiproduct_hist_density.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/19_markup_multiproduct_hist_d
+    > ensity.pdf saved as PDF format
 
-. graph export "$FIGPNG/19_markup_multiproduct_hist_density.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/19_markup_multiproduct_hist_density.png saved as PNG format
+. graph export "$FIGPNG/19_markup_multiproduct_hist_density.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/19_markup_multiproduct_hist_d
+    > ensity.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/19_markup_multiproduct_hist_d
+    > ensity.png saved as PNG format
 
 . 
 . * 21. Boxplot dos markups multiproduto.
 . graph box markup_multiproduct, ///
->     title("Boxplot dos markups multiproduto") ///
->     ytitle("Markup multiproduto")
+>     yline(0, `ZERO_LINE') ///
+>     title("Boxplot dos markups multiproduto", size(medsmall) color(black)) ///
+>     ytitle("Markup multiproduto") ///
+>     box(1, fcolor(navy) lcolor(navy)) ///
+>     marker(1, mcolor(navy)) ///
+>     `GBASE' `GRIDY'
 
 . graph export "$FIGPDF/21_markup_multiproduct_boxplot.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/21_markup_multiproduct_boxplot.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/21_markup_multiproduct_boxplo
+    > t.pdf saved as PDF format
 
-. graph export "$FIGPNG/21_markup_multiproduct_boxplot.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/21_markup_multiproduct_boxplot.png saved as PNG format
+. graph export "$FIGPNG/21_markup_multiproduct_boxplot.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/21_markup_multiproduct_boxplo
+    > t.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/21_markup_multiproduct_boxplo
+    > t.png saved as PNG format
 
 . 
 . * 10. Diagnóstico de força dos instrumentos: F/Wald-F robusto dos primeiros estágios.
@@ -2745,21 +2960,25 @@ Number of observations (_N) was 0, now 3.
 (1 real change made)
 
 . export delimited using "$OUTDATA/first_stage_diagnostics_for_graph_stata.csv", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/data/first_stage_diag
-> nostics_for_graph_stata.csv saved
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/first_stage_diagnostics_for_graph_sta
+> ta.csv saved
 
 . graph bar robust_Wald_F_manual, over(endogenous_variable, label(labsize(small))) ///
->     yline(10, lpattern(dash)) ///
->     title("Diagnóstico de força dos instrumentos") ///
->     ytitle("F/Wald-F robusto")
+>     yline(10, `ZERO_LINE') ///
+>     title("Diagnóstico de força dos instrumentos", size(medsmall) color(black)) ///
+>     ytitle("F/Wald-F robusto") ///
+>     bar(1, fcolor(navy) lcolor(navy)) ///
+>     `GBASE' `GRIDY'
 
 . graph export "$FIGPDF/10_first_stage_robust_f.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/10_first_stage_robust_f.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/10_first_stage_robust_f.pdf
+    saved as PDF format
 
-. graph export "$FIGPNG/10_first_stage_robust_f.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/10_first_stage_robust_f.png saved as PNG format
+. graph export "$FIGPNG/10_first_stage_robust_f.png", replace width(2800)
+(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/10_first_stage_robust_f.png
+    not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/10_first_stage_robust_f.png
+    saved as PNG format
 
 . 
 . /****************************************************************************************
@@ -2874,18 +3093,25 @@ Number of observations (_N) was 0, now 250.
 
 .     gen share_pred = 1/(1 + exp(-rel_grid))
 
-.     twoway (line share_pred rel_grid), ///
->         title("Curva clássica do logit - produto focal") ///
+.     twoway (line share_pred rel_grid, lcolor(navy) lwidth(medthick)), ///
+>         title("Curva clássica do logit - produto focal", size(medsmall) color(black)) ///
 >         xtitle("`L_VREL'") ///
->         ytitle("`L_SJ'")
+>         ytitle("`L_SJ'") ///
+>         legend(off) ///
+>         `GBASE' `GRIDXY'
 
 .     graph export "$FIGPDF/11_classic_logit_curve_share_vs_utility.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/11_classic_logit_curve_share_vs_utility.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/11_classic_logit_curve_share_
+    > vs_utility.pdf saved as PDF format
 
-.     graph export "$FIGPNG/11_classic_logit_curve_share_vs_utility.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/11_classic_logit_curve_share_vs_utility.png saved as PNG format
+.     graph export "$FIGPNG/11_classic_logit_curve_share_vs_utility.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/11_classic_logit_curve_share_
+    > vs_utility.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/11_classic_logit_curve_share_
+    > vs_utility.png saved as PNG format
 
 . restore
 
@@ -2908,19 +3134,26 @@ Number of observations (_N) was 0, now 250.
 
 .     gen share_pred = exp(v_price)/(C_focal + exp(v_price))
 
-.     twoway (line share_pred price_grid), ///
->         title("Resposta do share ao preço - produto focal") ///
+.     twoway (line share_pred price_grid, lcolor(navy) lwidth(medthick)), ///
+>         title("Resposta do share ao preço - produto focal", size(medsmall) color(black)) ///
 >         xtitle("`L_PRICEJ'") ///
 >         ytitle("`L_SJ'") ///
->         note("`note_slope'", size(vsmall))
+>         note("`note_slope'", size(vsmall)) ///
+>         legend(off) ///
+>         `GBASE' `GRIDXY'
 
 .     graph export "$FIGPDF/12_focal_product_share_vs_price.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/12_focal_product_share_vs_price.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/12_focal_product_share_vs_pri
+    > ce.pdf saved as PDF format
 
-.     graph export "$FIGPNG/12_focal_product_share_vs_price.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/12_focal_product_share_vs_price.png saved as PNG format
+.     graph export "$FIGPNG/12_focal_product_share_vs_price.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/12_focal_product_share_vs_pri
+    > ce.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/12_focal_product_share_vs_pri
+    > ce.png saved as PNG format
 
 . restore
 
@@ -2945,20 +3178,27 @@ Number of observations (_N) was 0, now 250.
 .     gen marginal_effect = price_slope_plot*share_pred*(1-share_pred)
 
 . 
-.     twoway (line marginal_effect price_grid), ///
->         yline(0, lpattern(dash)) ///
->         title("Efeito marginal do preço - produto focal") ///
+.     twoway (line marginal_effect price_grid, lcolor(cranberry) lwidth(medthick)), ///
+>         yline(0, `ZERO_LINE') ///
+>         title("Efeito marginal do preço - produto focal", size(medsmall) color(black)) ///
 >         xtitle("`L_PRICEJ'") ///
 >         ytitle("`L_DSDP'") ///
->         note("`note_slope'", size(vsmall))
+>         note("`note_slope'", size(vsmall)) ///
+>         legend(off) ///
+>         `GBASE' `GRIDXY'
 
 .     graph export "$FIGPDF/13_focal_product_marginal_effect_vs_price.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/13_focal_product_marginal_effect_vs_price.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/13_focal_product_marginal_eff
+    > ect_vs_price.pdf saved as PDF format
 
-.     graph export "$FIGPNG/13_focal_product_marginal_effect_vs_price.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/13_focal_product_marginal_effect_vs_price.png saved as PNG format
+.     graph export "$FIGPNG/13_focal_product_marginal_effect_vs_price.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/13_focal_product_marginal_eff
+    > ect_vs_price.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/13_focal_product_marginal_eff
+    > ect_vs_price.png saved as PNG format
 
 . restore
 
@@ -2984,51 +3224,74 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 
 . local hi = max(`max_obs', `max_pred')
 
-. twoway (scatter share share_pred_logit) (function y=x, range(`lo' `hi')), ///
->     title("Share observado versus previsto") ///
+. twoway (scatter share share_pred_logit, msymbol(circle) mcolor(navy)) ///
+>        (function y=x, range(`lo' `hi') lcolor(cranberry) lpattern(dash) lwidth(medthick)), ///
+>     title("Share observado versus previsto", size(medsmall) color(black)) ///
 >     xtitle("`L_SJ'") ///
 >     ytitle("`L_SOBS'") ///
->     legend(off)
+>     legend(off) ///
+>     `GBASE' `GRIDXY'
 
 . graph export "$FIGPDF/14_observed_vs_predicted_shares_simple_logit.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/14_observed_vs_predicted_shares_simple_logit.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/14_observed_vs_predicted_shar
+    > es_simple_logit.pdf saved as PDF format
 
-. graph export "$FIGPNG/14_observed_vs_predicted_shares_simple_logit.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/14_observed_vs_predicted_shares_simple_logit.png saved as PNG format
+. graph export "$FIGPNG/14_observed_vs_predicted_shares_simple_logit.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/14_observed_vs_predicted_shar
+    > es_simple_logit.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/14_observed_vs_predicted_shar
+    > es_simple_logit.png saved as PNG format
 
 . 
 . * 15. Histograma dos resíduos estruturais com curva de densidade kernel.
 . histogram xi_gmm_both, density kdensity ///
->     xline(0) ///
->     title("Distribuição dos resíduos estruturais ({&xi}{subscript:j})") ///
+>     fcolor(navy) lcolor(white) ///
+>     kdenopts(lcolor(cranberry) lwidth(medthick)) ///
+>     xline(0, `ZERO_LINE') ///
+>     title("Distribuição dos resíduos estruturais ({&xi}{subscript:j})", size(medsmall) color(black)) ///
 >     xtitle("`L_XI'") ///
->     ytitle("Densidade")
+>     ytitle("Densidade") ///
+>     `GBASE' `GRIDXY'
 (bin=7, start=-1.1600895, width=.55462241)
 
 . graph export "$FIGPDF/15_structural_residual_hist_density.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/15_structural_residual_hist_density.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/15_structural_residual_hist_d
+    > ensity.pdf saved as PDF format
 
-. graph export "$FIGPNG/15_structural_residual_hist_density.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/15_structural_residual_hist_density.png saved as PNG format
+. graph export "$FIGPNG/15_structural_residual_hist_density.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/15_structural_residual_hist_d
+    > ensity.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/15_structural_residual_hist_d
+    > ensity.png saved as PNG format
 
 . 
 . * 16. QQ plot dos resíduos estruturais.
 . qnorm xi_gmm_both, ///
->     title("QQ plot dos resíduos estruturais ({&xi}{subscript:j})") ///
+>     mcolor(navy) msymbol(circle) ///
+>     rlopts(lcolor(cranberry) lwidth(medthick)) ///
+>     title("QQ plot dos resíduos estruturais ({&xi}{subscript:j})", size(medsmall) color(black)) ///
 >     ytitle("Quantis de {&xi}{subscript:j}") ///
->     xtitle("Quantis teóricos normais")
+>     xtitle("Quantis teóricos normais") ///
+>     `GBASE' `GRIDXY'
 
 . graph export "$FIGPDF/16_structural_residual_qqplot.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/16_structural_residual_qqplot.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/16_structural_residual_qqplot
+    > .pdf saved as PDF format
 
-. graph export "$FIGPNG/16_structural_residual_qqplot.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/16_structural_residual_qqplot.png saved as PNG format
+. graph export "$FIGPNG/16_structural_residual_qqplot.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/16_structural_residual_qqplot
+    > .png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/16_structural_residual_qqplot
+    > .png saved as PNG format
 
 . 
 . * 17. Curvas de resposta ao preço dos cinco maiores produtos.
@@ -3048,8 +3311,8 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 .     tempfile top5_logit
 
 .     save `top5_logit', replace
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000006.tmp not found)
-file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000006.tmp saved as .dta format
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_000006.tmp not found)
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_000006.tmp saved as .dta format
 
 . 
 .     clear
@@ -3064,8 +3327,8 @@ Number of observations (_N) was 0, now 200.
 .     tempfile grid_logit
 
 .     save `grid_logit', replace
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000007.tmp not found)
-file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000007.tmp saved as .dta format
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_000007.tmp not found)
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1fa18_000007.tmp saved as .dta format
 
 . 
 .     use `top5_logit', clear
@@ -3080,24 +3343,31 @@ file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000007.tmp saved as .dta f
 
 . 
 .     twoway ///
->         (line share_grid price_grid if id==1, sort) ///
->         (line share_grid price_grid if id==2, sort) ///
->         (line share_grid price_grid if id==3, sort) ///
->         (line share_grid price_grid if id==4, sort) ///
->         (line share_grid price_grid if id==5, sort), ///
->         title("Curvas de resposta ao preço - top 5 produtos") ///
+>         (line share_grid price_grid if id==1, sort lcolor(navy) lwidth(medthick)) ///
+>         (line share_grid price_grid if id==2, sort lcolor(cranberry) lwidth(medthick)) ///
+>         (line share_grid price_grid if id==3, sort lcolor(forest_green) lwidth(medthick)) ///
+>         (line share_grid price_grid if id==4, sort lcolor(dkorange) lwidth(medthick)) ///
+>         (line share_grid price_grid if id==5, sort lcolor(purple) lwidth(medthick)), ///
+>         title("Curvas de resposta ao preço - top 5 produtos", size(medsmall) color(black)) ///
 >         xtitle("Preço simulado ({it:p}{subscript:j})") ///
 >         ytitle("`L_SJ'") ///
 >         note("`note_slope'", size(vsmall)) ///
->         legend(order(1 "Produto 1" 2 "Produto 2" 3 "Produto 3" 4 "Produto 4" 5 "Produto 5") rows(1))
+>         legend(order(1 "Produto 1" 2 "Produto 2" 3 "Produto 3" 4 "Produto 4" 5 "Produto 5") position(3) ring(1) cols(1
+> ) region(lcolor(none) fcolor(none)) size(small)) ///
+>         `GBASE' `GRIDXY'
 
 .     graph export "$FIGPDF/17_price_response_curves_top5_products.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/17_price_response_curves_top5_products.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/17_price_response_curves_top5
+    > _products.pdf saved as PDF format
 
-.     graph export "$FIGPNG/17_price_response_curves_top5_products.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/17_price_response_curves_top5_products.png saved as PNG format
+.     graph export "$FIGPNG/17_price_response_curves_top5_products.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/17_price_response_curves_top5
+    > _products.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/17_price_response_curves_top5
+    > _products.png saved as PNG format
 
 . restore
 
@@ -3116,7 +3386,7 @@ end of do-file
 > - extra_07 compara preço observado e preço ajustado no primeiro estágio.
 > ****************************************************************************************/
 . /****************************************************************************************
-> 07 - Visualizações extras para enriquecer a resposta
+> 07 - Visualizações extras para enriquecer a resposta com tema visual aplicado
 > ****************************************************************************************/
 . 
 . 
@@ -3128,6 +3398,39 @@ end of do-file
 . local L_SHARE_AGG `"Market share agregado"'
 
 . 
+. /****************************************************************************************
+> Tema visual dos gráficos
+> - Inspirado no arquivo de referência enviado: fundo branco, grade cinza clara tracejada,
+>   pontos azul-escuro, linhas de ajuste em vermelho/cranberry e legenda à direita quando útil.
+> - As macros abaixo são usadas em todos os gráficos deste script.
+> ****************************************************************************************/
+. set scheme s1color
+
+. capture graph set window fontface "Arial"
+
+. 
+. * Template visual fixo, copiado do padrão do gráfico de referência:
+. * fundo branco, grade cinza clara tracejada, pontos navy,
+. * linha de ajuste cranberry e linha zero preta tracejada.
+. local GBASE `"scheme(s1color) graphregion(color(white)) plotregion(color(white) lcolor(none)) bgcolor(white)"'
+
+. local GRIDXY `"xlabel(, labsize(small) grid glcolor(gs14) glpattern(dash)) ylabel(, labsize(small) angle(horizontal) g
+> rid glcolor(gs14) glpattern(dash))"'
+
+. local GRIDHBAR `"ylabel(, labsize(small) grid glcolor(gs14) glpattern(dash))"'
+
+. local GRIDY  `"ylabel(, labsize(small) angle(horizontal) grid glcolor(gs14) glpattern(dash))"'
+
+. local GRIDX  `"xlabel(, labsize(small) grid glcolor(gs14) glpattern(dash))"'
+
+. local LEGEND_RIGHT `"legend(position(3) ring(1) cols(1) region(lcolor(none) fcolor(none)) size(small))"'
+
+. local LEGEND_BOTTOM `"legend(rows(1) region(lcolor(none) fcolor(none)) size(small))"'
+
+. local ZERO_LINE `"lcolor(black) lpattern(dash) lwidth(medthin)"'
+
+. 
+. 
 . use "$OUTDATA/prepared_data_stata.dta", clear
 
 . 
@@ -3137,16 +3440,23 @@ end of do-file
 .     collapse (sum) share, by(firm)
 
 .     graph hbar share, over(firm, sort(share) descending label(labsize(vsmall))) ///
->         title("Concentração de market share por firma") ///
->         ytitle("`L_SHARE_AGG'")
+>         title("Concentração de market share por firma", size(medsmall) color(black)) ///
+>         ytitle("`L_SHARE_AGG'") ///
+>         bar(1, fcolor(navy) lcolor(navy)) ///
+>         `GBASE' `GRIDHBAR'
 
 .     graph export "$FIGPDF/extra_01_firm_share_concentration.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/extra_01_firm_share_concentration.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_01_firm_share_concentra
+    > tion.pdf saved as PDF format
 
-.     graph export "$FIGPNG/extra_01_firm_share_concentration.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/extra_01_firm_share_concentration.png saved as PNG format
+.     graph export "$FIGPNG/extra_01_firm_share_concentration.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_01_firm_share_concentra
+    > tion.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_01_firm_share_concentra
+    > tion.png saved as PNG format
 
 . restore
 
@@ -3157,16 +3467,20 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
 .     collapse (sum) share, by(segment)
 
 .     graph bar share, over(segment, label(labsize(small))) ///
->         title("Tamanho dos nests") ///
->         ytitle("`L_SHARE_AGG'")
+>         title("Tamanho dos nests", size(medsmall) color(black)) ///
+>         ytitle("`L_SHARE_AGG'") ///
+>         bar(1, fcolor(navy) lcolor(navy)) ///
+>         `GBASE' `GRIDY'
 
 .     graph export "$FIGPDF/extra_02_nest_sizes.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/extra_02_nest_sizes.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_02_nest_sizes.pdf
+    saved as PDF format
 
-.     graph export "$FIGPNG/extra_02_nest_sizes.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/extra_02_nest_sizes.png saved as PNG format
+.     graph export "$FIGPNG/extra_02_nest_sizes.png", replace width(2800)
+(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_02_nest_sizes.png not
+    found)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_02_nest_sizes.png
+    saved as PNG format
 
 . restore
 
@@ -3176,24 +3490,41 @@ file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lis
   2.     preserve
   3.         collapse (mean) `x', by(segment)
   4.         graph bar `x', over(segment, label(labsize(small))) ///
->             title("Média de `x' por segmento") ///
->             ytitle("`x'")
+>             title("Média de `x' por segmento", size(medsmall) color(black)) ///
+>             ytitle("`x'") ///
+>             bar(1, fcolor(navy) lcolor(navy)) ///
+>             `GBASE' `GRIDY'
   5.         graph export "$FIGPDF/extra_03_mean_`x'_by_segment.pdf", replace
-  6.         graph export "$FIGPNG/extra_03_mean_`x'_by_segment.png", replace width(2400)
+  6.         graph export "$FIGPNG/extra_03_mean_`x'_by_segment.png", replace width(2800)
   7.     restore
   8. }
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/extra_03_mean_cals_by_segment.pdf saved as PDF format
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/extra_03_mean_cals_by_segment.png saved as PNG format
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/extra_03_mean_fat_by_segment.pdf saved as PDF format
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/extra_03_mean_fat_by_segment.png saved as PNG format
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/extra_03_mean_sugar_by_segment.pdf saved as PDF format
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/extra_03_mean_sugar_by_segment.png saved as PNG format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_03_mean_cals_by_segment
+    > .pdf saved as PDF format
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_03_mean_cals_by_segment
+    > .png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_03_mean_cals_by_segment
+    > .png saved as PNG format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_03_mean_fat_by_segment.
+    > pdf saved as PDF format
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_03_mean_fat_by_segment.
+    > png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_03_mean_fat_by_segment.
+    > png saved as PNG format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_03_mean_sugar_by_segmen
+    > t.pdf saved as PDF format
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_03_mean_sugar_by_segmen
+    > t.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_03_mean_sugar_by_segmen
+    > t.png saved as PNG format
 
 . 
 . * extra_04: correlação entre instrumentos excluídos.
@@ -3258,53 +3589,78 @@ xij variables:
 
 . gen label_c = string(c, "%4.2f")
 
-. twoway (scatter row col, msymbol(square) msize(large)) ///
->        (scatter row col, msymbol(none) mlabel(label_c) mlabsize(tiny)), ///
->        title("Correlação entre instrumentos excluídos") ///
+. twoway (scatter row col, msymbol(square) msize(large) mcolor(navy)) ///
+>        (scatter row col, msymbol(none) mlabel(label_c) mlabsize(tiny) mlabcolor(white)), ///
+>        title("Correlação entre instrumentos excluídos", size(medsmall) color(black)) ///
 >        xtitle("Instrumento") ytitle("Instrumento") ///
->        xlabel(1(1)14, labsize(vsmall)) ylabel(1(1)14, labsize(vsmall)) ///
->        legend(off)
+>        xlabel(1(1)14, labsize(vsmall) grid glcolor(gs14) glpattern(dash)) ///
+>        ylabel(1(1)14, labsize(vsmall) grid glcolor(gs14) glpattern(dash)) ///
+>        legend(off) ///
+>        `GBASE'
 
 . graph export "$FIGPDF/extra_04_instrument_correlation_matrix.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/extra_04_instrument_correlation_matrix.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_04_instrument_correlati
+    > on_matrix.pdf saved as PDF format
 
-. graph export "$FIGPNG/extra_04_instrument_correlation_matrix.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/extra_04_instrument_correlation_matrix.png saved as PNG format
+. graph export "$FIGPNG/extra_04_instrument_correlation_matrix.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_04_instrument_correlati
+    > on_matrix.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_04_instrument_correlati
+    > on_matrix.png saved as PNG format
 
 . 
 . * extra_05: resíduos estruturais contra preço.
 . use "$OUTDATA/stata_after_simple_gmm.dta", clear
 
-. twoway (scatter xi_gmm_both price) (lfit xi_gmm_both price), ///
->     yline(0) ///
->     title("Resíduos estruturais ({&xi}{subscript:j}) e preço") ///
+. twoway (scatter xi_gmm_both price, msymbol(circle) mcolor(navy)) ///
+>        (lowess xi_gmm_both price, lcolor(cranberry) lwidth(medthick)), ///
+>     yline(0, `ZERO_LINE') ///
+>     title("Resíduos estruturais ({&xi}{subscript:j}) e preço", size(medsmall) color(black)) ///
+>     subtitle("Com curva de ajuste não linear LOWESS", size(small) color(black)) ///
 >     xtitle("Preço de transação") ///
 >     ytitle("`L_XI'") ///
->     legend(off)
+>     legend(order(1 "Resíduos estruturais" 2 "Ajuste não linear LOWESS") position(3) ring(1) cols(1) region(lcolor(none
+> ) fcolor(none)) size(small)) ///
+>     `GBASE' `GRIDXY'
 
 . graph export "$FIGPDF/extra_05_structural_residuals_vs_price.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/extra_05_structural_residuals_vs_price.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_05_structural_residuals
+    > _vs_price.pdf saved as PDF format
 
-. graph export "$FIGPNG/extra_05_structural_residuals_vs_price.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/extra_05_structural_residuals_vs_price.png saved as PNG format
+. graph export "$FIGPNG/extra_05_structural_residuals_vs_price.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_05_structural_residuals
+    > _vs_price.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_05_structural_residuals
+    > _vs_price.png saved as PNG format
 
 . 
 . * extra_06: resíduos estruturais por firma.
 . graph box xi_gmm_both, over(firm, label(labsize(vsmall))) ///
->     title("Resíduos estruturais ({&xi}{subscript:j}) por firma") ///
->     ytitle("`L_XI'")
+>     yline(0, `ZERO_LINE') ///
+>     title("Resíduos estruturais ({&xi}{subscript:j}) por firma", size(medsmall) color(black)) ///
+>     ytitle("`L_XI'") ///
+>     box(1, fcolor(navy) lcolor(navy)) ///
+>     marker(1, mcolor(navy)) ///
+>     `GBASE' `GRIDY'
 
 . graph export "$FIGPDF/extra_06_structural_residuals_by_firm.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/extra_06_structural_residuals_by_firm.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_06_structural_residuals
+    > _by_firm.pdf saved as PDF format
 
-. graph export "$FIGPNG/extra_06_structural_residuals_by_firm.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/extra_06_structural_residuals_by_firm.png saved as PNG format
+. graph export "$FIGPNG/extra_06_structural_residuals_by_firm.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_06_structural_residuals
+    > _by_firm.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_06_structural_residuals
+    > _by_firm.png saved as PNG format
 
 . 
 . * extra_07: primeiro estágio, preço observado versus ajustado.
@@ -3366,19 +3722,26 @@ note: rival_sugar omitted because of collinearity.
 
 . local hi = max(`maxp', `maxh')
 
-. twoway (scatter price_hat price) (function y=x, range(`lo' `hi')), ///
->     title("Primeiro estágio: preço observado vs ajustado") ///
+. twoway (scatter price_hat price, msymbol(circle) mcolor(navy)) ///
+>        (function y=x, range(`lo' `hi') lcolor(cranberry) lpattern(dash) lwidth(medthick)), ///
+>     title("Primeiro estágio: preço observado vs ajustado", size(medsmall) color(black)) ///
 >     xtitle("Preço observado") ///
 >     ytitle("Preço ajustado no primeiro estágio") ///
->     legend(off)
+>     legend(off) ///
+>     `GBASE' `GRIDXY'
 
 . graph export "$FIGPDF/extra_07_first_stage_price_fit.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/pdf/extra_07_first_stage_price_fit.pdf saved as PDF format
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_07_first_stage_price_fi
+    > t.pdf saved as PDF format
 
-. graph export "$FIGPNG/extra_07_first_stage_price_fit.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
-    3/outputs/stata/figures/png/extra_07_first_stage_price_fit.png saved as PNG format
+. graph export "$FIGPNG/extra_07_first_stage_price_fit.png", replace width(2800)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_07_first_stage_price_fi
+    > t.png not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_07_first_stage_price_fi
+    > t.png saved as PNG format
 
 . 
 end of do-file
@@ -3399,8 +3762,7 @@ end of do-file
 . 
 . log close
       name:  <unnamed>
-       log:  C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/logs/run_all_
-> stata.log
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/logs/run_all_stata.log
   log type:  text
- closed on:   4 Jun 2026, 11:58:19
+ closed on:   4 Jun 2026, 12:55:44
 ------------------------------------------------------------------------------------------------------------------------
