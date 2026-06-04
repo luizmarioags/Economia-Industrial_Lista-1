@@ -8,6 +8,10 @@
    - Q4 : verificação numérica de equivalência 2SLS == GMM exato
 ********************************************************************/
 
+
+* Carrega configuração se o script for rodado individualmente.
+do "Stata/_load_config_if_needed.do"
+
 use "$PROC/chicken_prepared_stata.dta", clear
 
 di as text _newline "[Stata] Questão 1: estimando MQO robusto"

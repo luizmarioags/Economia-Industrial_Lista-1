@@ -24,6 +24,8 @@ di as text "[Stata] Tabelas: $TABS"
 di as text "[Stata] Figuras: $FIGS"
 
 * Garante que as pastas de saída existam.
+cap mkdir "$ROOT/data"
+cap mkdir "$RAW"
 cap mkdir "$ROOT/output"
 cap mkdir "$TABS"
 cap mkdir "$FIGS"

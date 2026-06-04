@@ -1,24 +1,174 @@
-------------------------------------------------------------------------------------------------------------------------
-      name:  <unnamed>
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/logs/sta
-> ta_master.log
-  log type:  text
- opened on:  14 May 2026, 21:05:18
 
 . 
-. di as text "[Stata] Log geral aberto em output/logs/stata_master.log"
-[Stata] Log geral aberto em output/logs/stata_master.log
+. if _rc {
+.     di as error "[Stata] Não consegui sobrescrever $LOGS/stata_master.log"
+.     di as error "[Stata] O arquivo pode estar aberto, travado ou como somente leitura."
+.     di as text  "[Stata] Tentando criar log alternativo com data e hora..."
+. 
+.     local data_log = subinstr("`c(current_date)'", " ", "_", .)
+.     local hora_log = subinstr("`c(current_time)'", ":", "", .)
+.     local hora_log = subinstr("`hora_log'", ".", "", .)
+. 
+.     local log_alt "$LOGS/stata_master_`data_log'_`hora_log'.log"
+. 
+.     capture log using "`log_alt'", replace text
+. 
+.     if _rc {
+.         di as error "[Stata] Também não consegui criar log alternativo."
+.         di as error "[Stata] A replicação continuará sem log geral."
+.     }
+.     else {
+.         di as text "[Stata] Log alternativo criado em:"
+.         di as text "`log_alt'"
+.     }
+. }
+
+. else {
+.     di as text "[Stata] Log geral criado em:"
+[Stata] Log geral criado em:
+.     di as text "$LOGS/stata_master.log"
+C:\Users\B03531855158\Documents\Replication\Códigos/output/logs/stata_master.log
+. }
 
 . 
-. * Prepara a base e constrói variáveis da lista.
-. di as text "[Stata] Rodando Stata/01_prepare_data.do: importação, correção de escala e criação de variáveis"
-[Stata] Rodando Stata/01_prepare_data.do: importação, correção de escala e criação de variáveis
+. * ------------------------------------------------------------
+. * Roda os scripts na ordem correta
+. * ------------------------------------------------------------
+. 
+. di as text _newline "[Stata] Rodando 01_prepare_data.do"
+
+[Stata] Rodando 01_prepare_data.do
 
 . do "Stata/01_prepare_data.do"
 
 . /********************************************************************
 >  Questões preparatórias: importa dados, corrige escala e cria variáveis
 > ********************************************************************/
+. 
+. 
+. * Carrega configuração se o script for rodado individualmente.
+. do "Stata/_load_config_if_needed.do"
+
+. /********************************************************************
+>  Bloco de segurança: carrega Stata/config.do se os caminhos ainda
+>  não estiverem definidos. Assim os scripts podem ser rodados tanto
+>  pelo 00_master.do quanto individualmente.
+> ********************************************************************/
+. 
+. local rootdir "$ROOT"
+
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
+
+. 
+. if `"`procdir'"' == "" {
+.     di as text "[Stata] Globais ainda não carregados. Tentando rodar Stata/config.do..."
+. 
+.     capture noisily do "Stata/config.do"
+. 
+.     if _rc {
+.         di as error "[Stata] Não consegui rodar Stata/config.do."
+.         di as error "[Stata] Rode o projeto a partir da pasta raiz ou ajuste o caminho do config.do."
+.         exit 601
+.     }
+. }
+
+. 
+. local rootdir "$ROOT"
+
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
+
+. 
+. if `"`rootdir'"' == "" {
+.     di as error "[Stata] O global ROOT está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`rawdir'"' == "" {
+.     di as error "[Stata] O global RAW está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`procdir'"' == "" {
+.     di as error "[Stata] O global PROC está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`tabsdir'"' == "" {
+.     di as error "[Stata] O global TABS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`figsdir'"' == "" {
+.     di as error "[Stata] O global FIGS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`logsdir'"' == "" {
+.     di as error "[Stata] O global LOGS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. capture mkdir "$ROOT/data"
+
+. capture mkdir "$RAW"
+
+. capture mkdir "$PROC"
+
+. capture mkdir "$ROOT/output"
+
+. capture mkdir "$TABS"
+
+. capture mkdir "$FIGS"
+
+. capture mkdir "$LOGS"
+
+. 
+. di as text "[Stata] Caminhos carregados:"
+[Stata] Caminhos carregados:
+
+. di as text "  ROOT = $ROOT"
+  ROOT = C:\Users\B03531855158\Documents\Replication\Códigos
+
+. di as text "  RAW  = $RAW"
+  RAW  = C:\Users\B03531855158\Documents\Replication\Códigos/data/raw
+
+. di as text "  PROC = $PROC"
+  PROC = C:\Users\B03531855158\Documents\Replication\Códigos/data/processed
+
+. di as text "  TABS = $TABS"
+  TABS = C:\Users\B03531855158\Documents\Replication\Códigos/output/tables
+
+. di as text "  FIGS = $FIGS"
+  FIGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/figures
+
+. di as text "  LOGS = $LOGS"
+  LOGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/logs
+
+. 
+end of do-file
+
 . 
 . clear
 
@@ -53,8 +203,7 @@
 
 . describe, short
 
-Contains data from C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/data/raw/
-> chicken.dta
+Contains data from C:\Users\B03531855158\Documents\Replication\Códigos/data/raw/chicken.dta
  Observations:            52                  
     Variables:            12                  22 Jul 2020 16:36
 Sorted by: 
@@ -199,9 +348,7 @@ Time variable: year, 1950 to 2001
   (676 bytes saved)
 
 . save "$PROC/chicken_prepared_stata.dta", replace
-file
-    C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/data/processed/chicken
-    > _prepared_stata.dta saved
+file C:\Users\B03531855158\Documents\Replication\Códigos/data/processed/chicken_prepared_stata.dta saved
 
 . 
 . di as text "[Stata] Base tratada salva: data/processed/chicken_prepared_stata.dta"
@@ -210,8 +357,7 @@ file
 . 
 . * Exporta também em CSV para inspeção rápida.
 . export delimited using "$PROC/chicken_prepared_stata.csv", replace
-file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/data/processed/chicken_
-> prepared_stata.csv saved
+file C:\Users\B03531855158\Documents\Replication\Códigos/data/processed/chicken_prepared_stata.csv saved
 
 . di as text "[Stata] Base tratada exportada: data/processed/chicken_prepared_stata.csv"
 [Stata] Base tratada exportada: data/processed/chicken_prepared_stata.csv
@@ -220,9 +366,9 @@ file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4
 end of do-file
 
 . 
-. * Resolve as questões 1, 3 e 4.
-. di as text "[Stata] Rodando Stata/02_ols_iv_first_stage.do: MQO, 2SLS Z1 e primeiro estágio"
-[Stata] Rodando Stata/02_ols_iv_first_stage.do: MQO, 2SLS Z1 e primeiro estágio
+. di as text _newline "[Stata] Rodando 02_ols_iv_first_stage.do"
+
+[Stata] Rodando 02_ols_iv_first_stage.do
 
 . do "Stata/02_ols_iv_first_stage.do"
 
@@ -235,6 +381,131 @@ end of do-file
 >    - Q4 : p-valor individual de pi_z adicionado
 >    - Q4 : verificação numérica de equivalência 2SLS == GMM exato
 > ********************************************************************/
+. 
+. 
+. * Carrega configuração se o script for rodado individualmente.
+. do "Stata/_load_config_if_needed.do"
+
+. /********************************************************************
+>  Bloco de segurança: carrega Stata/config.do se os caminhos ainda
+>  não estiverem definidos. Assim os scripts podem ser rodados tanto
+>  pelo 00_master.do quanto individualmente.
+> ********************************************************************/
+. 
+. local rootdir "$ROOT"
+
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
+
+. 
+. if `"`procdir'"' == "" {
+.     di as text "[Stata] Globais ainda não carregados. Tentando rodar Stata/config.do..."
+. 
+.     capture noisily do "Stata/config.do"
+. 
+.     if _rc {
+.         di as error "[Stata] Não consegui rodar Stata/config.do."
+.         di as error "[Stata] Rode o projeto a partir da pasta raiz ou ajuste o caminho do config.do."
+.         exit 601
+.     }
+. }
+
+. 
+. local rootdir "$ROOT"
+
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
+
+. 
+. if `"`rootdir'"' == "" {
+.     di as error "[Stata] O global ROOT está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`rawdir'"' == "" {
+.     di as error "[Stata] O global RAW está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`procdir'"' == "" {
+.     di as error "[Stata] O global PROC está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`tabsdir'"' == "" {
+.     di as error "[Stata] O global TABS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`figsdir'"' == "" {
+.     di as error "[Stata] O global FIGS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`logsdir'"' == "" {
+.     di as error "[Stata] O global LOGS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. capture mkdir "$ROOT/data"
+
+. capture mkdir "$RAW"
+
+. capture mkdir "$PROC"
+
+. capture mkdir "$ROOT/output"
+
+. capture mkdir "$TABS"
+
+. capture mkdir "$FIGS"
+
+. capture mkdir "$LOGS"
+
+. 
+. di as text "[Stata] Caminhos carregados:"
+[Stata] Caminhos carregados:
+
+. di as text "  ROOT = $ROOT"
+  ROOT = C:\Users\B03531855158\Documents\Replication\Códigos
+
+. di as text "  RAW  = $RAW"
+  RAW  = C:\Users\B03531855158\Documents\Replication\Códigos/data/raw
+
+. di as text "  PROC = $PROC"
+  PROC = C:\Users\B03531855158\Documents\Replication\Códigos/data/processed
+
+. di as text "  TABS = $TABS"
+  TABS = C:\Users\B03531855158\Documents\Replication\Códigos/output/tables
+
+. di as text "  FIGS = $FIGS"
+  FIGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/figures
+
+. di as text "  LOGS = $LOGS"
+  LOGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/logs
+
+. 
+end of do-file
+
 . 
 . use "$PROC/chicken_prepared_stata.dta", clear
 
@@ -285,9 +556,7 @@ Linear regression                               Number of obs     =         52
 . predict double ols_fitted, xb
 
 . save "$PROC/chicken_with_ols_residuals_stata.dta", replace
-file
-    C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/data/processed/chicken
-    > _with_ols_residuals_stata.dta saved
+file C:\Users\B03531855158\Documents\Replication\Códigos/data/processed/chicken_with_ols_residuals_stata.dta saved
 
 . di as text "[Stata] Resíduos e valores ajustados do MQO salvos para gráficos"
 [Stata] Resíduos e valores ajustados do MQO salvos para gráficos
@@ -329,6 +598,7 @@ file
 >     double beta_y se_y pval_y ///
 >     double beta_b se_b pval_b ///
 >     using "$TABS/stata_question_01_ols.dta", replace
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_01_ols.dta not found)
 
 . 
 . post ols ///
@@ -343,8 +613,8 @@ file
 . use "$TABS/stata_question_01_ols.dta", clear
 
 . export delimited using "$TABS/stata_question_01_ols.csv", replace
-file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/stata_que
-> stion_01_ols.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_01_ols.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_01_ols.csv saved
 
 . di as text "[Stata] Tabela salva: output/tables/stata_question_01_ols.csv"
 [Stata] Tabela salva: output/tables/stata_question_01_ols.csv
@@ -516,6 +786,7 @@ Excluded instruments: z
 >     str20 method int N ///
 >     double beta_p se_p pval_p ci_low ci_high ///
 >     using "$TABS/stata_question_03_iv_z1.dta", replace
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_03_iv_z1.dta not found)
 
 . 
 . post ivz1 ///
@@ -528,8 +799,8 @@ Excluded instruments: z
 . use "$TABS/stata_question_03_iv_z1.dta", clear
 
 . export delimited using "$TABS/stata_question_03_iv_z1.csv", replace
-file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/stata_que
-> stion_03_iv_z1.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_03_iv_z1.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_03_iv_z1.csv saved
 
 . di as text "[Stata] Tabela salva: output/tables/stata_question_03_iv_z1.csv"
 [Stata] Tabela salva: output/tables/stata_question_03_iv_z1.csv
@@ -694,6 +965,7 @@ Linear regression                               Number of obs     =         52
 >     str20 model int N ///
 >     double pi_z se_z p_z partial_R2 F_usual p_F ///
 >     using "$TABS/stata_question_04_first_stage.dta", replace
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_04_first_stage.dta not found)
 
 . 
 . post fs ("Z1_first_stage") (e(N)) (pi_z) (se_z) (p_z) (partial_R2) (F_usual) (p_F)
@@ -704,8 +976,8 @@ Linear regression                               Number of obs     =         52
 . use "$TABS/stata_question_04_first_stage.dta", clear
 
 . export delimited using "$TABS/stata_question_04_first_stage.csv", replace
-file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/stata_que
-> stion_04_first_stage.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_04_first_stage.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_04_first_stage.csv saved
 
 . di as text "[Stata] Tabela salva: output/tables/stata_question_04_first_stage.csv"
 [Stata] Tabela salva: output/tables/stata_question_04_first_stage.csv
@@ -714,9 +986,9 @@ file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4
 end of do-file
 
 . 
-. * Resolve a questão 5: GMM e Hansen J.
-. di as text "[Stata] Rodando Stata/03_gmm_hansen.do: GMM e Hansen J"
-[Stata] Rodando Stata/03_gmm_hansen.do: GMM e Hansen J
+. di as text _newline "[Stata] Rodando 03_gmm_hansen.do"
+
+[Stata] Rodando 03_gmm_hansen.do
 
 . do "Stata/03_gmm_hansen.do"
 
@@ -727,6 +999,131 @@ end of do-file
 >    - verificação numérica explícita de equivalência 2SLS == GMM no caso exato
 >    - hansen_df registrado corretamente para caso exato (0) e sobreidentificado (1)
 > ********************************************************************/
+. 
+. 
+. * Carrega configuração se o script for rodado individualmente.
+. do "Stata/_load_config_if_needed.do"
+
+. /********************************************************************
+>  Bloco de segurança: carrega Stata/config.do se os caminhos ainda
+>  não estiverem definidos. Assim os scripts podem ser rodados tanto
+>  pelo 00_master.do quanto individualmente.
+> ********************************************************************/
+. 
+. local rootdir "$ROOT"
+
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
+
+. 
+. if `"`procdir'"' == "" {
+.     di as text "[Stata] Globais ainda não carregados. Tentando rodar Stata/config.do..."
+. 
+.     capture noisily do "Stata/config.do"
+. 
+.     if _rc {
+.         di as error "[Stata] Não consegui rodar Stata/config.do."
+.         di as error "[Stata] Rode o projeto a partir da pasta raiz ou ajuste o caminho do config.do."
+.         exit 601
+.     }
+. }
+
+. 
+. local rootdir "$ROOT"
+
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
+
+. 
+. if `"`rootdir'"' == "" {
+.     di as error "[Stata] O global ROOT está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`rawdir'"' == "" {
+.     di as error "[Stata] O global RAW está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`procdir'"' == "" {
+.     di as error "[Stata] O global PROC está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`tabsdir'"' == "" {
+.     di as error "[Stata] O global TABS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`figsdir'"' == "" {
+.     di as error "[Stata] O global FIGS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`logsdir'"' == "" {
+.     di as error "[Stata] O global LOGS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. capture mkdir "$ROOT/data"
+
+. capture mkdir "$RAW"
+
+. capture mkdir "$PROC"
+
+. capture mkdir "$ROOT/output"
+
+. capture mkdir "$TABS"
+
+. capture mkdir "$FIGS"
+
+. capture mkdir "$LOGS"
+
+. 
+. di as text "[Stata] Caminhos carregados:"
+[Stata] Caminhos carregados:
+
+. di as text "  ROOT = $ROOT"
+  ROOT = C:\Users\B03531855158\Documents\Replication\Códigos
+
+. di as text "  RAW  = $RAW"
+  RAW  = C:\Users\B03531855158\Documents\Replication\Códigos/data/raw
+
+. di as text "  PROC = $PROC"
+  PROC = C:\Users\B03531855158\Documents\Replication\Códigos/data/processed
+
+. di as text "  TABS = $TABS"
+  TABS = C:\Users\B03531855158\Documents\Replication\Códigos/output/tables
+
+. di as text "  FIGS = $FIGS"
+  FIGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/figures
+
+. di as text "  LOGS = $LOGS"
+  LOGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/logs
+
+. 
+end of do-file
+
 . 
 . use "$PROC/chicken_prepared_stata.dta", clear
 
@@ -748,6 +1145,7 @@ end of do-file
 >     double beta_p se_p pval_p ci_low ci_high ///
 >     double hansen_J hansen_p hansen_df ///
 >     using "$TABS/stata_question_05_gmm.dta", replace
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_05_gmm.dta not found)
 
 . 
 . * ------------------------------------------------------------------
@@ -935,8 +1333,8 @@ Excluded instruments: z z_sq
 . use "$TABS/stata_question_05_gmm.dta", clear
 
 . export delimited using "$TABS/stata_question_05_gmm.csv", replace
-file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/stata_que
-> stion_05_gmm.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_05_gmm.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_05_gmm.csv saved
 
 . di as text "[Stata] Tabela salva: output/tables/stata_question_05_gmm.csv"
 [Stata] Tabela salva: output/tables/stata_question_05_gmm.csv
@@ -945,9 +1343,9 @@ file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4
 end of do-file
 
 . 
-. * Resolve as questões 6, 8, 9 e 10: weakivtest e tabela comparativa.
-. di as text "[Stata] Rodando Stata/04_alt_instruments_weakiv.do: Z1-Z7, weakivtest e tabela comparativa"
-[Stata] Rodando Stata/04_alt_instruments_weakiv.do: Z1-Z7, weakivtest e tabela comparativa
+. di as text _newline "[Stata] Rodando 04_alt_instruments_weakiv.do"
+
+[Stata] Rodando 04_alt_instruments_weakiv.do
 
 . do "Stata/04_alt_instruments_weakiv.do"
 
@@ -976,6 +1374,131 @@ end of do-file
 >      model N k_inst beta_p se_p pval_p ci_low ci_high
 >      F_usual p_F F_eff cv5 cv10 cv20 hansen_J hansen_p
 > ********************************************************************/
+. 
+. 
+. * Carrega configuração se o script for rodado individualmente.
+. do "Stata/_load_config_if_needed.do"
+
+. /********************************************************************
+>  Bloco de segurança: carrega Stata/config.do se os caminhos ainda
+>  não estiverem definidos. Assim os scripts podem ser rodados tanto
+>  pelo 00_master.do quanto individualmente.
+> ********************************************************************/
+. 
+. local rootdir "$ROOT"
+
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
+
+. 
+. if `"`procdir'"' == "" {
+.     di as text "[Stata] Globais ainda não carregados. Tentando rodar Stata/config.do..."
+. 
+.     capture noisily do "Stata/config.do"
+. 
+.     if _rc {
+.         di as error "[Stata] Não consegui rodar Stata/config.do."
+.         di as error "[Stata] Rode o projeto a partir da pasta raiz ou ajuste o caminho do config.do."
+.         exit 601
+.     }
+. }
+
+. 
+. local rootdir "$ROOT"
+
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
+
+. 
+. if `"`rootdir'"' == "" {
+.     di as error "[Stata] O global ROOT está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`rawdir'"' == "" {
+.     di as error "[Stata] O global RAW está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`procdir'"' == "" {
+.     di as error "[Stata] O global PROC está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`tabsdir'"' == "" {
+.     di as error "[Stata] O global TABS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`figsdir'"' == "" {
+.     di as error "[Stata] O global FIGS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`logsdir'"' == "" {
+.     di as error "[Stata] O global LOGS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. capture mkdir "$ROOT/data"
+
+. capture mkdir "$RAW"
+
+. capture mkdir "$PROC"
+
+. capture mkdir "$ROOT/output"
+
+. capture mkdir "$TABS"
+
+. capture mkdir "$FIGS"
+
+. capture mkdir "$LOGS"
+
+. 
+. di as text "[Stata] Caminhos carregados:"
+[Stata] Caminhos carregados:
+
+. di as text "  ROOT = $ROOT"
+  ROOT = C:\Users\B03531855158\Documents\Replication\Códigos
+
+. di as text "  RAW  = $RAW"
+  RAW  = C:\Users\B03531855158\Documents\Replication\Códigos/data/raw
+
+. di as text "  PROC = $PROC"
+  PROC = C:\Users\B03531855158\Documents\Replication\Códigos/data/processed
+
+. di as text "  TABS = $TABS"
+  TABS = C:\Users\B03531855158\Documents\Replication\Códigos/output/tables
+
+. di as text "  FIGS = $FIGS"
+  FIGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/figures
+
+. di as text "  LOGS = $LOGS"
+  LOGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/logs
+
+. 
+end of do-file
+
 . 
 . use "$PROC/chicken_prepared_stata.dta", clear
 
@@ -1036,6 +1559,8 @@ end of do-file
 >     str5 model int N k_inst ///
 >     double partial_R2 F_usual p_F ///
 >     using "$TABS/stata_question_08_first_stage_all.dta", replace
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_08_first_stage_all.dta not
+    found)
 
 . 
 . * Tabela comparativa principal (Q9).
@@ -1045,6 +1570,7 @@ end of do-file
 >     double F_usual p_F F_eff cv5 cv10 cv20 ///
 >     double hansen_J hansen_p ///
 >     using "$TABS/stata_question_09_comparative.dta", replace
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_09_comparative.dta not found)
 
 . 
 . forvalues m = 1/7 {
@@ -1376,12 +1902,12 @@ tau=20%                   15.062    15.062
 tau=30%                   12.039    12.039
 --------------------------------------------
 [Stata] Z1: F efetivo MOP= 2.661129 | cv5_TSLS=37.417560 | cv10_TSLS=23.108510 | cv20_TSLS=15.061550
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z1.txt not found)
 ------------------------------------------------------------------------------------------------------------------------
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z1.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z1.txt
   log type:  text
- opened on:  14 May 2026, 21:05:21
+ opened on:  21 May 2026, 09:17:33
 Modelo Z1: instrumentos excluídos = z
 (obs=52)
 
@@ -1445,10 +1971,9 @@ scalars:
       r(K_eff_simp_20) =  1
       r(K_eff_simp_30) =  1
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z1.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z1.txt
   log type:  text
- closed on:  14 May 2026, 21:05:22
+ closed on:  21 May 2026, 09:17:34
 ------------------------------------------------------------------------------------------------------------------------
 [Stata] Z1: log do weakivtest salvo em output/tables/stata_question_06_weakivtest_Z1.txt
 
@@ -1683,12 +2208,12 @@ tau=20%                   10.117    11.755
 tau=30%                    8.238     9.436
 --------------------------------------------
 [Stata] Z2: F efetivo MOP=28.913783 | cv5_TSLS=23.816480 | cv10_TSLS=15.079710 | cv20_TSLS=10.117260
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z2.txt not found)
 ------------------------------------------------------------------------------------------------------------------------
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z2.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z2.txt
   log type:  text
- opened on:  14 May 2026, 21:05:23
+ opened on:  21 May 2026, 09:17:35
 Modelo Z2: instrumentos excluídos = z z_sq
 (obs=52)
 
@@ -1752,10 +2277,9 @@ scalars:
       r(K_eff_simp_20) =  1.347607
       r(K_eff_simp_30) =  1.356664
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z2.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z2.txt
   log type:  text
- closed on:  14 May 2026, 21:05:24
+ closed on:  21 May 2026, 09:17:36
 ------------------------------------------------------------------------------------------------------------------------
 [Stata] Z2: log do weakivtest salvo em output/tables/stata_question_06_weakivtest_Z2.txt
 
@@ -2021,12 +2545,12 @@ tau=20%                   11.370    10.492
 tau=30%                    9.087     8.448
 --------------------------------------------
 [Stata] Z3: F efetivo MOP=23.975020 | cv5_TSLS=28.390720 | cv10_TSLS=17.476490 | cv20_TSLS=11.370190
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z3.txt not found)
 ------------------------------------------------------------------------------------------------------------------------
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z3.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z3.txt
   log type:  text
- opened on:  14 May 2026, 21:05:25
+ opened on:  21 May 2026, 09:17:37
 Modelo Z3: instrumentos excluídos = z z_sq z_cu
 (obs=52)
 
@@ -2090,10 +2614,9 @@ scalars:
       r(K_eff_simp_20) =  1.518517
       r(K_eff_simp_30) =  1.533517
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z3.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z3.txt
   log type:  text
- closed on:  14 May 2026, 21:05:25
+ closed on:  21 May 2026, 09:17:38
 ------------------------------------------------------------------------------------------------------------------------
 [Stata] Z3: log do weakivtest salvo em output/tables/stata_question_06_weakivtest_Z3.txt
 
@@ -2309,12 +2832,12 @@ tau=20%                   15.062    15.062
 tau=30%                   12.039    12.039
 --------------------------------------------
 [Stata] Z4: F efetivo MOP= 0.997675 | cv5_TSLS=37.417560 | cv10_TSLS=23.108510 | cv20_TSLS=15.061550
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z4.txt not found)
 ------------------------------------------------------------------------------------------------------------------------
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z4.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z4.txt
   log type:  text
- opened on:  14 May 2026, 21:05:26
+ opened on:  21 May 2026, 09:17:39
 Modelo Z4: instrumentos excluídos = z_lag
 (obs=51)
 
@@ -2378,10 +2901,9 @@ scalars:
       r(K_eff_simp_20) =  1
       r(K_eff_simp_30) =  1
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z4.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z4.txt
   log type:  text
- closed on:  14 May 2026, 21:05:27
+ closed on:  21 May 2026, 09:17:39
 ------------------------------------------------------------------------------------------------------------------------
 [Stata] Z4: log do weakivtest salvo em output/tables/stata_question_06_weakivtest_Z4.txt
 
@@ -2616,12 +3138,12 @@ tau=20%                    8.050     9.946
 tau=30%                    6.635     8.013
 --------------------------------------------
 [Stata] Z5: F efetivo MOP=22.863237 | cv5_TSLS=18.452360 | cv10_TSLS=11.808450 | cv20_TSLS= 8.049638
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z5.txt not found)
 ------------------------------------------------------------------------------------------------------------------------
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z5.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z5.txt
   log type:  text
- opened on:  14 May 2026, 21:05:28
+ opened on:  21 May 2026, 09:17:40
 Modelo Z5: instrumentos excluídos = z_lag z_lag_sq
 (obs=51)
 
@@ -2685,10 +3207,9 @@ scalars:
       r(K_eff_simp_20) =  1.75654
       r(K_eff_simp_30) =  1.764381
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z5.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z5.txt
   log type:  text
- closed on:  14 May 2026, 21:05:29
+ closed on:  21 May 2026, 09:17:41
 ------------------------------------------------------------------------------------------------------------------------
 [Stata] Z5: log do weakivtest salvo em output/tables/stata_question_06_weakivtest_Z5.txt
 
@@ -2923,12 +3444,12 @@ tau=20%                    5.605     9.457
 tau=30%                    4.854     7.669
 --------------------------------------------
 [Stata] Z6: F efetivo MOP= 1.547446 | cv5_TSLS=10.946620 | cv10_TSLS= 7.571594 | cv20_TSLS= 5.605019
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z6.txt not found)
 ------------------------------------------------------------------------------------------------------------------------
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z6.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z6.txt
   log type:  text
- opened on:  14 May 2026, 21:05:30
+ opened on:  21 May 2026, 09:17:42
 Modelo Z6: instrumentos excluídos = z z_lag
 (obs=51)
 
@@ -2992,10 +3513,9 @@ scalars:
       r(K_eff_simp_20) =  1.697274
       r(K_eff_simp_30) =  1.706196
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z6.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z6.txt
   log type:  text
- closed on:  14 May 2026, 21:05:31
+ closed on:  21 May 2026, 09:17:43
 ------------------------------------------------------------------------------------------------------------------------
 [Stata] Z6: log do weakivtest salvo em output/tables/stata_question_06_weakivtest_Z6.txt
 
@@ -3280,12 +3800,12 @@ tau=20%                   10.773     8.997
 tau=30%                    8.548     7.259
 --------------------------------------------
 [Stata] Z7: F efetivo MOP=12.484455 | cv5_TSLS=27.595240 | cv10_TSLS=16.773730 | cv20_TSLS=10.773210
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z7.txt not found)
 ------------------------------------------------------------------------------------------------------------------------
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z7.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z7.txt
   log type:  text
- opened on:  14 May 2026, 21:05:32
+ opened on:  21 May 2026, 09:17:44
 Modelo Z7: instrumentos excluídos = z z_sq z_lag z_lag_sq
 (obs=51)
 
@@ -3349,10 +3869,9 @@ scalars:
       r(K_eff_simp_20) =  1.893199
       r(K_eff_simp_30) =  1.918064
       name:  weaklog
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/s
-> tata_question_06_weakivtest_Z7.txt
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_06_weakivtest_Z7.txt
   log type:  text
- closed on:  14 May 2026, 21:05:33
+ closed on:  21 May 2026, 09:17:45
 ------------------------------------------------------------------------------------------------------------------------
 [Stata] Z7: log do weakivtest salvo em output/tables/stata_question_06_weakivtest_Z7.txt
 
@@ -3365,8 +3884,9 @@ scalars:
 . use "$TABS/stata_question_08_first_stage_all.dta", clear
 
 . export delimited using "$TABS/stata_question_08_first_stage_all.csv", replace
-file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/stata_que
-> stion_08_first_stage_all.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_08_first_stage_all.csv not
+    found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_08_first_stage_all.csv saved
 
 . di as text "[Stata] Tabela salva: output/tables/stata_question_08_first_stage_all.csv"
 [Stata] Tabela salva: output/tables/stata_question_08_first_stage_all.csv
@@ -3375,19 +3895,390 @@ file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4
 . use "$TABS/stata_question_09_comparative.dta", clear
 
 . export delimited using "$TABS/stata_question_09_comparative.csv", replace
-file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/stata_que
-> stion_09_comparative.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_09_comparative.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_09_comparative.csv saved
 
 . di as text "[Stata] Tabela salva: output/tables/stata_question_09_comparative.csv"
 [Stata] Tabela salva: output/tables/stata_question_09_comparative.csv
 
 . 
+. 
+. /********************************************************************
+>  Questão 10: Teste J de Hansen para modelos sobreidentificados
+> 
+>  Gera:
+>    - Tabela CSV com estatística J, graus de liberdade e valor-p
+>    - Tabela LaTeX pronta para Overleaf
+>    - Gráfico dos valores-p do teste J de Hansen
+> ********************************************************************/
+. 
+. di as text _newline "[Stata] Questão 10: gerando tabela e gráfico do teste J de Hansen"
+
+[Stata] Questão 10: gerando tabela e gráfico do teste J de Hansen
+
+. 
+. * ------------------------------------------------------------
+. * Carrega config se necessário
+. * ------------------------------------------------------------
+. 
+. local procdir "$PROC"
+
+. 
+. if `"`procdir'"' == "" {
+.     di as text "[Stata] Globais ainda não carregados. Tentando rodar Stata/config.do..."
+. 
+.     capture noisily do "Stata/config.do"
+. 
+.     if _rc {
+.         di as error "[Stata] Não consegui carregar Stata/config.do."
+.         di as error "[Stata] Rode o projeto a partir da pasta raiz ou ajuste o caminho do config.do."
+.         exit 601
+.     }
+. }
+
+. 
+. capture mkdir "$TABS"
+
+. capture mkdir "$FIGS"
+
+. 
+. * ------------------------------------------------------------
+. * Garante que a tabela comparativa exista
+. * ------------------------------------------------------------
+. 
+. capture confirm file "$TABS/stata_question_09_comparative.csv"
+
+. 
+. if _rc {
+.     di as text "[Stata] Tabela comparativa não encontrada. Rodando 04_alt_instruments_weakiv.do..."
+.     do "Stata/04_alt_instruments_weakiv.do"
+. }
+
+. 
+. * ------------------------------------------------------------
+. * Importa resultados da questão 9
+. * ------------------------------------------------------------
+. 
+. import delimited "$TABS/stata_question_09_comparative.csv", clear
+(encoding automatically selected: ISO-8859-2)
+(16 vars, 7 obs)
+
+. 
+. * ------------------------------------------------------------
+. * Limpa variáveis auxiliares caso já existam no CSV
+. * ------------------------------------------------------------
+. 
+. capture drop modelo
+
+. capture drop k_instr
+
+. capture drop hansen_df
+
+. capture drop hansen_p
+
+. capture drop decisao_5
+
+. capture drop instrumentos
+
+. capture drop ordem
+
+. 
+. * ------------------------------------------------------------
+. * Garante tipos numéricos
+. * ------------------------------------------------------------
+. 
+. foreach v in hansen_j {
+  2.     capture confirm numeric variable `v'
+  3.     if _rc {
+  4.         destring `v', replace force
+  5.     }
+  6. }
+
+. 
+. * ------------------------------------------------------------
+. * Padroniza nome do modelo
+. * ------------------------------------------------------------
+. 
+. capture confirm variable model
+
+. if _rc {
+.     di as error "[Stata] A variável 'model' não foi encontrada em stata_question_09_comparative.csv."
+.     exit 111
+. }
+
+. 
+. gen str10 modelo = upper(model)
+
+. 
+. * ------------------------------------------------------------
+. * Mantém apenas modelos sobreidentificados
+. * Z1 e Z4 são exatamente identificados: não têm Hansen J
+. * ------------------------------------------------------------
+. 
+. keep if inlist(modelo, "Z2", "Z3", "Z5", "Z6", "Z7")
+(2 observations deleted)
+
+. 
+. * ------------------------------------------------------------
+. * Número de instrumentos excluídos por especificação
+. * Como há uma variável endógena, gl = k_instr - 1
+. * ------------------------------------------------------------
+. 
+. gen k_instr = .
+(5 missing values generated)
+
+. replace k_instr = 2 if modelo == "Z2"
+(1 real change made)
+
+. replace k_instr = 3 if modelo == "Z3"
+(1 real change made)
+
+. replace k_instr = 2 if modelo == "Z5"
+(1 real change made)
+
+. replace k_instr = 2 if modelo == "Z6"
+(1 real change made)
+
+. replace k_instr = 4 if modelo == "Z7"
+(1 real change made)
+
+. 
+. gen hansen_df = k_instr - 1
+
+. 
+. * ------------------------------------------------------------
+. * Valor-p do teste J de Hansen
+. * Sob H0, J ~ qui-quadrado(gl)
+. * ------------------------------------------------------------
+. 
+. gen double hansen_p = chi2tail(hansen_df, hansen_j)
+
+. 
+. gen str20 decisao_5 = ""
+(5 missing values generated)
+
+. replace decisao_5 = "Rejeita H0" if hansen_p < 0.05
+(4 real changes made)
+
+. replace decisao_5 = "Não rejeita H0" if hansen_p >= 0.05
+(1 real change made)
+
+. 
+. * ------------------------------------------------------------
+. * Rótulos dos instrumentos
+. * ------------------------------------------------------------
+. 
+. gen str100 instrumentos = ""
+(5 missing values generated)
+
+. replace instrumentos = "{z_t, z_t^2}" if modelo == "Z2"
+(1 real change made)
+
+. replace instrumentos = "{z_t, z_t^2, z_t^3}" if modelo == "Z3"
+(1 real change made)
+
+. replace instrumentos = "{z_{t-1}, z_{t-1}^2}" if modelo == "Z5"
+(1 real change made)
+
+. replace instrumentos = "{z_t, z_{t-1}}" if modelo == "Z6"
+(1 real change made)
+
+. replace instrumentos = "{z_t, z_t^2, z_{t-1}, z_{t-1}^2}" if modelo == "Z7"
+(1 real change made)
+
+. 
+. * ------------------------------------------------------------
+. * Organiza e salva tabela em CSV
+. * ------------------------------------------------------------
+. 
+. keep modelo instrumentos hansen_j hansen_df hansen_p decisao_5
+
+. sort modelo
+
+. 
+. format hansen_j %9.3f
+
+. format hansen_p %9.4f
+
+. 
+. export delimited using "$TABS/stata_question_10_hansen_overid.csv", replace
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_10_hansen_overid.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_10_hansen_overid.csv saved
+
+. 
+. di as text "[Stata] Tabela CSV salva em:"
+[Stata] Tabela CSV salva em:
+
+. di as text "$TABS/stata_question_10_hansen_overid.csv"
+C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_10_hansen_overid.csv
+
+. 
+. * ------------------------------------------------------------
+. * Gera tabela LaTeX
+. * ------------------------------------------------------------
+. 
+. tempname fh
+
+. file open `fh' using "$TABS/stata_question_10_hansen_overid.tex", write replace text
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_10_hansen_overid.tex not found)
+
+. 
+. file write `fh' "\begin{table}[H]" _n
+
+. file write `fh' "    \centering" _n
+
+. file write `fh' "    \small" _n
+
+. file write `fh' "    \caption{Teste \$J\$ de Hansen para modelos sobreidentificados}" _n
+
+. file write `fh' "    \label{tab:hansen_sobreidentificados}" _n
+
+. file write `fh' "    \setlength{\tabcolsep}{5pt}" _n
+
+. file write `fh' "    \begin{tabular}{lcccc}" _n
+
+. file write `fh' "        \hline" _n
+
+. file write `fh' "        Modelo & Instrumentos excluídos & Hansen \$J\$ & gl & Valor-\$p\$ \\" _n
+
+. file write `fh' "        \hline" _n
+
+. 
+. forvalues i = 1/`=_N' {
+  2.     local m   = modelo[`i']
+  3.     local ins = instrumentos[`i']
+  4.     local j   : display %9.3f hansen_j[`i']
+  5.     local gl  : display %2.0f hansen_df[`i']
+  6.     local pv  : display %9.4f hansen_p[`i']
+  7. 
+.     local j  = strtrim("`j'")
+  8.     local gl = strtrim("`gl'")
+  9.     local pv = strtrim("`pv'")
+ 10. 
+.     * troca ponto por vírgula para padrão brasileiro
+.     local j  = subinstr("`j'", ".", ",", .)
+ 11.     local pv = subinstr("`pv'", ".", ",", .)
+ 12. 
+.     file write `fh' "        \$`m'\$ & \$`ins'\$ & `j' & `gl' & `pv' \\" _n
+ 13. }
+
+. 
+. file write `fh' "        \hline" _n
+
+. file write `fh' "    \end{tabular}" _n
+
+. file write `fh' "" _n
+
+. file write `fh' "    \vspace{0.3em}" _n
+
+. file write `fh' "    \begin{minipage}{0.92\textwidth}" _n
+
+. file write `fh' "    \footnotesize" _n
+
+. file write `fh' "    Nota: \$gl\$ indica os graus de liberdade do teste, dados pelo número de instrumentos excluídos m
+> enos o número de variáveis endógenas. Os modelos \$Z_1\$ e \$Z_4\$ são exatamente identificados e, por isso, não possu
+> em restrições sobreidentificadoras a serem testadas." _n
+
+. file write `fh' "    \end{minipage}" _n
+
+. file write `fh' "\end{table}" _n
+
+. 
+. file close `fh'
+
+. 
+. di as text "[Stata] Tabela LaTeX salva em:"
+[Stata] Tabela LaTeX salva em:
+
+. di as text "$TABS/stata_question_10_hansen_overid.tex"
+C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_10_hansen_overid.tex
+
+. 
+. * ------------------------------------------------------------
+. * Gráfico dos valores-p do teste J de Hansen
+. * ------------------------------------------------------------
+. 
+. gen ordem = .
+(5 missing values generated)
+
+. replace ordem = 1 if modelo == "Z2"
+(1 real change made)
+
+. replace ordem = 2 if modelo == "Z3"
+(1 real change made)
+
+. replace ordem = 3 if modelo == "Z5"
+(1 real change made)
+
+. replace ordem = 4 if modelo == "Z6"
+(1 real change made)
+
+. replace ordem = 5 if modelo == "Z7"
+(1 real change made)
+
+. 
+. twoway ///
+>     (bar hansen_p ordem, ///
+>         barwidth(0.55) ///
+>         fcolor(navy%65) ///
+>         lcolor(navy)) ///
+>     (function y = 0.05, ///
+>         range(0.5 5.5) ///
+>         lcolor(cranberry) ///
+>         lpattern(dash) ///
+>         lwidth(medthick)), ///
+>     xlabel(1 "Z2" 2 "Z3" 3 "Z5" 4 "Z6" 5 "Z7", labsize(small)) ///
+>     ylabel(0(0.05)0.20, labsize(small)) ///
+>     title("Teste J de Hansen: valor-p por especificação", size(medsmall)) ///
+>     subtitle("Modelos sobreidentificados", size(small)) ///
+>     xtitle("Conjunto de instrumentos", size(small)) ///
+>     ytitle("Valor-p do teste J de Hansen", size(small)) ///
+>     legend( ///
+>         order(1 "Valor-p observado" ///
+>               2 "Nível de significância de 5%") ///
+>         cols(1) ///
+>         size(small) ///
+>         position(3) ///
+>         ring(1) ///
+>         region(lcolor(none) fcolor(none)) ///
+>     ) ///
+>     note("Valores abaixo de 0,05 indicam rejeição da validade conjunta das restrições sobreidentificadoras.", ///
+>         size(vsmall)) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_hansen_pvalues, replace)
+
+. 
+. graph export "$FIGS/stata_fig12_hansen_pvalues.png", replace width(3000)
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig12_hansen_pvalues.png not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig12_hansen_pvalues.png saved as PNG
+    format
+
+. graph export "$FIGS/stata_fig12_hansen_pvalues.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig12_hansen_pvalues.pdf saved as PDF
+    format
+
+. 
+. di as text "[Stata] Gráfico salvo em PNG:"
+[Stata] Gráfico salvo em PNG:
+
+. di as text "$FIGS/stata_fig12_hansen_pvalues.png"
+C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig12_hansen_pvalues.png
+
+. 
+. di as text "[Stata] Gráfico salvo em PDF:"
+[Stata] Gráfico salvo em PDF:
+
+. di as text "$FIGS/stata_fig12_hansen_pvalues.pdf"
+C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig12_hansen_pvalues.pdf
+
+. 
 end of do-file
 
 . 
-. * Resolve a questão 11: intervalos Anderson-Rubin por grade.
-. di as text "[Stata] Rodando Stata/05_ar_intervals.do: intervalos Anderson-Rubin"
-[Stata] Rodando Stata/05_ar_intervals.do: intervalos Anderson-Rubin
+. di as text _newline "[Stata] Rodando 05_ar_intervals.do"
+
+[Stata] Rodando 05_ar_intervals.do
 
 . do "Stata/05_ar_intervals.do"
 
@@ -3419,6 +4310,131 @@ end of do-file
 >    - open_left / open_right: flags de cauda aberta;
 >    - grid_min / grid_max: grade final efetivamente avaliada.
 > ********************************************************************/
+. 
+. 
+. * Carrega configuração se o script for rodado individualmente.
+. do "Stata/_load_config_if_needed.do"
+
+. /********************************************************************
+>  Bloco de segurança: carrega Stata/config.do se os caminhos ainda
+>  não estiverem definidos. Assim os scripts podem ser rodados tanto
+>  pelo 00_master.do quanto individualmente.
+> ********************************************************************/
+. 
+. local rootdir "$ROOT"
+
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
+
+. 
+. if `"`procdir'"' == "" {
+.     di as text "[Stata] Globais ainda não carregados. Tentando rodar Stata/config.do..."
+. 
+.     capture noisily do "Stata/config.do"
+. 
+.     if _rc {
+.         di as error "[Stata] Não consegui rodar Stata/config.do."
+.         di as error "[Stata] Rode o projeto a partir da pasta raiz ou ajuste o caminho do config.do."
+.         exit 601
+.     }
+. }
+
+. 
+. local rootdir "$ROOT"
+
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
+
+. 
+. if `"`rootdir'"' == "" {
+.     di as error "[Stata] O global ROOT está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`rawdir'"' == "" {
+.     di as error "[Stata] O global RAW está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`procdir'"' == "" {
+.     di as error "[Stata] O global PROC está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`tabsdir'"' == "" {
+.     di as error "[Stata] O global TABS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`figsdir'"' == "" {
+.     di as error "[Stata] O global FIGS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`logsdir'"' == "" {
+.     di as error "[Stata] O global LOGS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. capture mkdir "$ROOT/data"
+
+. capture mkdir "$RAW"
+
+. capture mkdir "$PROC"
+
+. capture mkdir "$ROOT/output"
+
+. capture mkdir "$TABS"
+
+. capture mkdir "$FIGS"
+
+. capture mkdir "$LOGS"
+
+. 
+. di as text "[Stata] Caminhos carregados:"
+[Stata] Caminhos carregados:
+
+. di as text "  ROOT = $ROOT"
+  ROOT = C:\Users\B03531855158\Documents\Replication\Códigos
+
+. di as text "  RAW  = $RAW"
+  RAW  = C:\Users\B03531855158\Documents\Replication\Códigos/data/raw
+
+. di as text "  PROC = $PROC"
+  PROC = C:\Users\B03531855158\Documents\Replication\Códigos/data/processed
+
+. di as text "  TABS = $TABS"
+  TABS = C:\Users\B03531855158\Documents\Replication\Códigos/output/tables
+
+. di as text "  FIGS = $FIGS"
+  FIGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/figures
+
+. di as text "  LOGS = $LOGS"
+  LOGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/logs
+
+. 
+end of do-file
+
 . 
 . use "$PROC/chicken_prepared_stata.dta", clear
 
@@ -3501,6 +4517,7 @@ end of do-file
 >     double coarse_step fine_step ///
 >     int open_left open_right n_expand left_hits right_hits npoints_final ///
 >     using "$TABS/stata_question_11_ar_intervals.dta", replace
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_11_ar_intervals.dta not found)
 
 . 
 . local Z1 "z"
@@ -3788,25 +4805,25 @@ end of do-file
 (0 observations deleted)
   52
 [Stata] AR Z1: N = 52
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000002.tmp not found)
-file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000002.tmp saved as .dta format
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000002.tmp not found)
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000002.tmp saved as .dta format
 [Stata] AR Z1: busca grossa em [-5, 2], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000003.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000003.tmp not found)
 [Stata] AR Z1: IC grosso provisório = [   -5.000,    -0.800]
 [Stata] AR Z1: beta0 menos rejeitado =   -1.7000 | p_max =  0.991139 | p_min =  0.000006
 ATENÇÃO: AR Z1 tocou a borda esquerda. Novo bmin = -10.25.
 [Stata] AR Z1: busca grossa em [-10.25, 2], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000004.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000004.tmp not found)
 [Stata] AR Z1: IC grosso provisório = [  -10.250,    -0.800]
 [Stata] AR Z1: beta0 menos rejeitado =   -1.7000 | p_max =  0.991139 | p_min =  0.000006
 ATENÇÃO: AR Z1 tocou a borda esquerda. Novo bmin = -19.4375.
 [Stata] AR Z1: busca grossa em [-19.4375, 2], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000005.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000005.tmp not found)
 [Stata] AR Z1: IC grosso provisório = [  -19.438,    -0.787]
 [Stata] AR Z1: beta0 menos rejeitado =   -1.6875 | p_max =  0.980798 | p_min =  0.000006
 ATENÇÃO: AR Z1 toca repetidamente a borda esquerda. Tratando IC como aberto à esquerda.
 [Stata] AR Z1: busca fina final em [-19.4375, 2], passo .005
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000006.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000006.tmp not found)
 [Stata] AR Z1: IC final = (-infinito,    -0.767]
 [Stata] AR Z1: grade testada = [-19.4375, 2]; limite inferior da grade aceito =   -19.438
 
@@ -3816,30 +4833,30 @@ ATENÇÃO: AR Z1 toca repetidamente a borda esquerda. Tratando IC como aberto à
 (0 observations deleted)
   52
 [Stata] AR Z2: N = 52
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000008.tmp not found)
-file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000008.tmp saved as .dta format
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000008.tmp not found)
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000008.tmp saved as .dta format
 [Stata] AR Z2: busca grossa em [-5, 2], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000009.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000009.tmp not found)
 ATENÇÃO: AR Z2 não aceitou nenhum beta0 na busca grossa corrente.
 [Stata] AR Z2: beta0 menos rejeitado =   -0.3000 | p_max =  0.000276
          Ampliando ambos os lados para [-10.25, 7.25].
 [Stata] AR Z2: busca grossa em [-10.25, 7.25], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_00000a.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_00000a.tmp not found)
 ATENÇÃO: AR Z2 não aceitou nenhum beta0 na busca grossa corrente.
 [Stata] AR Z2: beta0 menos rejeitado =   -0.3000 | p_max =  0.000276
          Ampliando ambos os lados para [-23.375, 20.375].
 [Stata] AR Z2: busca grossa em [-23.375, 20.375], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_00000b.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_00000b.tmp not found)
 ATENÇÃO: AR Z2 não aceitou nenhum beta0 na busca grossa corrente.
 [Stata] AR Z2: beta0 menos rejeitado =   -0.2750 | p_max =  0.000260
          Ampliando ambos os lados para [-56.1875, 53.1875].
 [Stata] AR Z2: busca grossa em [-56.1875, 53.1875], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_00000c.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_00000c.tmp not found)
 ATENÇÃO: AR Z2 não aceitou nenhum beta0 na busca grossa corrente.
 [Stata] AR Z2: beta0 menos rejeitado =   -0.2875 | p_max =  0.000275
          Ampliando ambos os lados para [-100, 100].
 [Stata] AR Z2: busca grossa em [-100, 100], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_00000d.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_00000d.tmp not found)
 ATENÇÃO: AR Z2 não aceitou nenhum beta0 na busca grossa corrente.
 [Stata] AR Z2: beta0 menos rejeitado =   -0.3000 | p_max =  0.000276
 ATENÇÃO: AR Z2 terminou sem intervalo aceito.
@@ -3853,30 +4870,30 @@ ATENÇÃO: AR Z2 terminou sem intervalo aceito.
 (0 observations deleted)
   51
 [Stata] AR Z7: N = 51
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_00000f.tmp not found)
-file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_00000f.tmp saved as .dta format
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_00000f.tmp not found)
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_00000f.tmp saved as .dta format
 [Stata] AR Z7: busca grossa em [-5, 2], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_00000g.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_00000g.tmp not found)
 ATENÇÃO: AR Z7 não aceitou nenhum beta0 na busca grossa corrente.
 [Stata] AR Z7: beta0 menos rejeitado =   -0.8500 | p_max =  0.000000
          Ampliando ambos os lados para [-10.25, 7.25].
 [Stata] AR Z7: busca grossa em [-10.25, 7.25], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_00000h.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_00000h.tmp not found)
 ATENÇÃO: AR Z7 não aceitou nenhum beta0 na busca grossa corrente.
 [Stata] AR Z7: beta0 menos rejeitado =   -0.8500 | p_max =  0.000000
          Ampliando ambos os lados para [-23.375, 20.375].
 [Stata] AR Z7: busca grossa em [-23.375, 20.375], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_00000i.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_00000i.tmp not found)
 ATENÇÃO: AR Z7 não aceitou nenhum beta0 na busca grossa corrente.
 [Stata] AR Z7: beta0 menos rejeitado =   -0.8250 | p_max =  0.000000
          Ampliando ambos os lados para [-56.1875, 53.1875].
 [Stata] AR Z7: busca grossa em [-56.1875, 53.1875], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_00000j.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_00000j.tmp not found)
 ATENÇÃO: AR Z7 não aceitou nenhum beta0 na busca grossa corrente.
 [Stata] AR Z7: beta0 menos rejeitado =   -0.8375 | p_max =  0.000000
          Ampliando ambos os lados para [-100, 100].
 [Stata] AR Z7: busca grossa em [-100, 100], passo .05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_00000k.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_00000k.tmp not found)
 ATENÇÃO: AR Z7 não aceitou nenhum beta0 na busca grossa corrente.
 [Stata] AR Z7: beta0 menos rejeitado =   -0.8500 | p_max =  0.000000
 ATENÇÃO: AR Z7 terminou sem intervalo aceito.
@@ -3889,8 +4906,8 @@ ATENÇÃO: AR Z7 terminou sem intervalo aceito.
 . use "$TABS/stata_question_11_ar_intervals.dta", clear
 
 . export delimited using "$TABS/stata_question_11_ar_intervals.csv", replace
-file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/stata_que
-> stion_11_ar_intervals.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_11_ar_intervals.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_11_ar_intervals.csv saved
 
 . 
 . di as text "[Stata] Tabela salva: output/tables/stata_question_11_ar_intervals.csv"
@@ -3900,145 +4917,868 @@ file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4
 end of do-file
 
 . 
-. * Gera gráficos auxiliares para interpretação e heterocedasticidade.
-. di as text "[Stata] Rodando Stata/06_visualizations.do: gráficos auxiliares"
-[Stata] Rodando Stata/06_visualizations.do: gráficos auxiliares
+. di as text _newline "[Stata] Rodando 06_visualizations.do"
+
+[Stata] Rodando 06_visualizations.do
 
 . do "Stata/06_visualizations.do"
 
 . /********************************************************************
 >  Gráficos auxiliares para interpretação dos resultados
+> 
+>  Correções principais:
+>    - Carrega config.do automaticamente se o script for rodado sozinho;
+>    - Gera chicken_with_ols_residuals_stata.dta caso ele não exista;
+>    - Se tabelas necessárias estiverem ausentes, orienta/roda scripts prévios;
+>    - Inclui gráfico MQO versus 2SLS com intervalos de confiança.
 > ********************************************************************/
 . 
-. use "$PROC/chicken_with_ols_residuals_stata.dta", clear
+. clear all
 
 . 
-. di as text _newline "[Stata] Visualizações: iniciando"
+. * Carrega configuração se o script for rodado individualmente.
+. do "Stata/_load_config_if_needed.do"
 
-[Stata] Visualizações: iniciando
+. /********************************************************************
+>  Bloco de segurança: carrega Stata/config.do se os caminhos ainda
+>  não estiverem definidos. Assim os scripts podem ser rodados tanto
+>  pelo 00_master.do quanto individualmente.
+> ********************************************************************/
+. 
+. local rootdir "$ROOT"
 
-. di as text "[Stata] Base usada: data/processed/chicken_with_ols_residuals_stata.dta"
-[Stata] Base usada: data/processed/chicken_with_ols_residuals_stata.dta
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
 
 . 
-. * Séries temporais principais em log.
-. di as text "[Stata] Figura 1: séries temporais de ln_q, ln_pch, ln_y, ln_pb e z"
-[Stata] Figura 1: séries temporais de ln_q, ln_pch, ln_y, ln_pb e z
-
-. twoway line ln_q year || line ln_pch year || line ln_y year || line ln_pb year || line z year, ///
->     legend(order(1 "ln_q" 2 "ln_pch" 3 "ln_y" 4 "ln_pb" 5 "z")) ///
->     title("Séries logarítmicas principais") xtitle("Ano") ytitle("Log")
-
-. graph export "$FIGS/stata_fig01_series.png", replace width(2000)
-file
-    C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/figures/stata_f
-    > ig01_series.png saved as PNG format
-
-. di as text "[Stata] Gráfico salvo: output/figures/stata_fig01_series.png"
-[Stata] Gráfico salvo: output/figures/stata_fig01_series.png
+. if `"`procdir'"' == "" {
+.     di as text "[Stata] Globais ainda não carregados. Tentando rodar Stata/config.do..."
+. 
+.     capture noisily do "Stata/config.do"
+. 
+.     if _rc {
+.         di as error "[Stata] Não consegui rodar Stata/config.do."
+.         di as error "[Stata] Rode o projeto a partir da pasta raiz ou ajuste o caminho do config.do."
+.         exit 601
+.     }
+. }
 
 . 
-. * Dispersão quantidade-preço com reta de ajuste MQO.
-. di as text "[Stata] Figura 2: dispersão ln_q versus ln_pch com reta de ajuste"
-[Stata] Figura 2: dispersão ln_q versus ln_pch com reta de ajuste
+. local rootdir "$ROOT"
 
-. twoway scatter ln_q ln_pch || lfit ln_q ln_pch, ///
->     title("Demanda observada: ln_q versus ln_pch") ///
->     xtitle("ln preço real do frango") ytitle("ln quantidade per capita")
+. local rawdir  "$RAW"
 
-. graph export "$FIGS/stata_fig02_scatter_demand.png", replace width(2000)
-file
-    C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/figures/stata_f
-    > ig02_scatter_demand.png saved as PNG format
+. local procdir "$PROC"
 
-. di as text "[Stata] Gráfico salvo: output/figures/stata_fig02_scatter_demand.png"
-[Stata] Gráfico salvo: output/figures/stata_fig02_scatter_demand.png
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
 
 . 
-. * Resíduos versus ajustados para discutir heterocedasticidade.
-. di as text "[Stata] Figura 3: resíduos MQO versus valores ajustados"
-[Stata] Figura 3: resíduos MQO versus valores ajustados
-
-. twoway scatter ols_resid ols_fitted, ///
->     yline(0) title("Resíduos MQO versus valores ajustados") ///
->     xtitle("Valor ajustado") ytitle("Resíduo")
-
-. graph export "$FIGS/stata_fig03_residuals_fitted.png", replace width(2000)
-file
-    C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/figures/stata_f
-    > ig03_residuals_fitted.png saved as PNG format
-
-. di as text "[Stata] Gráfico salvo: output/figures/stata_fig03_residuals_fitted.png"
-[Stata] Gráfico salvo: output/figures/stata_fig03_residuals_fitted.png
+. if `"`rootdir'"' == "" {
+.     di as error "[Stata] O global ROOT está vazio depois do config.do."
+.     exit 601
+. }
 
 . 
-. * Coeficiente beta_p e IC 95% para Z1-Z7.
-. di as text "[Stata] Figura 4: beta_p e IC 95% para especificações IV Z1-Z7"
-[Stata] Figura 4: beta_p e IC 95% para especificações IV Z1-Z7
-
-. import delimited "$TABS/stata_question_09_comparative.csv", clear
-(encoding automatically selected: ISO-8859-2)
-(16 vars, 7 obs)
-
-. encode model, gen(model_id)
-
-. twoway rcap ci_low ci_high model_id || scatter beta_p model_id, ///
->     yline(0) xlabel(1 "Z1" 2 "Z2" 3 "Z3" 4 "Z4" 5 "Z5" 6 "Z6" 7 "Z7") ///
->     title("Elasticidade-preço por especificação IV") ///
->     xtitle("Instrumentos") ytitle("beta_p e IC 95%") legend(off)
-
-. graph export "$FIGS/stata_fig04_beta_p_by_instrument.png", replace width(2000)
-file
-    C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/figures/stata_f
-    > ig04_beta_p_by_instrument.png saved as PNG format
-
-. di as text "[Stata] Gráfico salvo: output/figures/stata_fig04_beta_p_by_instrument.png"
-[Stata] Gráfico salvo: output/figures/stata_fig04_beta_p_by_instrument.png
+. if `"`rawdir'"' == "" {
+.     di as error "[Stata] O global RAW está vazio depois do config.do."
+.     exit 601
+. }
 
 . 
-. * F efetivo MOP, quando capturado pelo weakivtest.
-. di as text "[Stata] Figura 5: F efetivo MOP por especificação"
-[Stata] Figura 5: F efetivo MOP por especificação
+. if `"`procdir'"' == "" {
+.     di as error "[Stata] O global PROC está vazio depois do config.do."
+.     exit 601
+. }
 
-. twoway bar f_eff model_id, ///
->     xlabel(1 "Z1" 2 "Z2" 3 "Z3" 4 "Z4" 5 "Z5" 6 "Z6" 7 "Z7") ///
->     title("F efetivo MOP por especificação") ///
->     xtitle("Instrumentos") ytitle("F efetivo")
+. 
+. if `"`tabsdir'"' == "" {
+.     di as error "[Stata] O global TABS está vazio depois do config.do."
+.     exit 601
+. }
 
-. graph export "$FIGS/stata_fig05_f_eff.png", replace width(2000)
-file
-    C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/figures/stata_f
-    > ig05_f_eff.png saved as PNG format
+. 
+. if `"`figsdir'"' == "" {
+.     di as error "[Stata] O global FIGS está vazio depois do config.do."
+.     exit 601
+. }
 
-. di as text "[Stata] Gráfico salvo: output/figures/stata_fig05_f_eff.png"
-[Stata] Gráfico salvo: output/figures/stata_fig05_f_eff.png
+. 
+. if `"`logsdir'"' == "" {
+.     di as error "[Stata] O global LOGS está vazio depois do config.do."
+.     exit 601
+. }
 
-. di as text "[Stata] Visualizações: concluídas"
-[Stata] Visualizações: concluídas
+. 
+. capture mkdir "$ROOT/data"
+
+. capture mkdir "$RAW"
+
+. capture mkdir "$PROC"
+
+. capture mkdir "$ROOT/output"
+
+. capture mkdir "$TABS"
+
+. capture mkdir "$FIGS"
+
+. capture mkdir "$LOGS"
+
+. 
+. di as text "[Stata] Caminhos carregados:"
+[Stata] Caminhos carregados:
+
+. di as text "  ROOT = $ROOT"
+  ROOT = C:\Users\B03531855158\Documents\Replication\Códigos
+
+. di as text "  RAW  = $RAW"
+  RAW  = C:\Users\B03531855158\Documents\Replication\Códigos/data/raw
+
+. di as text "  PROC = $PROC"
+  PROC = C:\Users\B03531855158\Documents\Replication\Códigos/data/processed
+
+. di as text "  TABS = $TABS"
+  TABS = C:\Users\B03531855158\Documents\Replication\Códigos/output/tables
+
+. di as text "  FIGS = $FIGS"
+  FIGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/figures
+
+. di as text "  LOGS = $LOGS"
+  LOGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/logs
 
 . 
 end of do-file
 
 . 
-. * Resolve a questão 14: simulação de instrumentos fracos.
-. di as text "[Stata] Rodando Stata/07_simulation_weak_instruments.do: simulação de instrumentos fracos"
-[Stata] Rodando Stata/07_simulation_weak_instruments.do: simulação de instrumentos fracos
+. * ------------------------------------------------------------
+. * Garante que a base tratada exista
+. * ------------------------------------------------------------
+. 
+. capture confirm file "$PROC/chicken_prepared_stata.dta"
+
+. if _rc {
+.     di as text "[Stata] Base tratada não encontrada. Rodando 01_prepare_data.do..."
+.     do "Stata/01_prepare_data.do"
+. }
+
+. 
+. * ------------------------------------------------------------
+. * Garante que a base com resíduos exista
+. * ------------------------------------------------------------
+. 
+. capture confirm file "$PROC/chicken_with_ols_residuals_stata.dta"
+
+. 
+. if _rc {
+.     di as text "[Stata] Base com resíduos não encontrada. Gerando a partir da base preparada..."
+. 
+.     use "$PROC/chicken_prepared_stata.dta", clear
+. 
+.     foreach v in ln_q ln_pch ln_y ln_pb {
+  2.         capture confirm variable `v'
+  3.         if _rc {
+  4.             di as error "[Stata] Variável `v' não encontrada em $PROC/chicken_prepared_stata.dta."
+  5.             di as error "[Stata] Rode Stata/01_prepare_data.do e verifique a importação da base."
+  6.             exit 111
+  7.         }
+  8.     }
+. 
+.     quietly regress ln_q ln_pch ln_y ln_pb, vce(robust)
+.     predict double ols_fitted, xb
+.     predict double ols_resid, resid
+. 
+.     label variable ols_fitted "Valor ajustado pelo MQO"
+.     label variable ols_resid  "Resíduo do MQO"
+. 
+.     save "$PROC/chicken_with_ols_residuals_stata.dta", replace
+.     di as text "[Stata] Base com resíduos criada: $PROC/chicken_with_ols_residuals_stata.dta"
+. }
+
+. 
+. use "$PROC/chicken_with_ols_residuals_stata.dta", clear
+
+. 
+. /********************************************************************
+>  Figura 1: séries logarítmicas principais
+> ********************************************************************/
+. 
+. di as text "[Stata] Gerando Figura 1: séries logarítmicas principais"
+[Stata] Gerando Figura 1: séries logarítmicas principais
+
+. 
+. twoway ///
+>     (line ln_q year,   lcolor(navy)         lwidth(medthick)) ///
+>     (line ln_pch year, lcolor(cranberry)    lwidth(medthick)) ///
+>     (line ln_y year,   lcolor(forest_green) lwidth(medthick)) ///
+>     (line ln_pb year,  lcolor(orange)       lwidth(medthick)) ///
+>     (line z year,      lcolor(purple)       lwidth(medthick)), ///
+>     title("Séries logarítmicas principais", size(medsmall)) ///
+>     xtitle("Ano", size(small)) ///
+>     ytitle("Logaritmo", size(small)) ///
+>     legend( ///
+>         order(1 "Quantidade per capita de frango" ///
+>               2 "Preço real do frango" ///
+>               3 "Renda real per capita" ///
+>               4 "Preço real da carne bovina" ///
+>               5 "Preço real do milho") ///
+>         cols(1) ///
+>         size(small) ///
+>         position(3) ///
+>         ring(1) ///
+>         region(lcolor(none) fcolor(none)) ///
+>     ) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_series, replace)
+
+. 
+. graph export "$FIGS/stata_fig01_series.png", replace width(2800)
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig01_series.png not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig01_series.png saved as PNG format
+
+. graph export "$FIGS/stata_fig01_series.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig01_series.pdf saved as PDF format
+
+. 
+. /********************************************************************
+>  Figura 2: demanda observada
+> ********************************************************************/
+. 
+. di as text "[Stata] Gerando Figura 2: demanda observada"
+[Stata] Gerando Figura 2: demanda observada
+
+. 
+. twoway ///
+>     (scatter ln_q ln_pch, mcolor(navy) msymbol(circle) msize(medium)) ///
+>     (lfit ln_q ln_pch, lcolor(cranberry) lwidth(medthick)), ///
+>     title("Demanda observada: quantidade versus preço do frango", size(medsmall)) ///
+>     xtitle("Log do preço real do frango", size(small)) ///
+>     ytitle("Log da quantidade per capita de frango", size(small)) ///
+>     legend( ///
+>         order(1 "Observações anuais" ///
+>               2 "Ajuste linear") ///
+>         cols(1) ///
+>         size(small) ///
+>         position(3) ///
+>         ring(1) ///
+>         region(lcolor(none) fcolor(none)) ///
+>     ) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_scatter_demand, replace)
+
+. 
+. graph export "$FIGS/stata_fig02_scatter_demand.png", replace width(2800)
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig02_scatter_demand.png not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig02_scatter_demand.png saved as PNG
+    format
+
+. graph export "$FIGS/stata_fig02_scatter_demand.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig02_scatter_demand.pdf saved as PDF
+    format
+
+. 
+. //********************************************************************
+. * Figura 3: resíduos do MQO versus valores ajustados
+. * Com curva de ajuste não linear LOWESS
+. ********************************************************************/
+. 
+. di as text "[Stata] Gerando Figura 3: resíduos MQO versus valores ajustados com ajuste não linear"
+[Stata] Gerando Figura 3: resíduos MQO versus valores ajustados com ajuste não linear
+
+. 
+. twoway ///
+>     (scatter ols_resid ols_fitted, ///
+>         mcolor(navy) ///
+>         msymbol(circle) ///
+>         msize(medium)) ///
+>     (lowess ols_resid ols_fitted, ///
+>         lcolor(cranberry) ///
+>         lwidth(medthick) ///
+>         bwidth(0.8)), ///
+>     yline(0, ///
+>         lcolor(black) ///
+>         lpattern(dash) ///
+>         lwidth(medthin)) ///
+>     title("Resíduos do MQO versus valores ajustados", size(medsmall)) ///
+>     subtitle("Com curva de ajuste não linear dos resíduos", size(small)) ///
+>     xtitle("Valor ajustado pelo MQO", size(small)) ///
+>     ytitle("Resíduo do MQO", size(small)) ///
+>     legend( ///
+>         order(1 "Resíduos do MQO" ///
+>               2 "Ajuste não linear LOWESS" ///
+>               3 "Linha de resíduo zero") ///
+>         cols(1) ///
+>         size(small) ///
+>         position(3) ///
+>         ring(1) ///
+>         region(lcolor(none) fcolor(none)) ///
+>     ) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_resid_fitted, replace)
+
+. 
+. graph export "$FIGS/stata_fig03_residuals_fitted.png", replace width(2800)
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig03_residuals_fitted.png not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig03_residuals_fitted.png saved as PNG
+    format
+
+. graph export "$FIGS/stata_fig03_residuals_fitted.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig03_residuals_fitted.pdf saved as PDF
+    format
+
+. 
+. di as text "[Stata] Gráfico salvo em PNG: output/figures/stata_fig03_residuals_fitted.png"
+[Stata] Gráfico salvo em PNG: output/figures/stata_fig03_residuals_fitted.png
+
+. di as text "[Stata] Gráfico salvo em PDF: output/figures/stata_fig03_residuals_fitted.pdf"
+[Stata] Gráfico salvo em PDF: output/figures/stata_fig03_residuals_fitted.pdf
+
+. /********************************************************************
+>  Figura 4: elasticidade-preço estimada: MQO versus 2SLS
+> ********************************************************************/
+. 
+. di as text "[Stata] Gerando Figura 4: elasticidade-preço estimada — MQO versus 2SLS"
+[Stata] Gerando Figura 4: elasticidade-preço estimada — MQO versus 2SLS
+
+. 
+. capture confirm file "$TABS/stata_question_01_ols.csv"
+
+. if _rc {
+.     di as text "[Stata] Tabela de MQO não encontrada. Rodando 02_ols_iv_first_stage.do..."
+.     do "Stata/02_ols_iv_first_stage.do"
+. }
+
+. 
+. capture confirm file "$TABS/stata_question_09_comparative.csv"
+
+. if _rc {
+.     di as text "[Stata] Tabela comparativa não encontrada. Rodando 04_alt_instruments_weakiv.do..."
+.     do "Stata/04_alt_instruments_weakiv.do"
+. }
+
+. 
+. tempfile resultados_iv resultados_ols
+
+. 
+. * ------------------------------------------------------------
+. * Resultados 2SLS: Z1 a Z7
+. * ------------------------------------------------------------
+. 
+. import delimited "$TABS/stata_question_09_comparative.csv", clear
+(encoding automatically selected: ISO-8859-2)
+(16 vars, 7 obs)
+
+. 
+. keep model n beta_p ci_low ci_high
+
+. 
+. foreach v in n beta_p ci_low ci_high {
+  2.     capture confirm numeric variable `v'
+  3.     if _rc {
+  4.         destring `v', replace force
+  5.     }
+  6. }
+
+. 
+. gen str20 modelo = upper(model)
+
+. gen str20 estimador = "2SLS"
+
+. 
+. * Se model for Z1, Z2, ..., Z7
+. gen ordem = real(substr(modelo, 2, .)) + 1
+
+. 
+. keep modelo estimador ordem n beta_p ci_low ci_high
+
+. 
+. save `resultados_iv', replace
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000001.tmp not found)
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000001.tmp saved as .dta format
+
+. 
+. * ------------------------------------------------------------
+. * Resultado MQO
+. * ------------------------------------------------------------
+. 
+. import delimited "$TABS/stata_question_01_ols.csv", clear
+(encoding automatically selected: ISO-8859-1)
+(13 vars, 1 obs)
+
+. 
+. keep n beta_p ci_low_p ci_high_p
+
+. 
+. foreach v in n beta_p ci_low_p ci_high_p {
+  2.     capture confirm numeric variable `v'
+  3.     if _rc {
+  4.         destring `v', replace force
+  5.     }
+  6. }
+
+. 
+. rename ci_low_p  ci_low
+
+. rename ci_high_p ci_high
+
+. 
+. gen str20 modelo = "MQO"
+
+. gen str20 estimador = "MQO"
+
+. gen ordem = 1
+
+. 
+. keep modelo estimador ordem n beta_p ci_low ci_high
+
+. 
+. save `resultados_ols', replace
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000002.tmp not found)
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000002.tmp saved as .dta format
+
+. 
+. * ------------------------------------------------------------
+. * Junta MQO e 2SLS
+. * ------------------------------------------------------------
+. 
+. use `resultados_ols', clear
+
+. append using `resultados_iv'
+
+. 
+. drop if missing(beta_p)
+(0 observations deleted)
+
+. sort ordem
+
+. 
+. gen y = ordem
+
+. 
+. * ------------------------------------------------------------
+. * Rótulos fixos do eixo vertical
+. * Evita erro de sintaxe com levelsof de variável string
+. * ------------------------------------------------------------
+. 
+. capture label drop lab_modelo
+
+. label define lab_modelo ///
+>     1 "MQO" ///
+>     2 "Z1" ///
+>     3 "Z2" ///
+>     4 "Z3" ///
+>     5 "Z4" ///
+>     6 "Z5" ///
+>     7 "Z6" ///
+>     8 "Z7", replace
+
+. 
+. label values y lab_modelo
+
+. 
+. * ------------------------------------------------------------
+. * Gráfico: ponto = estimativa; barra = IC 95%
+. * ------------------------------------------------------------
+. 
+. twoway ///
+>     (rcap ci_low ci_high y, horizontal ///
+>         lcolor(gs6) ///
+>         lwidth(medthin)) ///
+>     (scatter y beta_p if estimador == "MQO", ///
+>         mcolor(black) ///
+>         msymbol(circle) ///
+>         msize(medium)) ///
+>     (scatter y beta_p if estimador == "2SLS", ///
+>         mcolor(black) ///
+>         msymbol(circle) ///
+>         msize(medium)), ///
+>     xline(0, lcolor(black) lpattern(solid) lwidth(thin)) ///
+>     yscale(reverse) ///
+>     ylabel(1(1)8, valuelabel angle(0) labsize(small) noticks) ///
+>     xlabel(, labsize(small)) ///
+>     title("Elasticidade-preço estimada: MQO versus 2SLS", size(medsmall)) ///
+>     xtitle("{&beta}{subscript:p}", size(small)) ///
+>     ytitle("Modelo", size(small)) ///
+>     legend(off) ///
+>     note("Pontos: estimativas de {&beta}{subscript:p}. Barras horizontais: intervalos de confiança de 95%. Linha verti
+> cal: elasticidade igual a zero.", ///
+>          size(vsmall)) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_beta_mqo_2sls, replace)
+
+. 
+. graph export "$FIGS/stata_fig04_beta_p_mqo_versus_2sls.png", ///
+>     replace width(2600)
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig04_beta_p_mqo_versus_2sls.png not
+    found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig04_beta_p_mqo_versus_2sls.png saved
+    as PNG format
+
+. 
+. graph export "$FIGS/stata_fig04_beta_p_mqo_versus_2sls.pdf", ///
+>     replace
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig04_beta_p_mqo_versus_2sls.pdf saved
+    as PDF format
+
+. 
+. di as text "[Stata] Gráfico salvo em PNG: output/figures/stata_fig04_beta_p_mqo_versus_2sls.png"
+[Stata] Gráfico salvo em PNG: output/figures/stata_fig04_beta_p_mqo_versus_2sls.png
+
+. di as text "[Stata] Gráfico salvo em PDF: output/figures/stata_fig04_beta_p_mqo_versus_2sls.pdf"
+[Stata] Gráfico salvo em PDF: output/figures/stata_fig04_beta_p_mqo_versus_2sls.pdf
+
+. /********************************************************************
+>  Figura GMM: elasticidade-preço e teste J de Hansen
+>  Questão 5
+> ********************************************************************/
+. 
+. di as text _newline "[Stata] Gerando figura GMM: beta_p e Hansen J"
+
+[Stata] Gerando figura GMM: beta_p e Hansen J
+
+. 
+. * Carrega config se necessário
+. local procdir "$PROC"
+
+. 
+. if `"`procdir'"' == "" {
+.     capture noisily do "Stata/config.do"
+.     if _rc {
+.         di as error "[Stata] Não consegui carregar Stata/config.do."
+.         exit 601
+.     }
+. }
+
+. 
+. capture confirm file "$TABS/stata_question_05_gmm.csv"
+
+. if _rc {
+.     di as text "[Stata] Tabela GMM não encontrada. Rodando 03_gmm_hansen.do..."
+.     do "Stata/03_gmm_hansen.do"
+. }
+
+. 
+. * ============================================================
+. * Painel A: coeficiente beta_p por GMM
+. * ============================================================
+. 
+. import delimited "$TABS/stata_question_05_gmm.csv", clear
+(encoding automatically selected: ISO-8859-1)
+(10 vars, 2 obs)
+
+. 
+. foreach v in n beta_p se_p pval_p ci_low ci_high hansen_j hansen_p hansen_df {
+  2.     capture confirm numeric variable `v'
+  3.     if _rc {
+  4.         capture destring `v', replace force
+  5.     }
+  6. }
+
+. 
+. gen ordem = .
+(2 missing values generated)
+
+. replace ordem = 1 if model == "GMM_Z1"
+(1 real change made)
+
+. replace ordem = 2 if model == "GMM_Z2"
+(1 real change made)
+
+. 
+. gen y = ordem
+
+. 
+. capture label drop lab_gmm
+
+. label define lab_gmm ///
+>     1 "GMM Z1: {z_t}" ///
+>     2 "GMM Z2: {z_t, z_t²}", replace
+
+. 
+. label values y lab_gmm
+
+. 
+. twoway ///
+>     (rcap ci_low ci_high y, horizontal ///
+>         lcolor(gs6) ///
+>         lwidth(medthin)) ///
+>     (scatter y beta_p, ///
+>         mcolor(black) ///
+>         msymbol(circle) ///
+>         msize(medium)), ///
+>     xline(0, lcolor(black) lpattern(solid) lwidth(thin)) ///
+>     yscale(reverse) ///
+>     ylabel(1(1)2, valuelabel angle(0) labsize(small) noticks) ///
+>     xlabel(, labsize(small)) ///
+>     title("A. Elasticidade-preço estimada por GMM", size(medsmall)) ///
+>     xtitle("{&beta}{subscript:p}", size(small)) ///
+>     ytitle("") ///
+>     legend(off) ///
+>     note("Pontos: estimativas de {&beta}{subscript:p}. Barras horizontais: IC 95%.", ///
+>          size(vsmall)) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_gmm_beta, replace)
+
+. 
+. * ============================================================
+. * Painel B: Hansen J para modelo sobreidentificado
+. * ============================================================
+. 
+. preserve
+
+. 
+. keep if hansen_df > 0
+(1 observation deleted)
+
+. gen x = 1
+
+. gen crit_5 = invchi2tail(hansen_df, 0.05)
+
+. 
+. twoway ///
+>     (bar hansen_j x, ///
+>         barwidth(0.45) ///
+>         fcolor(navy%65) ///
+>         lcolor(navy)) ///
+>     (function y = crit_5[1], ///
+>         range(0.6 1.4) ///
+>         lcolor(cranberry) ///
+>         lpattern(dash) ///
+>         lwidth(medthick)), ///
+>     xlabel(1 "GMM Z2", labsize(small)) ///
+>     ylabel(, labsize(small)) ///
+>     title("B. Teste J de Hansen", size(medsmall)) ///
+>     ytitle("Estatística J", size(small)) ///
+>     xtitle("") ///
+>     legend( ///
+>         order(1 "Estatística J observada" ///
+>               2 "Valor crítico 5%") ///
+>         cols(1) ///
+>         size(small) ///
+>         position(3) ///
+>         ring(1) ///
+>         region(lcolor(none) fcolor(none)) ///
+>     ) ///
+>     note("Modelo sobreidentificado: Z2 = {z_t, z_t²}. Rejeição quando J excede o valor crítico.", ///
+>          size(vsmall)) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_gmm_hansen, replace)
+
+. 
+. restore
+
+. 
+. * ============================================================
+. * Figura combinada
+. * ============================================================
+. 
+. graph combine ///
+>     g_gmm_beta ///
+>     g_gmm_hansen, ///
+>     cols(2) ///
+>     imargin(4 4 4 4) ///
+>     title("GMM: elasticidade-preço e validade dos instrumentos", size(medium)) ///
+>     subtitle("Comparação entre o modelo exatamente identificado e o sobreidentificado", size(small)) ///
+>     note( ///
+>         "Z1 usa apenas z_t; Z2 adiciona z_t². O teste J de Hansen só se aplica ao modelo sobreidentificado.", ///
+>         size(vsmall) ///
+>     ) ///
+>     graphregion(color(white)) ///
+>     name(g_gmm_q5, replace)
+
+. 
+. graph export "$FIGS/stata_fig11_gmm_beta_hansen.png", ///
+>     replace width(3200)
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig11_gmm_beta_hansen.png not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig11_gmm_beta_hansen.png saved as PNG
+    format
+
+. 
+. graph export "$FIGS/stata_fig11_gmm_beta_hansen.pdf", ///
+>     replace
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig11_gmm_beta_hansen.pdf saved as PDF
+    format
+
+. 
+. di as text "[Stata] Figura salva em PNG: output/figures/stata_fig11_gmm_beta_hansen.png"
+[Stata] Figura salva em PNG: output/figures/stata_fig11_gmm_beta_hansen.png
+
+. di as text "[Stata] Figura salva em PDF: output/figures/stata_fig11_gmm_beta_hansen.pdf"
+[Stata] Figura salva em PDF: output/figures/stata_fig11_gmm_beta_hansen.pdf
+
+. 
+. di as result "[Stata] 06_visualizations.do concluído com sucesso."
+[Stata] 06_visualizations.do concluído com sucesso.
+
+. 
+end of do-file
+
+. 
+. di as text _newline "[Stata] Rodando 07_simulation_weak_instruments.do"
+
+[Stata] Rodando 07_simulation_weak_instruments.do
 
 . do "Stata/07_simulation_weak_instruments.do"
 
 . /********************************************************************
 >  Questão 14: simulação de instrumentos fracos
 > 
->  CORREÇÕES APLICADAS:
->    - F médio do primeiro estágio calculado por nível de pi e salvo na tabela
->    - Estimador MQO de referência rodado em cada replicação e salvo (b_ols)
->    - Tabela final: strength pi reps mean_iv b_ols bias_iv sd_iv mean_f_fs coverage_95
->    - Gráfico adicional: b_iv e b_ols por nível de pi (mostra convergência quando pi -> 0)
+>  Objetivo:
+>    - Simular o problema de instrumentos fracos;
+>    - Mostrar como a redução da força do instrumento afeta:
+>        1. viés do estimador 2SLS;
+>        2. dispersão do estimador 2SLS;
+>        3. cobertura dos intervalos convencionais de 95%;
+>        4. força do primeiro estágio.
+> 
+>  Estrutura da simulação:
+>    y = beta*x + u, com beta verdadeiro = -1
+>    x = pi*z + v
+>    pi controla a força do instrumento.
 > ********************************************************************/
 . 
 . clear all
 
 . set seed 26052026
+
+. 
+. * Carrega configuração se o script for rodado individualmente.
+. do "Stata/_load_config_if_needed.do"
+
+. /********************************************************************
+>  Bloco de segurança: carrega Stata/config.do se os caminhos ainda
+>  não estiverem definidos. Assim os scripts podem ser rodados tanto
+>  pelo 00_master.do quanto individualmente.
+> ********************************************************************/
+. 
+. local rootdir "$ROOT"
+
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
+
+. 
+. if `"`procdir'"' == "" {
+.     di as text "[Stata] Globais ainda não carregados. Tentando rodar Stata/config.do..."
+. 
+.     capture noisily do "Stata/config.do"
+. 
+.     if _rc {
+.         di as error "[Stata] Não consegui rodar Stata/config.do."
+.         di as error "[Stata] Rode o projeto a partir da pasta raiz ou ajuste o caminho do config.do."
+.         exit 601
+.     }
+. }
+
+. 
+. local rootdir "$ROOT"
+
+. local rawdir  "$RAW"
+
+. local procdir "$PROC"
+
+. local tabsdir "$TABS"
+
+. local figsdir "$FIGS"
+
+. local logsdir "$LOGS"
+
+. 
+. if `"`rootdir'"' == "" {
+.     di as error "[Stata] O global ROOT está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`rawdir'"' == "" {
+.     di as error "[Stata] O global RAW está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`procdir'"' == "" {
+.     di as error "[Stata] O global PROC está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`tabsdir'"' == "" {
+.     di as error "[Stata] O global TABS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`figsdir'"' == "" {
+.     di as error "[Stata] O global FIGS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. if `"`logsdir'"' == "" {
+.     di as error "[Stata] O global LOGS está vazio depois do config.do."
+.     exit 601
+. }
+
+. 
+. capture mkdir "$ROOT/data"
+
+. capture mkdir "$RAW"
+
+. capture mkdir "$PROC"
+
+. capture mkdir "$ROOT/output"
+
+. capture mkdir "$TABS"
+
+. capture mkdir "$FIGS"
+
+. capture mkdir "$LOGS"
+
+. 
+. di as text "[Stata] Caminhos carregados:"
+[Stata] Caminhos carregados:
+
+. di as text "  ROOT = $ROOT"
+  ROOT = C:\Users\B03531855158\Documents\Replication\Códigos
+
+. di as text "  RAW  = $RAW"
+  RAW  = C:\Users\B03531855158\Documents\Replication\Códigos/data/raw
+
+. di as text "  PROC = $PROC"
+  PROC = C:\Users\B03531855158\Documents\Replication\Códigos/data/processed
+
+. di as text "  TABS = $TABS"
+  TABS = C:\Users\B03531855158\Documents\Replication\Códigos/output/tables
+
+. di as text "  FIGS = $FIGS"
+  FIGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/figures
+
+. di as text "  LOGS = $LOGS"
+  LOGS = C:\Users\B03531855158\Documents\Replication\Códigos/output/logs
+
+. 
+end of do-file
 
 . 
 . di as text _newline "[Stata] Questão 14: simulação de instrumentos fracos"
@@ -4055,16 +5795,13 @@ end of do-file
 [Stata] Erros u e v são correlacionados (rho=0.6) para gerar endogeneidade
 
 . 
-. * CORREÇÃO: tabela agora inclui b_ols (MQO médio de referência) e mean_f_fs (F médio do 1º estágio)
-. postfile sim ///
->     str10 strength double pi int reps ///
->     double mean_iv b_ols bias_iv sd_iv mean_f_fs coverage_95 ///
->     using "$TABS/stata_question_14_simulation.dta", replace
-
+. * ------------------------------------------------------------
+. * Parâmetros da simulação
+. * ------------------------------------------------------------
 . 
-. local reps     = 250
+. local reps      = 250
 
-. local n        = 200
+. local n         = 200
 
 . local true_beta = -1
 
@@ -4073,23 +5810,37 @@ end of do-file
 [Stata] Parâmetros: reps=250 | n=200 | beta verdadeiro=-1
 
 . 
+. * ------------------------------------------------------------
+. * Arquivo de resultados agregados por nível de pi
+. * ------------------------------------------------------------
+. 
+. postfile sim ///
+>     str10 strength double pi int reps ///
+>     double mean_iv b_ols bias_iv sd_iv mean_f_fs coverage_95 ///
+>     using "$TABS/stata_question_14_simulation.dta", replace
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_14_simulation.dta not found)
+
+. 
 . foreach pi in 1 0.5 0.25 0.10 0.05 0.02 {
-  2.     di as text "[Stata] Simulando pi = `pi'"
+  2. 
+.     di as text "[Stata] Simulando pi = `pi'"
   3. 
 .     tempfile draws
-  4.     * CORREÇÃO: postfile de replicações agora inclui beta_ols e f_fs
+  4. 
 .     postfile one ///
 >         double beta_iv beta_ols f_fs ci_low ci_high covered ///
 >         using `draws', replace
   5. 
 .     forvalues r = 1/`reps' {
-  6.         clear
+  6. 
+.         clear
   7.         set obs `n'
   8. 
 .         * Instrumento exógeno.
 .         gen double z = rnormal()
   9. 
-.         * Erros estrutural e de primeiro estágio correlacionados (rho = 0.6).
+.         * Erros estrutural e de primeiro estágio correlacionados.
+.         * rho = 0.6 gera endogeneidade entre x e u.
 .         gen double e1 = rnormal()
  10.         gen double e2 = rnormal()
  11.         gen double u  = e1
@@ -4101,18 +5852,19 @@ end of do-file
 .         * Equação estrutural verdadeira.
 .         gen double y = `true_beta'*x + u
  15. 
-.         * CORREÇÃO: MQO de referência para comparação de viés
+.         * MQO de referência.
 .         quietly regress y x, vce(robust)
  16.         scalar b_ols_rep = _b[x]
  17. 
-.         * CORREÇÃO: F do primeiro estágio em cada replicação
+.         * Primeiro estágio e F robusto.
 .         quietly regress x z, vce(robust)
  18.         quietly test z
  19.         scalar f_fs_rep = r(F)
  20. 
-.         * Estimação IV com erro-padrão robusto.
+.         * Estimação por 2SLS.
 .         quietly ivregress 2sls y (x = z), vce(robust)
- 21.         scalar b  = _b[x]
+ 21. 
+.         scalar b  = _b[x]
  22.         scalar se = _se[x]
  23.         scalar lo = b - invnormal(0.975)*se
  24.         scalar hi = b + invnormal(0.975)*se
@@ -4120,28 +5872,38 @@ end of do-file
  26. 
 .         post one (b) (b_ols_rep) (f_fs_rep) (lo) (hi) (ok)
  27.     }
- 28.     postclose one
+ 28. 
+.     postclose one
  29. 
 .     use `draws', clear
- 30.     quietly summarize beta_iv
+ 30. 
+.     quietly summarize beta_iv
  31.     scalar mean_iv  = r(mean)
  32.     scalar sd_iv    = r(sd)
- 33.     quietly summarize beta_ols
+ 33. 
+.     quietly summarize beta_ols
  34.     scalar b_ols    = r(mean)
- 35.     quietly summarize f_fs
+ 35. 
+.     quietly summarize f_fs
  36.     scalar mean_ffs = r(mean)
- 37.     quietly summarize covered
+ 37. 
+.     quietly summarize covered
  38.     scalar cov_iv   = r(mean)
- 39.     scalar bias_iv  = mean_iv - `true_beta'
+ 39. 
+.     scalar bias_iv  = mean_iv - `true_beta'
  40. 
-.     di as text "[Stata] pi=`pi': IV=" %9.6f mean_iv " | OLS=" %9.6f b_ols ///
->                " | viés=" %9.6f bias_iv " | sd=" %9.6f sd_iv ///
->                " | F_fs médio=" %9.2f mean_ffs " | cobertura=" %9.6f cov_iv
+.     di as text "[Stata] pi=`pi': 2SLS=" %9.6f mean_iv ///
+>                " | MQO=" %9.6f b_ols ///
+>                " | viés=" %9.6f bias_iv ///
+>                " | sd=" %9.6f sd_iv ///
+>                " | F_fs médio=" %9.2f mean_ffs ///
+>                " | cobertura=" %9.6f cov_iv
  41. 
-.     post sim ("pi=`pi'") (`pi') (`reps') (mean_iv) (b_ols) (bias_iv) (sd_iv) (mean_ffs) (cov_iv)
+.     post sim ("pi=`pi'") (`pi') (`reps') ///
+>         (mean_iv) (b_ols) (bias_iv) (sd_iv) (mean_ffs) (cov_iv)
  42. }
 [Stata] Simulando pi = 1
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000001.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000001.tmp not found)
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
@@ -4392,263 +6154,264 @@ Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
-[Stata] pi=1: IV=-0.997697 | OLS=-0.698944 | viés= 0.002303 | sd= 0.064437 | F_fs médio=   208.87 | cobertura= 0.968000
-[Stata] Simulando pi = 0.5
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000002.tmp not found)
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-Number of observations (_N) was 0, now 200.
-[Stata] pi=0.5: IV=-1.013508 | OLS=-0.520294 | viés=-0.013508 | sd= 0.157544 | F_fs médio=    53.10 | cobertura= 0.94400
+[Stata] pi=1: 2SLS=-0.997697 | MQO=-0.698944 | viés= 0.002303 | sd= 0.064437 | F_fs médio=   208.87 | cobertura= 0.96800
 > 0
+[Stata] Simulando pi = 0.5
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000002.tmp not found)
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+Number of observations (_N) was 0, now 200.
+[Stata] pi=0.5: 2SLS=-1.013508 | MQO=-0.520294 | viés=-0.013508 | sd= 0.157544 | F_fs médio=    53.10 | cobertura= 0.944
+> 000
 [Stata] Simulando pi = 0.25
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000003.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000003.tmp not found)
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
@@ -4899,10 +6662,10 @@ Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
-[Stata] pi=0.25: IV=-1.099719 | OLS=-0.434551 | viés=-0.099719 | sd= 0.391757 | F_fs médio=    13.40 | cobertura= 0.9560
-> 00
+[Stata] pi=0.25: 2SLS=-1.099719 | MQO=-0.434551 | viés=-0.099719 | sd= 0.391757 | F_fs médio=    13.40 | cobertura= 0.95
+> 6000
 [Stata] Simulando pi = 0.10
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000004.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000004.tmp not found)
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
@@ -5153,10 +6916,10 @@ Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
-[Stata] pi=0.10: IV=-0.478659 | OLS=-0.410519 | viés= 0.521341 | sd= 5.417924 | F_fs médio=     3.35 | cobertura= 0.9480
-> 00
+[Stata] pi=0.10: 2SLS=-0.478659 | MQO=-0.410519 | viés= 0.521341 | sd= 5.417924 | F_fs médio=     3.35 | cobertura= 0.94
+> 8000
 [Stata] Simulando pi = 0.05
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000005.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000005.tmp not found)
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
@@ -5407,10 +7170,10 @@ Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
-[Stata] pi=0.05: IV=-4.596059 | OLS=-0.398545 | viés=-3.596059 | sd=58.595615 | F_fs médio=     1.66 | cobertura= 0.9240
-> 00
+[Stata] pi=0.05: 2SLS=-4.596059 | MQO=-0.398545 | viés=-3.596059 | sd=58.595615 | F_fs médio=     1.66 | cobertura= 0.92
+> 4000
 [Stata] Simulando pi = 0.02
-(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_1c65c_000006.tmp not found)
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_7770_000006.tmp not found)
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
@@ -5661,91 +7424,383 @@ Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
 Number of observations (_N) was 0, now 200.
-[Stata] pi=0.02: IV= 1.129719 | OLS=-0.399553 | viés= 2.129719 | sd=48.751136 | F_fs médio=     1.11 | cobertura= 0.9720
-> 00
+[Stata] pi=0.02: 2SLS= 1.129719 | MQO=-0.399553 | viés= 2.129719 | sd=48.751136 | F_fs médio=     1.11 | cobertura= 0.97
+> 2000
 
 . 
 . postclose sim
 
+. 
 . use "$TABS/stata_question_14_simulation.dta", clear
 
 . export delimited using "$TABS/stata_question_14_simulation.csv", replace
-file C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/tables/stata_que
-> stion_14_simulation.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_14_simulation.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/tables/stata_question_14_simulation.csv saved
 
+. 
 . di as text "[Stata] Tabela salva: output/tables/stata_question_14_simulation.csv"
 [Stata] Tabela salva: output/tables/stata_question_14_simulation.csv
 
 . 
-. * Gráfico 1: dispersão do estimador IV quando o instrumento enfraquece.
-. di as text "[Stata] Gerando gráfico 1: dispersão do IV por pi"
-[Stata] Gerando gráfico 1: dispersão do IV por pi
+. * ============================================================
+. * Gráficos auxiliares da simulação
+. * ============================================================
+. 
+. * ------------------------------------------------------------
+. * Gráfico auxiliar 1: dispersão do estimador 2SLS
+. * Legenda à direita do gráfico
+. * ------------------------------------------------------------
+. 
+. di as text "[Stata] Gerando gráfico auxiliar 1: dispersão do estimador 2SLS"
+[Stata] Gerando gráfico auxiliar 1: dispersão do estimador 2SLS
 
-. twoway line sd_iv pi, sort || scatter sd_iv pi, ///
->     title("Simulação: dispersão do IV quando o instrumento enfraquece") ///
->     xtitle("Força do instrumento, pi") ytitle("Desvio-padrão do estimador IV")
+. 
+. twoway ///
+>     (line sd_iv pi, ///
+>         sort ///
+>         lcolor(navy) ///
+>         lwidth(medthick)) ///
+>     (scatter sd_iv pi, ///
+>         mcolor(cranberry) ///
+>         msymbol(circle) ///
+>         msize(medium)), ///
+>     title("Dispersão do 2SLS quando o instrumento enfraquece", size(medsmall)) ///
+>     subtitle("Simulação com redução gradual da força do primeiro estágio", size(small)) ///
+>     xtitle("Força do instrumento: coeficiente do primeiro estágio ({&pi})", size(small)) ///
+>     ytitle("Desvio-padrão das estimativas 2SLS", size(small)) ///
+>     legend( ///
+>         order(1 "Dispersão das estimativas 2SLS") ///
+>         cols(1) ///
+>         size(small) ///
+>         position(3) ///
+>         ring(1) ///
+>         region(lcolor(none) fcolor(none)) ///
+>     ) ///
+>     note( ///
+>         "Cada ponto representa o desvio-padrão das estimativas 2SLS em 250 repetições da simulação." ///
+>         "Valores menores de {&pi} indicam instrumentos mais fracos e maior instabilidade do estimador.", ///
+>         size(vsmall) ///
+>     ) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_simulation_sd, replace)
 
-. graph export "$FIGS/stata_fig06_simulation_sd.png", replace width(2000)
-file
-    C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/figures/stata_f
-    > ig06_simulation_sd.png saved as PNG format
+. 
+. graph export "$FIGS/stata_fig06_simulation_sd.png", replace width(3200)
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig06_simulation_sd.png not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig06_simulation_sd.png saved as PNG
+    format
 
+. graph export "$FIGS/stata_fig06_simulation_sd.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig06_simulation_sd.pdf saved as PDF
+    format
+
+. 
 . di as text "[Stata] Gráfico salvo: output/figures/stata_fig06_simulation_sd.png"
 [Stata] Gráfico salvo: output/figures/stata_fig06_simulation_sd.png
 
+. di as text "[Stata] Gráfico salvo: output/figures/stata_fig06_simulation_sd.pdf"
+[Stata] Gráfico salvo: output/figures/stata_fig06_simulation_sd.pdf
+
 . 
-. * CORREÇÃO: Gráfico 2 — b_iv e b_ols por nível de pi (convergência IV -> OLS quando pi -> 0).
-. di as text "[Stata] Gerando gráfico 2: b_iv e b_ols (convergência quando instrumento fraca)"
-[Stata] Gerando gráfico 2: b_iv e b_ols (convergência quando instrumento fraca)
+. * ------------------------------------------------------------
+. * Gráfico auxiliar 2: estimativa média 2SLS, MQO e valor verdadeiro
+. * ------------------------------------------------------------
+. 
+. di as text "[Stata] Gerando gráfico auxiliar 2: 2SLS, MQO e valor verdadeiro"
+[Stata] Gerando gráfico auxiliar 2: 2SLS, MQO e valor verdadeiro
 
+. 
 . twoway ///
->     (line mean_iv pi, sort lcolor(navy) lpattern(solid)) ///
->     (line b_ols  pi, sort lcolor(cranberry) lpattern(dash)) ///
->     (scatter mean_iv pi, mcolor(navy)) ///
->     (scatter b_ols   pi, mcolor(cranberry) msymbol(triangle)), ///
->     yline(`=-1', lcolor(gray) lpattern(dot)) ///
->     legend(order(1 "IV médio" 2 "OLS médio" 5 "Valor verdadeiro")) ///
->     title("IV converge para OLS quando instrumento enfraquece") ///
->     xtitle("Força do instrumento, pi") ytitle("Estimativa média de beta")
+>     (function y = `true_beta', range(0.02 1) lcolor(gs8) lpattern(dot) lwidth(medthick)) ///
+>     (line mean_iv pi, sort lcolor(navy) lpattern(solid) lwidth(medthick)) ///
+>     (scatter mean_iv pi, mcolor(navy) msymbol(circle) msize(medium)) ///
+>     (line b_ols pi, sort lcolor(cranberry) lpattern(dash) lwidth(medthick)) ///
+>     (scatter b_ols pi, mcolor(cranberry) msymbol(triangle) msize(medium)), ///
+>     title("2SLS se torna instável quando o instrumento enfraquece") ///
+>     xtitle("Força do instrumento: coeficiente do primeiro estágio ({&pi})") ///
+>     ytitle("Estimativa média de {&beta}{subscript:p}") ///
+>     legend( ///
+>         order(1 "Valor verdadeiro: {&beta}{subscript:p} = -1" ///
+>               2 "Estimativa média por 2SLS" ///
+>               4 "Estimativa média por MQO") ///
+>         cols(1) ///
+>         size(small) ///
+>         position(3) ///
+>         ring(1) ///
+>         region(lcolor(none) fcolor(none)) ///
+>     ) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white))
 
-. graph export "$FIGS/stata_fig07_simulation_bias_convergence.png", replace width(2000)
-file
-    C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/figures/stata_f
-    > ig07_simulation_bias_convergence.png saved as PNG format
+. 
+. graph export "$FIGS/stata_fig07_simulation_bias_convergence.png", replace width(2600)
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig07_simulation_bias_convergence.png
+    not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig07_simulation_bias_convergence.png
+    saved as PNG format
 
+. 
 . di as text "[Stata] Gráfico salvo: output/figures/stata_fig07_simulation_bias_convergence.png"
 [Stata] Gráfico salvo: output/figures/stata_fig07_simulation_bias_convergence.png
 
 . 
-. * CORREÇÃO: Gráfico 3 — F médio do primeiro estágio por nível de pi.
-. di as text "[Stata] Gerando gráfico 3: F médio do primeiro estágio por pi"
-[Stata] Gerando gráfico 3: F médio do primeiro estágio por pi
+. * ------------------------------------------------------------
+. * Gráfico auxiliar 3: F médio do primeiro estágio
+. * Legenda à direita do gráfico
+. * ------------------------------------------------------------
+. 
+. di as text "[Stata] Gerando gráfico auxiliar 3: F médio do primeiro estágio"
+[Stata] Gerando gráfico auxiliar 3: F médio do primeiro estágio
 
-. twoway line mean_f_fs pi, sort || scatter mean_f_fs pi, ///
->     yline(10, lcolor(red) lpattern(dash)) ///
->     title("F médio do primeiro estágio por nível de pi") ///
->     xtitle("Força do instrumento, pi") ytitle("F médio (1º estágio)") ///
->     note("Linha vermelha: limiar convencional F = 10")
+. 
+. twoway ///
+>     (line mean_f_fs pi, ///
+>         sort ///
+>         lcolor(navy) ///
+>         lwidth(medthick)) ///
+>     (scatter mean_f_fs pi, ///
+>         mcolor(cranberry) ///
+>         msymbol(circle) ///
+>         msize(medium)) ///
+>     (function y = 10, ///
+>         range(0.02 1) ///
+>         lcolor(red) ///
+>         lpattern(dash) ///
+>         lwidth(medthick)), ///
+>     title("Força do primeiro estágio por nível de {&pi}", size(medsmall)) ///
+>     subtitle("Instrumentos mais fortes geram maior estatística F média", size(small)) ///
+>     xtitle("Força do instrumento: coeficiente do primeiro estágio ({&pi})", size(small)) ///
+>     ytitle("Estatística F média do primeiro estágio", size(small)) ///
+>     legend( ///
+>         order(1 "Estatística F média do primeiro estágio" ///
+>               3 "Limiar convencional: F = 10") ///
+>         cols(1) ///
+>         size(small) ///
+>         position(3) ///
+>         ring(1) ///
+>         region(lcolor(none) fcolor(none)) ///
+>     ) ///
+>     note( ///
+>         "Cada ponto mostra o F médio do primeiro estágio em 250 repetições da simulação." ///
+>         "A linha vermelha indica a regra de bolso convencional abaixo da qual há indício de instrumento fraco.", ///
+>         size(vsmall) ///
+>     ) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_simulation_ffs, replace)
 
-. graph export "$FIGS/stata_fig08_simulation_ffs.png", replace width(2000)
-file
-    C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/figures/stata_f
-    > ig08_simulation_ffs.png saved as PNG format
+. 
+. graph export "$FIGS/stata_fig08_simulation_ffs.png", replace width(3200)
+(file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig08_simulation_ffs.png not found)
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig08_simulation_ffs.png saved as PNG
+    format
 
+. graph export "$FIGS/stata_fig08_simulation_ffs.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig08_simulation_ffs.pdf saved as PDF
+    format
+
+. 
 . di as text "[Stata] Gráfico salvo: output/figures/stata_fig08_simulation_ffs.png"
 [Stata] Gráfico salvo: output/figures/stata_fig08_simulation_ffs.png
+
+. di as text "[Stata] Gráfico salvo: output/figures/stata_fig08_simulation_ffs.pdf"
+[Stata] Gráfico salvo: output/figures/stata_fig08_simulation_ffs.pdf
+
+. * ============================================================
+. * Figura principal da Questão 14
+. * ============================================================
+. 
+. di as text _newline "[Stata] Questão 14: gerando visualização sintética da simulação"
+
+[Stata] Questão 14: gerando visualização sintética da simulação
+
+. 
+. use "$TABS/stata_question_14_simulation.dta", clear
+
+. 
+. * ------------------------------------------------------------
+. * Variáveis auxiliares apenas para o gráfico principal
+. * ------------------------------------------------------------
+. 
+. gen double vies_abs_2sls = abs(bias_iv)
+
+. gen double cobertura_pct = 100*coverage_95
+
+. 
+. label variable pi              "Força do instrumento: coeficiente do primeiro estágio"
+
+. label variable mean_iv         "Elasticidade-preço estimada por 2SLS"
+
+. label variable b_ols           "Elasticidade-preço estimada por MQO"
+
+. label variable vies_abs_2sls   "Viés absoluto do 2SLS"
+
+. label variable sd_iv           "Dispersão do estimador 2SLS"
+
+. label variable mean_f_fs       "Estatística F média do primeiro estágio"
+
+. label variable cobertura_pct   "Cobertura do IC convencional de 95%"
+
+. 
+. local xlabels 0.02 "0,02" 0.05 "0,05" 0.10 "0,10" 0.25 "0,25" 0.50 "0,50" 1.00 "1,00"
+
+. 
+. * ------------------------------------------------------------
+. * Painel A: estimativa média do parâmetro estrutural
+. * ------------------------------------------------------------
+. 
+. twoway ///
+>     (function y = -1, range(0.02 1) lcolor(gs8) lpattern(dot) lwidth(medthick)) ///
+>     (line mean_iv pi, sort lcolor(navy) lpattern(solid) lwidth(medthick)) ///
+>     (scatter mean_iv pi, mcolor(navy) msymbol(circle) msize(medium)) ///
+>     (line b_ols pi, sort lcolor(cranberry) lpattern(dash) lwidth(medthick)) ///
+>     (scatter b_ols pi, mcolor(cranberry) msymbol(triangle) msize(medium)), ///
+>     xscale(log) ///
+>     xlabel(`xlabels', labsize(vsmall)) ///
+>     ylabel(, labsize(vsmall)) ///
+>     yline(0, lcolor(gs12) lpattern(solid)) ///
+>     title("A. Estimativa média do parâmetro estrutural", size(small)) ///
+>     xtitle("Força do instrumento: coeficiente do primeiro estágio ({&pi})", size(vsmall)) ///
+>     ytitle("Elasticidade-preço ({&beta}{subscript:p})", size(vsmall) margin(small)) ///
+>     legend( ///
+>         order(1 "Valor verdadeiro: {&beta}{subscript:p} = -1" ///
+>               2 "Estimativa média por 2SLS" ///
+>               4 "Estimativa média por MQO") ///
+>         cols(1) ///
+>         size(vsmall) ///
+>         position(3) ///
+>         ring(1) ///
+>         region(lcolor(none) fcolor(none)) ///
+>     ) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_q14_media, replace)
+
+. 
+. * ------------------------------------------------------------
+. * Painel B: viés absoluto do 2SLS
+. * ------------------------------------------------------------
+. 
+. twoway ///
+>     (line vies_abs_2sls pi, sort lcolor(navy) lpattern(solid) lwidth(medthick)) ///
+>     (scatter vies_abs_2sls pi, mcolor(navy) msymbol(circle) msize(medium)), ///
+>     xscale(log) ///
+>     xlabel(`xlabels', labsize(vsmall)) ///
+>     ylabel(, labsize(vsmall)) ///
+>     title("B. Viés absoluto do estimador 2SLS", size(small)) ///
+>     xtitle("Força do instrumento: coeficiente do primeiro estágio ({&pi})", size(vsmall)) ///
+>     ytitle("Viés absoluto", size(vsmall) margin(small)) ///
+>     legend(off) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_q14_vies, replace)
+
+. 
+. * ------------------------------------------------------------
+. * Painel C: dispersão do estimador 2SLS
+. * ------------------------------------------------------------
+. 
+. twoway ///
+>     (line sd_iv pi, sort lcolor(forest_green) lpattern(solid) lwidth(medthick)) ///
+>     (scatter sd_iv pi, mcolor(forest_green) msymbol(circle) msize(medium)), ///
+>     xscale(log) ///
+>     xlabel(`xlabels', labsize(vsmall)) ///
+>     ylabel(, labsize(vsmall)) ///
+>     title("C. Dispersão do estimador 2SLS", size(small)) ///
+>     xtitle("Força do instrumento: coeficiente do primeiro estágio ({&pi})", size(vsmall)) ///
+>     ytitle("Desvio-padrão do 2SLS", size(vsmall) margin(small)) ///
+>     legend(off) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_q14_dispersao, replace)
+
+. 
+. * ------------------------------------------------------------
+. * Painel D: cobertura dos intervalos convencionais
+. * ------------------------------------------------------------
+. 
+. twoway ///
+>     (function y = 95, range(0.02 1) lcolor(gs8) lpattern(dot) lwidth(medthick)) ///
+>     (line cobertura_pct pi, sort lcolor(maroon) lpattern(solid) lwidth(medthick)) ///
+>     (scatter cobertura_pct pi, mcolor(maroon) msymbol(circle) msize(medium)), ///
+>     xscale(log) ///
+>     xlabel(`xlabels', labsize(vsmall)) ///
+>     ylabel(90(2)100, labsize(vsmall)) ///
+>     title("D. Cobertura do intervalo convencional de 95%", size(small)) ///
+>     xtitle("Força do instrumento: coeficiente do primeiro estágio ({&pi})", size(vsmall)) ///
+>     ytitle("Cobertura do IC 95% (%)", size(vsmall) margin(small)) ///
+>     legend( ///
+>         order(1 "Cobertura nominal de 95%" ///
+>               2 "Cobertura observada na simulação") ///
+>         cols(1) ///
+>         size(vsmall) ///
+>         position(3) ///
+>         ring(1) ///
+>         region(lcolor(none) fcolor(none)) ///
+>     ) ///
+>     graphregion(color(white)) ///
+>     plotregion(color(white)) ///
+>     name(g_q14_cobertura, replace)
+
+. 
+. * ------------------------------------------------------------
+. * Figura combinada
+. * ------------------------------------------------------------
+. 
+. graph combine ///
+>     g_q14_media ///
+>     g_q14_vies ///
+>     g_q14_dispersao ///
+>     g_q14_cobertura, ///
+>     cols(2) ///
+>     imargin(5 10 5 10) ///
+>     iscale(0.82) ///
+>     xsize(14) ///
+>     ysize(8) ///
+>     title("Simulação de instrumentos fracos e desempenho do estimador 2SLS", size(medsmall)) ///
+>     subtitle("À esquerda do eixo horizontal, o instrumento é mais fraco; à direita, mais forte", size(vsmall)) ///
+>     note( ///
+>         "A força do instrumento é medida pelo coeficiente do primeiro estágio ({&pi}) na equação simulada." ///
+>         "O parâmetro estrutural verdadeiro é {&beta}{subscript:p} = -1." ///
+>         "Quando o instrumento enfraquece, o 2SLS fica mais viesado, mais disperso e a inferência convencional torna-se
+>  menos confiável.", ///
+>         size(vsmall) ///
+>     ) ///
+>     graphregion(color(white)) ///
+>     name(g_q14_simulacao_final, replace)
+
+. 
+. graph export "$FIGS/stata_fig09_q14_simulacao_instrumentos_fracos.png", ///
+>     replace width(4200)
+(file
+    C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig09_q14_simulacao_instrumentos_fracos.p
+    > ng not found)
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig09_q14_simulacao_instrumentos_fracos.p
+    > ng saved as PNG format
+
+. 
+. graph export "$FIGS/stata_fig09_q14_simulacao_instrumentos_fracos.pdf", ///
+>     replace
+file
+    C:\Users\B03531855158\Documents\Replication\Códigos/output/figures/stata_fig09_q14_simulacao_instrumentos_fracos.p
+    > df saved as PDF format
+
+. 
+. di as text "[Stata] Figura salva em PNG: output/figures/stata_fig09_q14_simulacao_instrumentos_fracos.png"
+[Stata] Figura salva em PNG: output/figures/stata_fig09_q14_simulacao_instrumentos_fracos.png
+
+. di as text "[Stata] Figura salva em PDF: output/figures/stata_fig09_q14_simulacao_instrumentos_fracos.pdf"
+[Stata] Figura salva em PDF: output/figures/stata_fig09_q14_simulacao_instrumentos_fracos.pdf
 
 . 
 end of do-file
 
 . 
-. di as text "[Stata] FIM DA REPLICAÇÃO EM STATA"
-[Stata] FIM DA REPLICAÇÃO EM STATA
+. di as result _newline "[Stata] REPLICAÇÃO FINALIZADA COM SUCESSO"
 
-. log close _all
-      name:  <unnamed>
-       log:  C:\Users\B03531855158\Documents\Replication\lista1EI_replication_package_v4_downloads_plots/output/logs/sta
-> ta_master.log
-  log type:  text
- closed on:  14 May 2026, 21:09:29
-------------------------------------------------------------------------------------------------------------------------
+[Stata] REPLICAÇÃO FINALIZADA COM SUCESSO
+
+. 
+. cap log close _all

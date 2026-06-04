@@ -24,6 +24,10 @@
      F_usual p_F F_eff cv5 cv10 cv20 hansen_J hansen_p
 ********************************************************************/
 
+
+* Carrega configuração se o script for rodado individualmente.
+do "Stata/_load_config_if_needed.do"
+
 use "$PROC/chicken_prepared_stata.dta", clear
 
 di as text _newline "[Stata] Questões 6, 8, 9 e 10: Z1-Z7, primeiro estágio, 2SLS, weakivtest e Hansen J"
@@ -188,3 +192,248 @@ di as text "[Stata] Tabela salva: output/tables/stata_question_08_first_stage_al
 use "$TABS/stata_question_09_comparative.dta", clear
 export delimited using "$TABS/stata_question_09_comparative.csv", replace
 di as text "[Stata] Tabela salva: output/tables/stata_question_09_comparative.csv"
+
+
+/********************************************************************
+ Questão 10: Teste J de Hansen para modelos sobreidentificados
+
+ Gera:
+   - Tabela CSV com estatística J, graus de liberdade e valor-p
+   - Tabela LaTeX pronta para Overleaf
+   - Gráfico dos valores-p do teste J de Hansen
+********************************************************************/
+
+di as text _newline "[Stata] Questão 10: gerando tabela e gráfico do teste J de Hansen"
+
+* ------------------------------------------------------------
+* Carrega config se necessário
+* ------------------------------------------------------------
+
+local procdir "$PROC"
+
+if `"`procdir'"' == "" {
+    di as text "[Stata] Globais ainda não carregados. Tentando rodar Stata/config.do..."
+
+    capture noisily do "Stata/config.do"
+
+    if _rc {
+        di as error "[Stata] Não consegui carregar Stata/config.do."
+        di as error "[Stata] Rode o projeto a partir da pasta raiz ou ajuste o caminho do config.do."
+        exit 601
+    }
+}
+
+capture mkdir "$TABS"
+capture mkdir "$FIGS"
+
+* ------------------------------------------------------------
+* Garante que a tabela comparativa exista
+* ------------------------------------------------------------
+
+capture confirm file "$TABS/stata_question_09_comparative.csv"
+
+if _rc {
+    di as text "[Stata] Tabela comparativa não encontrada. Rodando 04_alt_instruments_weakiv.do..."
+    do "Stata/04_alt_instruments_weakiv.do"
+}
+
+* ------------------------------------------------------------
+* Importa resultados da questão 9
+* ------------------------------------------------------------
+
+import delimited "$TABS/stata_question_09_comparative.csv", clear
+
+* ------------------------------------------------------------
+* Limpa variáveis auxiliares caso já existam no CSV
+* ------------------------------------------------------------
+
+capture drop modelo
+capture drop k_instr
+capture drop hansen_df
+capture drop hansen_p
+capture drop decisao_5
+capture drop instrumentos
+capture drop ordem
+
+* ------------------------------------------------------------
+* Garante tipos numéricos
+* ------------------------------------------------------------
+
+foreach v in hansen_j {
+    capture confirm numeric variable `v'
+    if _rc {
+        destring `v', replace force
+    }
+}
+
+* ------------------------------------------------------------
+* Padroniza nome do modelo
+* ------------------------------------------------------------
+
+capture confirm variable model
+if _rc {
+    di as error "[Stata] A variável 'model' não foi encontrada em stata_question_09_comparative.csv."
+    exit 111
+}
+
+gen str10 modelo = upper(model)
+
+* ------------------------------------------------------------
+* Mantém apenas modelos sobreidentificados
+* Z1 e Z4 são exatamente identificados: não têm Hansen J
+* ------------------------------------------------------------
+
+keep if inlist(modelo, "Z2", "Z3", "Z5", "Z6", "Z7")
+
+* ------------------------------------------------------------
+* Número de instrumentos excluídos por especificação
+* Como há uma variável endógena, gl = k_instr - 1
+* ------------------------------------------------------------
+
+gen k_instr = .
+replace k_instr = 2 if modelo == "Z2"
+replace k_instr = 3 if modelo == "Z3"
+replace k_instr = 2 if modelo == "Z5"
+replace k_instr = 2 if modelo == "Z6"
+replace k_instr = 4 if modelo == "Z7"
+
+gen hansen_df = k_instr - 1
+
+* ------------------------------------------------------------
+* Valor-p do teste J de Hansen
+* Sob H0, J ~ qui-quadrado(gl)
+* ------------------------------------------------------------
+
+gen double hansen_p = chi2tail(hansen_df, hansen_j)
+
+gen str20 decisao_5 = ""
+replace decisao_5 = "Rejeita H0" if hansen_p < 0.05
+replace decisao_5 = "Não rejeita H0" if hansen_p >= 0.05
+
+* ------------------------------------------------------------
+* Rótulos dos instrumentos
+* ------------------------------------------------------------
+
+gen str100 instrumentos = ""
+replace instrumentos = "{z_t, z_t^2}" if modelo == "Z2"
+replace instrumentos = "{z_t, z_t^2, z_t^3}" if modelo == "Z3"
+replace instrumentos = "{z_{t-1}, z_{t-1}^2}" if modelo == "Z5"
+replace instrumentos = "{z_t, z_{t-1}}" if modelo == "Z6"
+replace instrumentos = "{z_t, z_t^2, z_{t-1}, z_{t-1}^2}" if modelo == "Z7"
+
+* ------------------------------------------------------------
+* Organiza e salva tabela em CSV
+* ------------------------------------------------------------
+
+keep modelo instrumentos hansen_j hansen_df hansen_p decisao_5
+sort modelo
+
+format hansen_j %9.3f
+format hansen_p %9.4f
+
+export delimited using "$TABS/stata_question_10_hansen_overid.csv", replace
+
+di as text "[Stata] Tabela CSV salva em:"
+di as text "$TABS/stata_question_10_hansen_overid.csv"
+
+* ------------------------------------------------------------
+* Gera tabela LaTeX
+* ------------------------------------------------------------
+
+tempname fh
+file open `fh' using "$TABS/stata_question_10_hansen_overid.tex", write replace text
+
+file write `fh' "\begin{table}[H]" _n
+file write `fh' "    \centering" _n
+file write `fh' "    \small" _n
+file write `fh' "    \caption{Teste \$J\$ de Hansen para modelos sobreidentificados}" _n
+file write `fh' "    \label{tab:hansen_sobreidentificados}" _n
+file write `fh' "    \setlength{\tabcolsep}{5pt}" _n
+file write `fh' "    \begin{tabular}{lcccc}" _n
+file write `fh' "        \hline" _n
+file write `fh' "        Modelo & Instrumentos excluídos & Hansen \$J\$ & gl & Valor-\$p\$ \\" _n
+file write `fh' "        \hline" _n
+
+forvalues i = 1/`=_N' {
+    local m   = modelo[`i']
+    local ins = instrumentos[`i']
+    local j   : display %9.3f hansen_j[`i']
+    local gl  : display %2.0f hansen_df[`i']
+    local pv  : display %9.4f hansen_p[`i']
+
+    local j  = strtrim("`j'")
+    local gl = strtrim("`gl'")
+    local pv = strtrim("`pv'")
+
+    * troca ponto por vírgula para padrão brasileiro
+    local j  = subinstr("`j'", ".", ",", .)
+    local pv = subinstr("`pv'", ".", ",", .)
+
+    file write `fh' "        \$`m'\$ & \$`ins'\$ & `j' & `gl' & `pv' \\" _n
+}
+
+file write `fh' "        \hline" _n
+file write `fh' "    \end{tabular}" _n
+file write `fh' "" _n
+file write `fh' "    \vspace{0.3em}" _n
+file write `fh' "    \begin{minipage}{0.92\textwidth}" _n
+file write `fh' "    \footnotesize" _n
+file write `fh' "    Nota: \$gl\$ indica os graus de liberdade do teste, dados pelo número de instrumentos excluídos menos o número de variáveis endógenas. Os modelos \$Z_1\$ e \$Z_4\$ são exatamente identificados e, por isso, não possuem restrições sobreidentificadoras a serem testadas." _n
+file write `fh' "    \end{minipage}" _n
+file write `fh' "\end{table}" _n
+
+file close `fh'
+
+di as text "[Stata] Tabela LaTeX salva em:"
+di as text "$TABS/stata_question_10_hansen_overid.tex"
+
+* ------------------------------------------------------------
+* Gráfico dos valores-p do teste J de Hansen
+* ------------------------------------------------------------
+
+gen ordem = .
+replace ordem = 1 if modelo == "Z2"
+replace ordem = 2 if modelo == "Z3"
+replace ordem = 3 if modelo == "Z5"
+replace ordem = 4 if modelo == "Z6"
+replace ordem = 5 if modelo == "Z7"
+
+twoway ///
+    (bar hansen_p ordem, ///
+        barwidth(0.55) ///
+        fcolor(navy%65) ///
+        lcolor(navy)) ///
+    (function y = 0.05, ///
+        range(0.5 5.5) ///
+        lcolor(cranberry) ///
+        lpattern(dash) ///
+        lwidth(medthick)), ///
+    xlabel(1 "Z2" 2 "Z3" 3 "Z5" 4 "Z6" 5 "Z7", labsize(small)) ///
+    ylabel(0(0.05)0.20, labsize(small)) ///
+    title("Teste J de Hansen: valor-p por especificação", size(medsmall)) ///
+    subtitle("Modelos sobreidentificados", size(small)) ///
+    xtitle("Conjunto de instrumentos", size(small)) ///
+    ytitle("Valor-p do teste J de Hansen", size(small)) ///
+    legend( ///
+        order(1 "Valor-p observado" ///
+              2 "Nível de significância de 5%") ///
+        cols(1) ///
+        size(small) ///
+        position(3) ///
+        ring(1) ///
+        region(lcolor(none) fcolor(none)) ///
+    ) ///
+    note("Valores abaixo de 0,05 indicam rejeição da validade conjunta das restrições sobreidentificadoras.", ///
+        size(vsmall)) ///
+    graphregion(color(white)) ///
+    plotregion(color(white)) ///
+    name(g_hansen_pvalues, replace)
+
+graph export "$FIGS/stata_fig12_hansen_pvalues.png", replace width(3000)
+graph export "$FIGS/stata_fig12_hansen_pvalues.pdf", replace
+
+di as text "[Stata] Gráfico salvo em PNG:"
+di as text "$FIGS/stata_fig12_hansen_pvalues.png"
+
+di as text "[Stata] Gráfico salvo em PDF:"
+di as text "$FIGS/stata_fig12_hansen_pvalues.pdf"

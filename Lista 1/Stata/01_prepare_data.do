@@ -2,6 +2,10 @@
  Questões preparatórias: importa dados, corrige escala e cria variáveis
 ********************************************************************/
 
+
+* Carrega configuração se o script for rodado individualmente.
+do "Stata/_load_config_if_needed.do"
+
 clear
 
 di as text _newline "[Stata] Preparação dos dados: iniciando"

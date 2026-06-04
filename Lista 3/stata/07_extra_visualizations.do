@@ -11,6 +11,13 @@ COMENTÁRIOS DETALHADOS
 07 - Visualizações extras para enriquecer a resposta
 ****************************************************************************************/
 
+
+/****************************************************************************************
+Rótulos matemáticos para gráficos do Stata via SMCL.
+****************************************************************************************/
+local L_XI `"{&xi}{subscript:j} estimado"'
+local L_SHARE_AGG `"Market share agregado"'
+
 use "$OUTDATA/prepared_data_stata.dta", clear
 
 * extra_01: concentração de market share por firma.
@@ -18,7 +25,7 @@ preserve
     collapse (sum) share, by(firm)
     graph hbar share, over(firm, sort(share) descending label(labsize(vsmall))) ///
         title("Concentração de market share por firma") ///
-        ytitle("Share agregado")
+        ytitle("`L_SHARE_AGG'")
     graph export "$FIGPDF/extra_01_firm_share_concentration.pdf", replace
     graph export "$FIGPNG/extra_01_firm_share_concentration.png", replace width(2400)
 restore
@@ -28,7 +35,7 @@ preserve
     collapse (sum) share, by(segment)
     graph bar share, over(segment, label(labsize(small))) ///
         title("Tamanho dos nests") ///
-        ytitle("Share agregado")
+        ytitle("`L_SHARE_AGG'")
     graph export "$FIGPDF/extra_02_nest_sizes.pdf", replace
     graph export "$FIGPNG/extra_02_nest_sizes.png", replace width(2400)
 restore
@@ -70,17 +77,17 @@ graph export "$FIGPNG/extra_04_instrument_correlation_matrix.png", replace width
 use "$OUTDATA/stata_after_simple_gmm.dta", clear
 twoway (scatter xi_gmm_both price) (lfit xi_gmm_both price), ///
     yline(0) ///
-    title("Resíduos estruturais e preço") ///
+    title("Resíduos estruturais ({&xi}{subscript:j}) e preço") ///
     xtitle("Preço de transação") ///
-    ytitle("Resíduo estrutural estimado") ///
+    ytitle("`L_XI'") ///
     legend(off)
 graph export "$FIGPDF/extra_05_structural_residuals_vs_price.pdf", replace
 graph export "$FIGPNG/extra_05_structural_residuals_vs_price.png", replace width(2400)
 
 * extra_06: resíduos estruturais por firma.
 graph box xi_gmm_both, over(firm, label(labsize(vsmall))) ///
-    title("Resíduos estruturais por firma") ///
-    ytitle("Resíduo estrutural")
+    title("Resíduos estruturais ({&xi}{subscript:j}) por firma") ///
+    ytitle("`L_XI'")
 graph export "$FIGPDF/extra_06_structural_residuals_by_firm.pdf", replace
 graph export "$FIGPNG/extra_06_structural_residuals_by_firm.png", replace width(2400)
 

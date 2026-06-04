@@ -1,0 +1,24 @@
+\begin{table}[H]
+    \centering
+    \small
+    \caption{Teste $J$ de Hansen para modelos sobreidentificados}
+    \label{tab:hansen_sobreidentificados}
+    \setlength{\tabcolsep}{5pt}
+    \begin{tabular}{lcccc}
+        \hline
+        Modelo & Instrumentos excluídos & Hansen $J$ & gl & Valor-$p$ \\
+        \hline
+        $Z2$ & ${z_t, z_t^2}$ & 14,592 & 1 & 0,0001 \\
+        $Z3$ & ${z_t, z_t^2, z_t^3}$ & 14,683 & 2 & 0,0006 \\
+        $Z5$ & ${z_{t-1}, z_{t-1}^2}$ & 14,519 & 1 & 0,0001 \\
+        $Z6$ & ${z_t, z_{t-1}}$ & 1,996 & 1 & 0,1577 \\
+        $Z7$ & ${z_t, z_t^2, z_{t-1}, z_{t-1}^2}$ & 15,699 & 3 & 0,0013 \\
+        \hline
+    \end{tabular}
+
+    \vspace{0.3em}
+    \begin{minipage}{0.92\textwidth}
+    \footnotesize
+    Nota: $gl$ indica os graus de liberdade do teste, dados pelo número de instrumentos excluídos menos o número de variáveis endógenas. Os modelos $Z_1$ e $Z_4$ são exatamente identificados e, por isso, não possuem restrições sobreidentificadoras a serem testadas.
+    \end{minipage}
+\end{table}

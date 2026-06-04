@@ -27,6 +27,10 @@
    - grid_min / grid_max: grade final efetivamente avaliada.
 ********************************************************************/
 
+
+* Carrega configuração se o script for rodado individualmente.
+do "Stata/_load_config_if_needed.do"
+
 use "$PROC/chicken_prepared_stata.dta", clear
 
 di as text _newline "[Stata] Questão 11: intervalos Anderson-Rubin com grade adaptativa e detecção de cauda aberta"

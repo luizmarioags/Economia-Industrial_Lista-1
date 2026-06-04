@@ -7,43 +7,74 @@ set more off
 
 di as text _newline "[Stata] INÍCIO DA REPLICAÇÃO EM STATA"
 
-* Carrega caminhos, pastas e dependências.
+* ------------------------------------------------------------
+* Carrega caminhos, pastas e dependências
+* ------------------------------------------------------------
+
 di as text "[Stata] Rodando Stata/config.do: caminhos, pastas e dependências"
 do "Stata/config.do"
 
-* Abre log geral da execução.
+* ------------------------------------------------------------
+* Abre log geral da execução
+* Se o log antigo estiver travado ou somente leitura, cria log alternativo
+* ------------------------------------------------------------
+
 cap log close _all
-log using "$LOGS/stata_master.log", replace text
 
-di as text "[Stata] Log geral aberto em output/logs/stata_master.log"
+capture log using "$LOGS/stata_master.log", replace text
 
-* Prepara a base e constrói variáveis da lista.
-di as text "[Stata] Rodando Stata/01_prepare_data.do: importação, correção de escala e criação de variáveis"
+if _rc {
+    di as error "[Stata] Não consegui sobrescrever $LOGS/stata_master.log"
+    di as error "[Stata] O arquivo pode estar aberto, travado ou como somente leitura."
+    di as text  "[Stata] Tentando criar log alternativo com data e hora..."
+
+    local data_log = subinstr("`c(current_date)'", " ", "_", .)
+    local hora_log = subinstr("`c(current_time)'", ":", "", .)
+    local hora_log = subinstr("`hora_log'", ".", "", .)
+
+    local log_alt "$LOGS/stata_master_`data_log'_`hora_log'.log"
+
+    capture log using "`log_alt'", replace text
+
+    if _rc {
+        di as error "[Stata] Também não consegui criar log alternativo."
+        di as error "[Stata] A replicação continuará sem log geral."
+    }
+    else {
+        di as text "[Stata] Log alternativo criado em:"
+        di as text "`log_alt'"
+    }
+}
+else {
+    di as text "[Stata] Log geral criado em:"
+    di as text "$LOGS/stata_master.log"
+}
+
+* ------------------------------------------------------------
+* Roda os scripts na ordem correta
+* ------------------------------------------------------------
+
+di as text _newline "[Stata] Rodando 01_prepare_data.do"
 do "Stata/01_prepare_data.do"
 
-* Resolve as questões 1, 3 e 4.
-di as text "[Stata] Rodando Stata/02_ols_iv_first_stage.do: MQO, 2SLS Z1 e primeiro estágio"
+di as text _newline "[Stata] Rodando 02_ols_iv_first_stage.do"
 do "Stata/02_ols_iv_first_stage.do"
 
-* Resolve a questão 5: GMM e Hansen J.
-di as text "[Stata] Rodando Stata/03_gmm_hansen.do: GMM e Hansen J"
+di as text _newline "[Stata] Rodando 03_gmm_hansen.do"
 do "Stata/03_gmm_hansen.do"
 
-* Resolve as questões 6, 8, 9 e 10: weakivtest e tabela comparativa.
-di as text "[Stata] Rodando Stata/04_alt_instruments_weakiv.do: Z1-Z7, weakivtest e tabela comparativa"
+di as text _newline "[Stata] Rodando 04_alt_instruments_weakiv.do"
 do "Stata/04_alt_instruments_weakiv.do"
 
-* Resolve a questão 11: intervalos Anderson-Rubin por grade.
-di as text "[Stata] Rodando Stata/05_ar_intervals.do: intervalos Anderson-Rubin"
+di as text _newline "[Stata] Rodando 05_ar_intervals.do"
 do "Stata/05_ar_intervals.do"
 
-* Gera gráficos auxiliares para interpretação e heterocedasticidade.
-di as text "[Stata] Rodando Stata/06_visualizations.do: gráficos auxiliares"
+di as text _newline "[Stata] Rodando 06_visualizations.do"
 do "Stata/06_visualizations.do"
 
-* Resolve a questão 14: simulação de instrumentos fracos.
-di as text "[Stata] Rodando Stata/07_simulation_weak_instruments.do: simulação de instrumentos fracos"
+di as text _newline "[Stata] Rodando 07_simulation_weak_instruments.do"
 do "Stata/07_simulation_weak_instruments.do"
 
-di as text "[Stata] FIM DA REPLICAÇÃO EM STATA"
-log close _all
+di as result _newline "[Stata] REPLICAÇÃO FINALIZADA COM SUCESSO"
+
+cap log close _all

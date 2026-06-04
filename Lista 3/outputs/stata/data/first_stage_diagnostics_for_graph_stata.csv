@@ -1,4 +1,4 @@
 endogenous_variable,robust_Wald_F_manual
-price_simple,2.27545
-price_nested,4.4294558
-ln_share_within_nest,13.337846
+price_simple,1.0705236
+price_nested,3.0907617
+ln(s_j|g),6.2029123

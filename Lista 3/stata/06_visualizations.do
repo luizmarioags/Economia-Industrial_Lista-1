@@ -12,12 +12,31 @@ COMENTÁRIOS DETALHADOS
 06 - Gráficos principais em PDF e PNG
 ****************************************************************************************/
 
+
+/****************************************************************************************
+Rótulos matemáticos para gráficos do Stata
+- O Stata não renderiza LaTeX diretamente em títulos/eixos.
+- Para obter saída tipográfica semelhante ao LaTeX nos PDFs/PNGs, usamos SMCL:
+  {&delta}, {&alpha}, {&xi}, {&epsilon}, {it:...}, {subscript:...} etc.
+****************************************************************************************/
+local L_DELTA `"{&delta}{subscript:j} = ln({it:s}{subscript:j}) - ln({it:s}{subscript:0})"'
+local L_PRICECOEF `"Coeficiente do preço (= -{&alpha})"'
+local L_EJK `"{&epsilon}{subscript:jk}"'
+local L_EJJ `"{&epsilon}{subscript:jj}"'
+local L_XI `"{&xi}{subscript:j} estimado"'
+local L_SJ `"{it:s}{subscript:j} previsto"'
+local L_SOBS `"{it:s}{subscript:j} observado"'
+local L_VREL `"{it:V}{subscript:j} - ln({it:C}{subscript:j})"'
+local L_DSDP `"d{it:s}{subscript:j}/d{it:p}{subscript:j}"'
+local L_PRICEJ `"{it:p}{subscript:j} simulado"'
+local L_SHARE `"Market share ({it:s}{subscript:j})"'
+
 * 1. Share vs preço, com rótulos de produto para inspeção de outliers.
 use "$OUTDATA/prepared_data_stata.dta", clear
 twoway (scatter share price, mlabel(product) mlabsize(vsmall)), ///
     title("Share e preço por segmento") ///
     xtitle("Preço de transação") ///
-    ytitle("Market share interno") ///
+    ytitle("`L_SHARE'") ///
     legend(off)
 graph export "$FIGPDF/01_share_vs_transaction_price.pdf", replace
 graph export "$FIGPNG/01_share_vs_transaction_price.png", replace width(2400)
@@ -41,7 +60,7 @@ graph export "$FIGPNG/03_price_by_segment.png", replace width(2400)
 twoway (scatter delta price) (lfit delta price), ///
     title("Inversão logit de Berry e preço") ///
     xtitle("Preço de transação") ///
-    ytitle("delta = ln(s_j)-ln(s_0)") ///
+    ytitle("`L_DELTA'") ///
     legend(off)
 graph export "$FIGPDF/04_delta_vs_price.pdf", replace
 graph export "$FIGPNG/04_delta_vs_price.png", replace width(2400)
@@ -68,7 +87,7 @@ use `pricecomp', clear
 export delimited using "$OUTDATA/price_parameter_comparison_stata_graph.csv", replace
 graph hbar price_coef, over(model, label(labsize(tiny))) ///
     title("Comparação das estimativas de preço") ///
-    ytitle("Coeficiente do preço (= -alpha)")
+    ytitle("`L_PRICECOEF'")
 graph export "$FIGPDF/05_price_coefficient_comparison.pdf", replace
 graph export "$FIGPNG/05_price_coefficient_comparison.png", replace width(2400)
 
@@ -106,8 +125,8 @@ reshape long e, i(row) j(col)
 gen label_e = string(e, "%4.2f")
 twoway (scatter row col, msymbol(square) msize(large)) ///
        (scatter row col, msymbol(none) mlabel(label_e) mlabsize(tiny)), ///
-       title("Matriz de elasticidades-preço - subconjunto") ///
-       xtitle("Produto k") ytitle("Produto j") ///
+       title("Matriz de elasticidades-preço ({&epsilon}{subscript:jk})") ///
+       xtitle("Produto {it:k}") ytitle("Produto {it:j}") ///
        xlabel(1(1)12, labsize(vsmall)) ylabel(1(1)12, labsize(vsmall)) ///
        legend(off)
 graph export "$FIGPDF/06_elasticity_matrix_subset.pdf", replace
@@ -117,24 +136,24 @@ graph export "$FIGPNG/06_elasticity_matrix_subset.png", replace width(2400)
 import delimited "$TABCsv/05_own_elasticities_simple_logit.csv", clear varnames(1)
 gsort own_elasticity_simple_logit
 graph hbar own_elasticity_simple_logit in 1/15, over(product, label(labsize(vsmall))) ///
-    title("Elasticidades próprias mais intensas") ///
-    ytitle("Elasticidade própria")
+    title("Elasticidades próprias mais intensas ({&epsilon}{subscript:jj})") ///
+    ytitle("`L_EJJ'")
 graph export "$FIGPDF/07_own_price_elasticities.pdf", replace
 graph export "$FIGPNG/07_own_price_elasticities.png", replace width(2400)
 
 * 18. Distribuição das elasticidades próprias: histograma + densidade kernel.
 histogram own_elasticity_simple_logit, density kdensity ///
     xline(0) ///
-    title("Distribuição das elasticidades próprias") ///
-    xtitle("Elasticidade própria") ///
+    title("Distribuição das elasticidades próprias ({&epsilon}{subscript:jj})") ///
+    xtitle("`L_EJJ'") ///
     ytitle("Densidade")
 graph export "$FIGPDF/18_own_elasticity_hist_density.pdf", replace
 graph export "$FIGPNG/18_own_elasticity_hist_density.png", replace width(2400)
 
 * 20. Boxplot das elasticidades próprias.
 graph box own_elasticity_simple_logit, ///
-    title("Boxplot das elasticidades próprias") ///
-    ytitle("Elasticidade própria")
+    title("Boxplot das elasticidades próprias ({&epsilon}{subscript:jj})") ///
+    ytitle("`L_EJJ'")
 graph export "$FIGPDF/20_own_elasticity_boxplot.pdf", replace
 graph export "$FIGPNG/20_own_elasticity_boxplot.png", replace width(2400)
 
@@ -193,7 +212,7 @@ set obs 3
 gen str32 endogenous_variable = ""
 replace endogenous_variable = "price_simple" in 1
 replace endogenous_variable = "price_nested" in 2
-replace endogenous_variable = "ln_share_within_nest" in 3
+replace endogenous_variable = "ln(s_j|g)" in 3
 gen robust_Wald_F_manual = .
 replace robust_Wald_F_manual = F_simple in 1
 replace robust_Wald_F_manual = F_nested_price in 2
@@ -233,17 +252,41 @@ scalar bfatlogit = _b[/bfat]
 scalar bsugarlogit = _b[/bsugar]
 scalar pricecoeflogit = _b[/bp]
 
+/*
+Correção para os gráficos de curva de demanda e efeito marginal:
+- Em Stata, pricecoeflogit é o coeficiente estimado diretamente sobre price.
+- Pela notação da lista, esse coeficiente corresponde a -alpha.
+- Como as curvas didáticas 12, 13 e 17 devem representar demanda decrescente,
+  usamos alpha_plot_logit = abs(pricecoeflogit) e a inclinação simulada
+  price_slope_plot = -alpha_plot_logit.
+- Se o coeficiente estimado vier positivo por ruído/endogeneidade/fragilidade dos
+  instrumentos, o gráfico deixa isso registrado em nota, mas não desenha uma
+  curva de demanda positivamente inclinada.
+*/
+scalar alpha_plot_logit = abs(pricecoeflogit)
+scalar price_slope_plot = -alpha_plot_logit
+
+local note_slope "Inclinação do preço usada nas curvas: -|coeficiente estimado do preço|, garantindo demanda decrescente."
+if (pricecoeflogit < 0) {
+    local note_slope "Inclinação do preço usada nas curvas igual ao coeficiente estimado, pois ele já é negativo."
+}
+
 gen v_no_price = b0logit + bcalslogit*cals + bfatlogit*fat + bsugarlogit*sugar
 gen vhat_logit = v_no_price + pricecoeflogit*price
 gen expv_logit = exp(vhat_logit)
 egen total_exp_logit = total(expv_logit)
 gen share_pred_logit = expv_logit/(1 + total_exp_logit)
 
+* Intercepto ajustado para curvas didáticas decrescentes, preservando o
+* índice médio previsto no preço observado de cada produto.
+gen v_intercept_plot = vhat_logit - price_slope_plot*price
+
 gsort -share
 scalar focal_vhat = vhat_logit[1]
 scalar focal_price = price[1]
 scalar focal_share = share[1]
 scalar focal_v_no_price = v_no_price[1]
+scalar focal_v_intercept_plot = v_intercept_plot[1]
 scalar focal_expv = expv_logit[1]
 scalar total_exp_scalar = total_exp_logit[1]
 scalar C_focal = 1 + total_exp_scalar - focal_expv
@@ -258,8 +301,8 @@ preserve
     gen share_pred = 1/(1 + exp(-rel_grid))
     twoway (line share_pred rel_grid), ///
         title("Curva clássica do logit - produto focal") ///
-        xtitle("Utilidade relativa V_j - ln(C_j)") ///
-        ytitle("Share previsto")
+        xtitle("`L_VREL'") ///
+        ytitle("`L_SJ'")
     graph export "$FIGPDF/11_classic_logit_curve_share_vs_utility.pdf", replace
     graph export "$FIGPNG/11_classic_logit_curve_share_vs_utility.png", replace width(2400)
 restore
@@ -271,12 +314,13 @@ preserve
     clear
     set obs 250
     gen price_grid = p_low + (_n - 1)*((p_high - p_low)/249)
-    gen v_price = focal_v_no_price + pricecoeflogit*price_grid
+    gen v_price = focal_v_intercept_plot + price_slope_plot*price_grid
     gen share_pred = exp(v_price)/(C_focal + exp(v_price))
     twoway (line share_pred price_grid), ///
         title("Resposta do share ao preço - produto focal") ///
-        xtitle("Preço simulado do produto focal") ///
-        ytitle("Share previsto")
+        xtitle("`L_PRICEJ'") ///
+        ytitle("`L_SJ'") ///
+        note("`note_slope'", size(vsmall))
     graph export "$FIGPDF/12_focal_product_share_vs_price.pdf", replace
     graph export "$FIGPNG/12_focal_product_share_vs_price.png", replace width(2400)
 restore
@@ -286,14 +330,19 @@ preserve
     clear
     set obs 250
     gen price_grid = p_low + (_n - 1)*((p_high - p_low)/249)
-    gen v_price = focal_v_no_price + pricecoeflogit*price_grid
+    gen v_price = focal_v_intercept_plot + price_slope_plot*price_grid
     gen share_pred = exp(v_price)/(C_focal + exp(v_price))
-    gen marginal_effect = pricecoeflogit*share_pred*(1-share_pred)
+
+    * Efeito marginal próprio correto: ds_j/dp_j = -alpha*s_j*(1-s_j).
+    * Como price_slope_plot = -alpha_plot_logit < 0, a curva fica abaixo de zero.
+    gen marginal_effect = price_slope_plot*share_pred*(1-share_pred)
+
     twoway (line marginal_effect price_grid), ///
-        yline(0) ///
+        yline(0, lpattern(dash)) ///
         title("Efeito marginal do preço - produto focal") ///
-        xtitle("Preço simulado do produto focal") ///
-        ytitle("Efeito marginal ds_j/dp_j")
+        xtitle("`L_PRICEJ'") ///
+        ytitle("`L_DSDP'") ///
+        note("`note_slope'", size(vsmall))
     graph export "$FIGPDF/13_focal_product_marginal_effect_vs_price.pdf", replace
     graph export "$FIGPNG/13_focal_product_marginal_effect_vs_price.png", replace width(2400)
 restore
@@ -311,8 +360,8 @@ local lo = min(`min_obs', `min_pred')
 local hi = max(`max_obs', `max_pred')
 twoway (scatter share share_pred_logit) (function y=x, range(`lo' `hi')), ///
     title("Share observado versus previsto") ///
-    xtitle("Share previsto pelo logit simples") ///
-    ytitle("Share observado") ///
+    xtitle("`L_SJ'") ///
+    ytitle("`L_SOBS'") ///
     legend(off)
 graph export "$FIGPDF/14_observed_vs_predicted_shares_simple_logit.pdf", replace
 graph export "$FIGPNG/14_observed_vs_predicted_shares_simple_logit.png", replace width(2400)
@@ -320,23 +369,23 @@ graph export "$FIGPNG/14_observed_vs_predicted_shares_simple_logit.png", replace
 * 15. Histograma dos resíduos estruturais com curva de densidade kernel.
 histogram xi_gmm_both, density kdensity ///
     xline(0) ///
-    title("Distribuição dos resíduos estruturais") ///
-    xtitle("Resíduo estrutural estimado") ///
+    title("Distribuição dos resíduos estruturais ({&xi}{subscript:j})") ///
+    xtitle("`L_XI'") ///
     ytitle("Densidade")
 graph export "$FIGPDF/15_structural_residual_hist_density.pdf", replace
 graph export "$FIGPNG/15_structural_residual_hist_density.png", replace width(2400)
 
 * 16. QQ plot dos resíduos estruturais.
 qnorm xi_gmm_both, ///
-    title("QQ plot dos resíduos estruturais") ///
-    ytitle("Quantis dos resíduos") ///
+    title("QQ plot dos resíduos estruturais ({&xi}{subscript:j})") ///
+    ytitle("Quantis de {&xi}{subscript:j}") ///
     xtitle("Quantis teóricos normais")
 graph export "$FIGPDF/16_structural_residual_qqplot.pdf", replace
 graph export "$FIGPNG/16_structural_residual_qqplot.png", replace width(2400)
 
 * 17. Curvas de resposta ao preço dos cinco maiores produtos.
 preserve
-    keep product share price v_no_price expv_logit
+    keep product share price v_no_price vhat_logit v_intercept_plot expv_logit
     gsort -share
     keep in 1/5
     gen id = _n
@@ -354,7 +403,7 @@ preserve
     use `top5_logit', clear
     cross using `grid_logit'
     gen price_grid = price*grid_scale
-    gen v_grid = v_no_price + pricecoeflogit*price_grid
+    gen v_grid = v_intercept_plot + price_slope_plot*price_grid
     gen share_grid = exp(v_grid)/(C_i + exp(v_grid))
 
     twoway ///
@@ -364,8 +413,9 @@ preserve
         (line share_grid price_grid if id==4, sort) ///
         (line share_grid price_grid if id==5, sort), ///
         title("Curvas de resposta ao preço - top 5 produtos") ///
-        xtitle("Preço simulado") ///
-        ytitle("Share previsto") ///
+        xtitle("Preço simulado ({it:p}{subscript:j})") ///
+        ytitle("`L_SJ'") ///
+        note("`note_slope'", size(vsmall)) ///
         legend(order(1 "Produto 1" 2 "Produto 2" 3 "Produto 3" 4 "Produto 4" 5 "Produto 5") rows(1))
     graph export "$FIGPDF/17_price_response_curves_top5_products.pdf", replace
     graph export "$FIGPNG/17_price_response_curves_top5_products.png", replace width(2400)

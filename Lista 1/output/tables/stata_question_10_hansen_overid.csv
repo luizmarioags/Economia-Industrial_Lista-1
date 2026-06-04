@@ -1,0 +1,6 @@
+hansen_j,modelo,hansen_df,hansen_p,decisao_5,instrumentos
+14.592206,Z2,1,.000133465413488,Rejeita H0,"{z_t, z_t^2}"
+14.683096,Z3,2,.0006480465900291,Rejeita H0,"{z_t, z_t^2, z_t^3}"
+14.519241,Z5,1,.0001387352637734,Rejeita H0,"{z_{t-1}, z_{t-1}^2}"
+1.9960998,Z6,1,.1577045472115348,Não rejeita H0,"{z_t, z_{t-1}}"
+15.699091,Z7,3,.0013069758356894,Rejeita H0,"{z_t, z_t^2, z_{t-1}, z_{t-1}^2}"

@@ -6,6 +6,10 @@
    - hansen_df registrado corretamente para caso exato (0) e sobreidentificado (1)
 ********************************************************************/
 
+
+* Carrega configuração se o script for rodado individualmente.
+do "Stata/_load_config_if_needed.do"
+
 use "$PROC/chicken_prepared_stata.dta", clear
 
 di as text _newline "[Stata] Questão 5: estimando GMM em dois passos"

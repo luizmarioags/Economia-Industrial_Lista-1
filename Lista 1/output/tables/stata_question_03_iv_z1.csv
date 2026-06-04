@@ -1,0 +1,2 @@
+method,N,beta_p,se_p,pval_p,ci_low,ci_high
+2SLS_Z1_robust,52,-1.710860374167694,.9406693,.068946637,-3.5545382,.13281752

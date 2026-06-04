@@ -1,8 +1,9 @@
 ------------------------------------------------------------------------------------------------------------------------
       name:  <unnamed>
-       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/logs/run_all_stata.log
+       log:  C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/logs/run_all_
+> stata.log
   log type:  text
- opened on:   3 Jun 2026, 12:34:23
+ opened on:   4 Jun 2026, 11:57:43
 
 . 
 . display "#########################################################################"
@@ -252,10 +253,12 @@ sugar: all characters numeric; replaced as double
 . order idProduct firm product segment price share delta cals fat sugar
 
 . save "$OUTDATA/prepared_data_stata.dta", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/prepared_data_stata.dta saved
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/data/prepared_data_stata.dta saved
 
 . export delimited using "$OUTDATA/prepared_data_stata.csv", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/prepared_data_stata.csv saved
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/data/prepared_data_st
+> ata.csv saved
 
 . 
 end of do-file
@@ -590,7 +593,8 @@ Instruments for equation 1: cals fat sugar own_cals own_fat own_sugar o.rival_ca
 . gen xi_gmm_both = delta - _b[/b0] - _b[/bcals]*cals - _b[/bfat]*fat - _b[/bsugar]*sugar - _b[/bp]*price
 
 . save "$OUTDATA/stata_after_simple_gmm.dta", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/stata_after_simple_gmm.dta saved
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/data/stata_after_simple_gmm.dta saved
 
 . 
 . * Exportação padronizada transferida para 08_standard_tables.do.
@@ -748,7 +752,8 @@ Sigma nested =    0.3733 ; intervalo teórico: 0 <= sigma < 1
 > _share_within_nest
 
 . save "$OUTDATA/stata_after_nested_gmm.dta", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/stata_after_nested_gmm.dta saved
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/data/stata_after_nested_gmm.dta saved
 
 . 
 . * Exportação padronizada transferida para 08_standard_tables.do.
@@ -844,8 +849,8 @@ Alpha do logit simples usado nas elasticidades/markups =  -1.17642
 
 . 
 . save "$OUTDATA/stata_elasticities_markups_work.dta", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/stata_elasticities_markups_work.dta
-    saved
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/data/stata_elasticities_markups_work.dta saved
 
 . 
 end of do-file
@@ -881,8 +886,8 @@ end of do-file
 . 
 . * Primeiro estágio do preço.
 . reg price $XVARS $ZBOTH, vce(robust)
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 
 Linear regression                               Number of obs     =         50
@@ -895,16 +900,16 @@ Linear regression                               Number of obs     =         50
              |               Robust
        price | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-        cals |          0  (omitted)
+        cals |  -.0047293   .0022813    -2.07   0.044    -.0093299   -.0001286
          fat |          0  (omitted)
        sugar |   .0231264   .0240092     0.96   0.341    -.0252927    .0715456
-    own_cals |     .00368   .0023552     1.56   0.125    -.0010696    .0084296
+    own_cals |  -.0010493   .0015325    -0.68   0.497    -.0041398    .0020413
      own_fat |  -.0368122   .0479435    -0.77   0.447    -.1334995    .0598751
    own_sugar |   .0191069   .0237163     0.81   0.425    -.0287216    .0669355
-  rival_cals |   .0047293   .0022813     2.07   0.044     .0001286    .0093299
+  rival_cals |          0  (omitted)
    rival_fat |  -.0025582   .0710037    -0.04   0.971    -.1457508    .1406344
  rival_sugar |          0  (omitted)
-       _cons |  -30.79941   16.15031    -1.91   0.063    -63.36961    1.770797
+       _cons |   3.634262     5.5582     0.65   0.517    -7.574917    14.84344
 ------------------------------------------------------------------------------
 
 . eststo FS_price_simple
@@ -914,13 +919,14 @@ Linear regression                               Number of obs     =         50
  ( 1)  own_cals = 0
  ( 2)  own_fat = 0
  ( 3)  own_sugar = 0
- ( 4)  rival_cals = 0
+ ( 4)  o.rival_cals = 0
  ( 5)  rival_fat = 0
  ( 6)  o.rival_sugar = 0
+       Constraint 4 dropped
        Constraint 6 dropped
 
-       F(  5,    43) =    2.28
-            Prob > F =    0.0638
+       F(  4,    43) =    1.07
+            Prob > F =    0.3828
 
 . 
 . * IV + weakivtest MO-P para uma endógena.
@@ -970,9 +976,9 @@ tau=30%                    6.430     6.012
 . 
 . * Nested: diagnósticos separados.
 . reg price $XVARS $ZNESTALL, vce(robust)
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
 note: sugar omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 note: n_same_nest_other omitted because of collinearity.
 note: n_rival_nest omitted because of collinearity.
@@ -990,13 +996,13 @@ Linear regression                               Number of obs     =         50
                   |               Robust
             price | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ------------------+----------------------------------------------------------------
-             cals |          0  (omitted)
+             cals |  -.0031607   .0028255    -1.12   0.270    -.0088669    .0025454
               fat |          0  (omitted)
             sugar |          0  (omitted)
-         own_cals |   .0020227      .0029     0.70   0.489     -.003834    .0078794
+         own_cals |   -.001138   .0015569    -0.73   0.469    -.0042822    .0020061
           own_fat |  -.0149283   .0420618    -0.35   0.724    -.0998739    .0700172
         own_sugar |   .0224969   .0241964     0.93   0.358    -.0263687    .0713625
-       rival_cals |   .0031607   .0028255     1.12   0.270    -.0025454    .0088669
+       rival_cals |          0  (omitted)
         rival_fat |   .0303246   .0668084     0.45   0.652    -.1045978    .1652469
       rival_sugar |          0  (omitted)
 n_same_nest_other |          0  (omitted)
@@ -1007,7 +1013,7 @@ n_same_nest_other |          0  (omitted)
   nest_rival_cals |   .0010262   .0003283     3.13   0.003     .0003632    .0016893
    nest_rival_fat |          0  (omitted)
  nest_rival_sugar |  -.0554197   .0260259    -2.13   0.039    -.1079801   -.0028592
-            _cons |  -5.059662   15.19926    -0.33   0.741    -35.75519    25.63587
+            _cons |   17.95374   10.68981     1.68   0.101    -3.634775    39.54225
 -----------------------------------------------------------------------------------
 
 . eststo FS_price_nested
@@ -1017,7 +1023,7 @@ n_same_nest_other |          0  (omitted)
  ( 1)  own_cals = 0
  ( 2)  own_fat = 0
  ( 3)  own_sugar = 0
- ( 4)  rival_cals = 0
+ ( 4)  o.rival_cals = 0
  ( 5)  rival_fat = 0
  ( 6)  o.rival_sugar = 0
  ( 7)  o.n_same_nest_other = 0
@@ -1028,6 +1034,7 @@ n_same_nest_other |          0  (omitted)
  (12)  nest_rival_cals = 0
  (13)  o.nest_rival_fat = 0
  (14)  nest_rival_sugar = 0
+       Constraint 4 dropped
        Constraint 6 dropped
        Constraint 7 dropped
        Constraint 8 dropped
@@ -1035,13 +1042,13 @@ n_same_nest_other |          0  (omitted)
        Constraint 10 dropped
        Constraint 13 dropped
 
-       F(  8,    41) =    4.43
-            Prob > F =    0.0006
+       F(  7,    41) =    3.09
+            Prob > F =    0.0104
 
 . reg log_share_within_nest $XVARS $ZNESTALL, vce(robust)
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
 note: sugar omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 note: n_same_nest_other omitted because of collinearity.
 note: n_rival_nest omitted because of collinearity.
@@ -1059,13 +1066,13 @@ Linear regression                               Number of obs     =         50
                   |               Robust
 log_share_withi~t | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ------------------+----------------------------------------------------------------
-             cals |          0  (omitted)
+             cals |   .0047697   .0033955     1.40   0.168    -.0020876     .011627
               fat |          0  (omitted)
             sugar |          0  (omitted)
-         own_cals |  -.0050495   .0032672    -1.55   0.130    -.0116478    .0015487
+         own_cals |  -.0002799   .0012106    -0.23   0.818    -.0027248    .0021651
           own_fat |  -.0117904    .057577    -0.20   0.839    -.1280695    .1044888
         own_sugar |   .0097602   .0187916     0.52   0.606    -.0281902    .0477105
-       rival_cals |  -.0047697   .0033955    -1.40   0.168     -.011627    .0020876
+       rival_cals |          0  (omitted)
         rival_fat |   .0219505   .0694076     0.32   0.753    -.1182211     .162122
       rival_sugar |          0  (omitted)
 n_same_nest_other |          0  (omitted)
@@ -1076,7 +1083,7 @@ n_same_nest_other |          0  (omitted)
   nest_rival_cals |   .0011995   .0003479     3.45   0.001      .000497    .0019021
    nest_rival_fat |          0  (omitted)
  nest_rival_sugar |   .0178947   .0265924     0.67   0.505    -.0358097     .071599
-            _cons |   10.33636   16.65728     0.62   0.538     -23.3037    43.97642
+            _cons |  -24.39158   11.89529    -2.05   0.047    -48.41461   -.3685514
 -----------------------------------------------------------------------------------
 
 . eststo FS_lnsjgnested
@@ -1086,7 +1093,7 @@ n_same_nest_other |          0  (omitted)
  ( 1)  own_cals = 0
  ( 2)  own_fat = 0
  ( 3)  own_sugar = 0
- ( 4)  rival_cals = 0
+ ( 4)  o.rival_cals = 0
  ( 5)  rival_fat = 0
  ( 6)  o.rival_sugar = 0
  ( 7)  o.n_same_nest_other = 0
@@ -1097,6 +1104,7 @@ n_same_nest_other |          0  (omitted)
  (12)  nest_rival_cals = 0
  (13)  o.nest_rival_fat = 0
  (14)  nest_rival_sugar = 0
+       Constraint 4 dropped
        Constraint 6 dropped
        Constraint 7 dropped
        Constraint 8 dropped
@@ -1104,8 +1112,8 @@ n_same_nest_other |          0  (omitted)
        Constraint 10 dropped
        Constraint 13 dropped
 
-       F(  8,    41) =   13.34
-            Prob > F =    0.0000
+       F(  7,    41) =    6.20
+            Prob > F =    0.0001
 
 . 
 . * IV nested e weakivtest. Para múltiplas endógenas, reportar também testes separados acima.
@@ -1264,12 +1272,14 @@ end of do-file
 
 . export_csv_tex, csv("$TABCsv/01_all_coefficients.csv") tex("$TABTEX/01_all_coefficients.tex") caption("Coeficientes es
 > timados") label("tab:all-coef")
-(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/01_all_coefficients.csv not
-    found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/01_all_coefficients.csv saved
-(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/01_all_coefficients.tex not
-    found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/01_all_coefficients.tex saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/csv/01_all_coefficients.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/01_all_coe
+> fficients.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/tex/01_all_coefficients.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/01_all_coe
+> fficients.tex saved
 
 . 
 . * -------------------------
@@ -1292,16 +1302,14 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/t
 
 .     export_csv_tex, csv("$TABCsv/02_price_parameter_comparison.csv") tex("$TABTEX/02_price_parameter_comparison.tex") 
 > caption("Comparação do parâmetro de preço") label("tab:price-compare")
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/02_price_parameter_comparison.
-    > csv not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/02_price_parameter_comparison.c
-> sv saved
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/02_price_parameter_comparison.
-    > tex not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/02_price_parameter_comparison.t
-> ex saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/csv/02_price_parameter_comparison.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/02_price_p
+> arameter_comparison.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/tex/02_price_parameter_comparison.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/02_price_p
+> arameter_comparison.tex saved
 
 . restore
 
@@ -1370,16 +1378,14 @@ file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000006.tmp saved as .dta f
 
 . export_csv_tex, csv("$TABCsv/03_elasticity_matrix_simple_logit.csv") tex("$TABTEX/03_elasticity_matrix_simple_logit.te
 > x") caption("Matriz de elasticidades - logit simples") label("tab:elas-simple")
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/03_elasticity_matrix_simple_lo
-    > git.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/03_elasticity_matrix_simple_log
-> it.csv saved
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/03_elasticity_matrix_simple_lo
-    > git.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/03_elasticity_matrix_simple_log
-> it.tex saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/csv/03_elasticity_matrix_simple_logit.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/03_elastic
+> ity_matrix_simple_logit.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/tex/03_elasticity_matrix_simple_logit.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/03_elastic
+> ity_matrix_simple_logit.tex saved
 
 . 
 . use "$OUTDATA/prepared_data_stata.dta", clear
@@ -1437,16 +1443,14 @@ file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_00000a.tmp saved as .dta f
 
 . export_csv_tex, csv("$TABCsv/04_elasticity_matrix_simple_logit_subset.csv") tex("$TABTEX/04_elasticity_matrix_simple_l
 > ogit_subset.tex") caption("Matriz de elasticidades - logit simples - subconjunto") label("tab:elas-simple-subset")
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/04_elasticity_matrix_simple_lo
-    > git_subset.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/04_elasticity_matrix_simple_log
-> it_subset.csv saved
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/04_elasticity_matrix_simple_lo
-    > git_subset.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/04_elasticity_matrix_simple_log
-> it_subset.tex saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/csv/04_elasticity_matrix_simple_logit_subset.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/04_elastic
+> ity_matrix_simple_logit_subset.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/tex/04_elasticity_matrix_simple_logit_subset.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/04_elastic
+> ity_matrix_simple_logit_subset.tex saved
 
 . 
 . * -------------------------
@@ -1462,16 +1466,14 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/t
 
 . export_csv_tex, csv("$TABCsv/05_own_elasticities_simple_logit.csv") tex("$TABTEX/05_own_elasticities_simple_logit.tex"
 > ) caption("Elasticidades próprias - logit simples") label("tab:own-elas-simple")
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/05_own_elasticities_simple_log
-    > it.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/05_own_elasticities_simple_logi
-> t.csv saved
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/05_own_elasticities_simple_log
-    > it.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/05_own_elasticities_simple_logi
-> t.tex saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/csv/05_own_elasticities_simple_logit.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/05_own_ela
+> sticities_simple_logit.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/tex/05_own_elasticities_simple_logit.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/05_own_ela
+> sticities_simple_logit.tex saved
 
 . 
 . * -------------------------
@@ -1634,16 +1636,14 @@ file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_00000e.tmp saved as .dta f
 
 . export_csv_tex, csv("$TABCsv/06_elasticity_matrix_nested_logit.csv") tex("$TABTEX/06_elasticity_matrix_nested_logit.te
 > x") caption("Matriz de elasticidades - nested logit") label("tab:elas-nested")
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/06_elasticity_matrix_nested_lo
-    > git.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/06_elasticity_matrix_nested_log
-> it.csv saved
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/06_elasticity_matrix_nested_lo
-    > git.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/06_elasticity_matrix_nested_log
-> it.tex saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/csv/06_elasticity_matrix_nested_logit.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/06_elastic
+> ity_matrix_nested_logit.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/tex/06_elasticity_matrix_nested_logit.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/06_elastic
+> ity_matrix_nested_logit.tex saved
 
 . 
 . use "$OUTDATA/prepared_data_stata.dta", clear
@@ -1668,16 +1668,14 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/t
 
 . export_csv_tex, csv("$TABCsv/07_own_elasticities_nested_logit.csv") tex("$TABTEX/07_own_elasticities_nested_logit.tex"
 > ) caption("Elasticidades próprias - nested logit") label("tab:own-elas-nested")
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/07_own_elasticities_nested_log
-    > it.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/07_own_elasticities_nested_logi
-> t.csv saved
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/07_own_elasticities_nested_log
-    > it.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/07_own_elasticities_nested_logi
-> t.tex saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/csv/07_own_elasticities_nested_logit.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/07_own_ela
+> sticities_nested_logit.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/tex/07_own_elasticities_nested_logit.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/07_own_ela
+> sticities_nested_logit.tex saved
 
 . 
 . * -------------------------
@@ -1733,10 +1731,14 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/t
 
 . export_csv_tex, csv("$TABCsv/08_markups.csv") tex("$TABTEX/08_markups.tex") caption("Markups implícitos - logit simple
 > s") label("tab:markups")
-(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/08_markups.csv not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/08_markups.csv saved
-(file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/08_markups.tex not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/08_markups.tex saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/csv/08_markups.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/08_markups
+> .csv saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/tex/08_markups.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/08_markups
+> .tex saved
 
 . 
 . * -------------------------
@@ -1763,8 +1765,8 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/t
 
 . 
 . reg price $XVARS $ZBOTH
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 
       Source |       SS           df       MS      Number of obs   =        50
@@ -1777,16 +1779,16 @@ note: rival_sugar omitted because of collinearity.
 ------------------------------------------------------------------------------
        price | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-        cals |          0  (omitted)
+        cals |  -.0047293    .002801    -1.69   0.099     -.010378    .0009195
          fat |          0  (omitted)
        sugar |   .0231264   .0248398     0.93   0.357    -.0269677    .0732206
-    own_cals |     .00368   .0025404     1.45   0.155    -.0014432    .0088032
+    own_cals |  -.0010493   .0015443    -0.68   0.501    -.0041636    .0020651
      own_fat |  -.0368122   .0589171    -0.62   0.535    -.1556299    .0820055
    own_sugar |   .0191069   .0236848     0.81   0.424     -.028658    .0668719
-  rival_cals |   .0047293    .002801     1.69   0.099    -.0009195     .010378
+  rival_cals |          0  (omitted)
    rival_fat |  -.0025582   .0704447    -0.04   0.971    -.1446236    .1395072
  rival_sugar |          0  (omitted)
-       _cons |  -30.79941   19.59761    -1.57   0.123    -70.32175    8.722936
+       _cons |   3.634262   5.593268     0.65   0.519    -7.645637    14.91416
 ------------------------------------------------------------------------------
 
 . test $ZBOTH
@@ -1794,21 +1796,22 @@ note: rival_sugar omitted because of collinearity.
  ( 1)  own_cals = 0
  ( 2)  own_fat = 0
  ( 3)  own_sugar = 0
- ( 4)  rival_cals = 0
+ ( 4)  o.rival_cals = 0
  ( 5)  rival_fat = 0
  ( 6)  o.rival_sugar = 0
+       Constraint 4 dropped
        Constraint 6 dropped
 
-       F(  5,    43) =    1.90
-            Prob > F =    0.1141
+       F(  4,    43) =    1.10
+            Prob > F =    0.3666
 
 . scalar f_homo = r(F)
 
 . scalar r2fs = e(r2)
 
 . reg price $XVARS $ZBOTH, vce(robust)
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 
 Linear regression                               Number of obs     =         50
@@ -1821,16 +1824,16 @@ Linear regression                               Number of obs     =         50
              |               Robust
        price | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-        cals |          0  (omitted)
+        cals |  -.0047293   .0022813    -2.07   0.044    -.0093299   -.0001286
          fat |          0  (omitted)
        sugar |   .0231264   .0240092     0.96   0.341    -.0252927    .0715456
-    own_cals |     .00368   .0023552     1.56   0.125    -.0010696    .0084296
+    own_cals |  -.0010493   .0015325    -0.68   0.497    -.0041398    .0020413
      own_fat |  -.0368122   .0479435    -0.77   0.447    -.1334995    .0598751
    own_sugar |   .0191069   .0237163     0.81   0.425    -.0287216    .0669355
-  rival_cals |   .0047293   .0022813     2.07   0.044     .0001286    .0093299
+  rival_cals |          0  (omitted)
    rival_fat |  -.0025582   .0710037    -0.04   0.971    -.1457508    .1406344
  rival_sugar |          0  (omitted)
-       _cons |  -30.79941   16.15031    -1.91   0.063    -63.36961    1.770797
+       _cons |   3.634262     5.5582     0.65   0.517    -7.574917    14.84344
 ------------------------------------------------------------------------------
 
 . test $ZBOTH
@@ -1838,13 +1841,14 @@ Linear regression                               Number of obs     =         50
  ( 1)  own_cals = 0
  ( 2)  own_fat = 0
  ( 3)  own_sugar = 0
- ( 4)  rival_cals = 0
+ ( 4)  o.rival_cals = 0
  ( 5)  rival_fat = 0
  ( 6)  o.rival_sugar = 0
+       Constraint 4 dropped
        Constraint 6 dropped
 
-       F(  5,    43) =    2.28
-            Prob > F =    0.0638
+       F(  4,    43) =    1.07
+            Prob > F =    0.3828
 
 . scalar f_rob = r(F)
 
@@ -1852,9 +1856,9 @@ Linear regression                               Number of obs     =         50
 
 . 
 . reg price $XVARS $ZNESTALL
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
 note: sugar omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 note: n_same_nest_other omitted because of collinearity.
 note: n_rival_nest omitted because of collinearity.
@@ -1872,13 +1876,13 @@ note: nest_rival_fat omitted because of collinearity.
 -----------------------------------------------------------------------------------
             price | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
 ------------------+----------------------------------------------------------------
-             cals |          0  (omitted)
+             cals |  -.0031607   .0031088    -1.02   0.315    -.0094391    .0031176
               fat |          0  (omitted)
             sugar |          0  (omitted)
-         own_cals |   .0020227   .0029275     0.69   0.494    -.0038895    .0079349
+         own_cals |   -.001138   .0014408    -0.79   0.434    -.0040478    .0017717
           own_fat |  -.0149283   .0554994    -0.27   0.789    -.1270117     .097155
         own_sugar |   .0224969   .0221521     1.02   0.316    -.0222401    .0672339
-       rival_cals |   .0031607   .0031088     1.02   0.315    -.0031176    .0094391
+       rival_cals |          0  (omitted)
         rival_fat |   .0303246   .0667965     0.45   0.652    -.1045737    .1652229
       rival_sugar |          0  (omitted)
 n_same_nest_other |          0  (omitted)
@@ -1889,7 +1893,7 @@ n_same_nest_other |          0  (omitted)
   nest_rival_cals |   .0010262   .0003913     2.62   0.012     .0002359    .0018166
    nest_rival_fat |          0  (omitted)
  nest_rival_sugar |  -.0554197   .0261739    -2.12   0.040     -.108279   -.0025603
-            _cons |  -5.059662   15.96628    -0.32   0.753    -37.30423     27.1849
+            _cons |   17.95374   11.28612     1.59   0.119    -4.839051    40.74653
 -----------------------------------------------------------------------------------
 
 . test $ZNESTALL
@@ -1897,7 +1901,7 @@ n_same_nest_other |          0  (omitted)
  ( 1)  own_cals = 0
  ( 2)  own_fat = 0
  ( 3)  own_sugar = 0
- ( 4)  rival_cals = 0
+ ( 4)  o.rival_cals = 0
  ( 5)  rival_fat = 0
  ( 6)  o.rival_sugar = 0
  ( 7)  o.n_same_nest_other = 0
@@ -1908,6 +1912,7 @@ n_same_nest_other |          0  (omitted)
  (12)  nest_rival_cals = 0
  (13)  o.nest_rival_fat = 0
  (14)  nest_rival_sugar = 0
+       Constraint 4 dropped
        Constraint 6 dropped
        Constraint 7 dropped
        Constraint 8 dropped
@@ -1915,17 +1920,17 @@ n_same_nest_other |          0  (omitted)
        Constraint 10 dropped
        Constraint 13 dropped
 
-       F(  8,    41) =    2.42
-            Prob > F =    0.0304
+       F(  7,    41) =    2.11
+            Prob > F =    0.0638
 
 . scalar f_homo = r(F)
 
 . scalar r2fs = e(r2)
 
 . reg price $XVARS $ZNESTALL, vce(robust)
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
 note: sugar omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 note: n_same_nest_other omitted because of collinearity.
 note: n_rival_nest omitted because of collinearity.
@@ -1943,13 +1948,13 @@ Linear regression                               Number of obs     =         50
                   |               Robust
             price | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ------------------+----------------------------------------------------------------
-             cals |          0  (omitted)
+             cals |  -.0031607   .0028255    -1.12   0.270    -.0088669    .0025454
               fat |          0  (omitted)
             sugar |          0  (omitted)
-         own_cals |   .0020227      .0029     0.70   0.489     -.003834    .0078794
+         own_cals |   -.001138   .0015569    -0.73   0.469    -.0042822    .0020061
           own_fat |  -.0149283   .0420618    -0.35   0.724    -.0998739    .0700172
         own_sugar |   .0224969   .0241964     0.93   0.358    -.0263687    .0713625
-       rival_cals |   .0031607   .0028255     1.12   0.270    -.0025454    .0088669
+       rival_cals |          0  (omitted)
         rival_fat |   .0303246   .0668084     0.45   0.652    -.1045978    .1652469
       rival_sugar |          0  (omitted)
 n_same_nest_other |          0  (omitted)
@@ -1960,7 +1965,7 @@ n_same_nest_other |          0  (omitted)
   nest_rival_cals |   .0010262   .0003283     3.13   0.003     .0003632    .0016893
    nest_rival_fat |          0  (omitted)
  nest_rival_sugar |  -.0554197   .0260259    -2.13   0.039    -.1079801   -.0028592
-            _cons |  -5.059662   15.19926    -0.33   0.741    -35.75519    25.63587
+            _cons |   17.95374   10.68981     1.68   0.101    -3.634775    39.54225
 -----------------------------------------------------------------------------------
 
 . test $ZNESTALL
@@ -1968,7 +1973,7 @@ n_same_nest_other |          0  (omitted)
  ( 1)  own_cals = 0
  ( 2)  own_fat = 0
  ( 3)  own_sugar = 0
- ( 4)  rival_cals = 0
+ ( 4)  o.rival_cals = 0
  ( 5)  rival_fat = 0
  ( 6)  o.rival_sugar = 0
  ( 7)  o.n_same_nest_other = 0
@@ -1979,6 +1984,7 @@ n_same_nest_other |          0  (omitted)
  (12)  nest_rival_cals = 0
  (13)  o.nest_rival_fat = 0
  (14)  nest_rival_sugar = 0
+       Constraint 4 dropped
        Constraint 6 dropped
        Constraint 7 dropped
        Constraint 8 dropped
@@ -1986,8 +1992,8 @@ n_same_nest_other |          0  (omitted)
        Constraint 10 dropped
        Constraint 13 dropped
 
-       F(  8,    41) =    4.43
-            Prob > F =    0.0006
+       F(  7,    41) =    3.09
+            Prob > F =    0.0104
 
 . scalar f_rob = r(F)
 
@@ -1995,9 +2001,9 @@ n_same_nest_other |          0  (omitted)
 
 . 
 . reg log_share_within_nest $XVARS $ZNESTALL
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
 note: sugar omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 note: n_same_nest_other omitted because of collinearity.
 note: n_rival_nest omitted because of collinearity.
@@ -2015,13 +2021,13 @@ note: nest_rival_fat omitted because of collinearity.
 -----------------------------------------------------------------------------------
 log_share_withi~t | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
 ------------------+----------------------------------------------------------------
-             cals |          0  (omitted)
+             cals |   .0047697   .0029301     1.63   0.111    -.0011477    .0106871
               fat |          0  (omitted)
             sugar |          0  (omitted)
-         own_cals |  -.0050495   .0027592    -1.83   0.075    -.0106219    .0005228
+         own_cals |  -.0002799    .001358    -0.21   0.838    -.0030223    .0024626
           own_fat |  -.0117904    .052309    -0.23   0.823    -.1174306    .0938498
         own_sugar |   .0097602   .0208786     0.47   0.643    -.0324051    .0519255
-       rival_cals |  -.0047697   .0029301    -1.63   0.111    -.0106871    .0011477
+       rival_cals |          0  (omitted)
         rival_fat |   .0219505   .0629567     0.35   0.729    -.1051932    .1490942
       rival_sugar |          0  (omitted)
 n_same_nest_other |          0  (omitted)
@@ -2032,7 +2038,7 @@ n_same_nest_other |          0  (omitted)
   nest_rival_cals |   .0011995   .0003689     3.25   0.002     .0004546    .0019444
    nest_rival_fat |          0  (omitted)
  nest_rival_sugar |   .0178947   .0246693     0.73   0.472     -.031926    .0677154
-            _cons |   10.33636   15.04846     0.69   0.496    -20.05462    40.72735
+            _cons |  -24.39158   10.63734    -2.29   0.027    -45.87412   -2.909032
 -----------------------------------------------------------------------------------
 
 . test $ZNESTALL
@@ -2040,7 +2046,7 @@ n_same_nest_other |          0  (omitted)
  ( 1)  own_cals = 0
  ( 2)  own_fat = 0
  ( 3)  own_sugar = 0
- ( 4)  rival_cals = 0
+ ( 4)  o.rival_cals = 0
  ( 5)  rival_fat = 0
  ( 6)  o.rival_sugar = 0
  ( 7)  o.n_same_nest_other = 0
@@ -2051,6 +2057,7 @@ n_same_nest_other |          0  (omitted)
  (12)  nest_rival_cals = 0
  (13)  o.nest_rival_fat = 0
  (14)  nest_rival_sugar = 0
+       Constraint 4 dropped
        Constraint 6 dropped
        Constraint 7 dropped
        Constraint 8 dropped
@@ -2058,17 +2065,17 @@ n_same_nest_other |          0  (omitted)
        Constraint 10 dropped
        Constraint 13 dropped
 
-       F(  8,    41) =    5.67
-            Prob > F =    0.0001
+       F(  7,    41) =    5.06
+            Prob > F =    0.0003
 
 . scalar f_homo = r(F)
 
 . scalar r2fs = e(r2)
 
 . reg log_share_within_nest $XVARS $ZNESTALL, vce(robust)
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
 note: sugar omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 note: n_same_nest_other omitted because of collinearity.
 note: n_rival_nest omitted because of collinearity.
@@ -2086,13 +2093,13 @@ Linear regression                               Number of obs     =         50
                   |               Robust
 log_share_withi~t | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ------------------+----------------------------------------------------------------
-             cals |          0  (omitted)
+             cals |   .0047697   .0033955     1.40   0.168    -.0020876     .011627
               fat |          0  (omitted)
             sugar |          0  (omitted)
-         own_cals |  -.0050495   .0032672    -1.55   0.130    -.0116478    .0015487
+         own_cals |  -.0002799   .0012106    -0.23   0.818    -.0027248    .0021651
           own_fat |  -.0117904    .057577    -0.20   0.839    -.1280695    .1044888
         own_sugar |   .0097602   .0187916     0.52   0.606    -.0281902    .0477105
-       rival_cals |  -.0047697   .0033955    -1.40   0.168     -.011627    .0020876
+       rival_cals |          0  (omitted)
         rival_fat |   .0219505   .0694076     0.32   0.753    -.1182211     .162122
       rival_sugar |          0  (omitted)
 n_same_nest_other |          0  (omitted)
@@ -2103,7 +2110,7 @@ n_same_nest_other |          0  (omitted)
   nest_rival_cals |   .0011995   .0003479     3.45   0.001      .000497    .0019021
    nest_rival_fat |          0  (omitted)
  nest_rival_sugar |   .0178947   .0265924     0.67   0.505    -.0358097     .071599
-            _cons |   10.33636   16.65728     0.62   0.538     -23.3037    43.97642
+            _cons |  -24.39158   11.89529    -2.05   0.047    -48.41461   -.3685514
 -----------------------------------------------------------------------------------
 
 . test $ZNESTALL
@@ -2111,7 +2118,7 @@ n_same_nest_other |          0  (omitted)
  ( 1)  own_cals = 0
  ( 2)  own_fat = 0
  ( 3)  own_sugar = 0
- ( 4)  rival_cals = 0
+ ( 4)  o.rival_cals = 0
  ( 5)  rival_fat = 0
  ( 6)  o.rival_sugar = 0
  ( 7)  o.n_same_nest_other = 0
@@ -2122,6 +2129,7 @@ n_same_nest_other |          0  (omitted)
  (12)  nest_rival_cals = 0
  (13)  o.nest_rival_fat = 0
  (14)  nest_rival_sugar = 0
+       Constraint 4 dropped
        Constraint 6 dropped
        Constraint 7 dropped
        Constraint 8 dropped
@@ -2129,8 +2137,8 @@ n_same_nest_other |          0  (omitted)
        Constraint 10 dropped
        Constraint 13 dropped
 
-       F(  8,    41) =   13.34
-            Prob > F =    0.0000
+       F(  7,    41) =    6.20
+            Prob > F =    0.0001
 
 . scalar f_rob = r(F)
 
@@ -2143,16 +2151,14 @@ n_same_nest_other |          0  (omitted)
 
 . export_csv_tex, csv("$TABCsv/09_first_stage_diagnostics.csv") tex("$TABTEX/09_first_stage_diagnostics.tex") caption("D
 > iagnóstico de primeiro estágio") label("tab:first-stage")
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/09_first_stage_diagnostics.csv
-    not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/csv/09_first_stage_diagnostics.csv 
-> saved
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/09_first_stage_diagnostics.tex
-    not found)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/tables/tex/09_first_stage_diagnostics.tex 
-> saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/csv/09_first_stage_diagnostics.csv not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/csv/09_first_s
+> tage_diagnostics.csv saved
+(file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/tables/tex/09_first_stage_diagnostics.tex not found)
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/tables/tex/09_first_s
+> tage_diagnostics.tex saved
 
 . 
 end of do-file
@@ -2173,24 +2179,52 @@ end of do-file
 > 06 - Gráficos principais em PDF e PNG
 > ****************************************************************************************/
 . 
+. 
+. /****************************************************************************************
+> Rótulos matemáticos para gráficos do Stata
+> - O Stata não renderiza LaTeX diretamente em títulos/eixos.
+> - Para obter saída tipográfica semelhante ao LaTeX nos PDFs/PNGs, usamos SMCL:
+>   {&delta}, {&alpha}, {&xi}, {&epsilon}, {it:...}, {subscript:...} etc.
+> ****************************************************************************************/
+. local L_DELTA `"{&delta}{subscript:j} = ln({it:s}{subscript:j}) - ln({it:s}{subscript:0})"'
+
+. local L_PRICECOEF `"Coeficiente do preço (= -{&alpha})"'
+
+. local L_EJK `"{&epsilon}{subscript:jk}"'
+
+. local L_EJJ `"{&epsilon}{subscript:jj}"'
+
+. local L_XI `"{&xi}{subscript:j} estimado"'
+
+. local L_SJ `"{it:s}{subscript:j} previsto"'
+
+. local L_SOBS `"{it:s}{subscript:j} observado"'
+
+. local L_VREL `"{it:V}{subscript:j} - ln({it:C}{subscript:j})"'
+
+. local L_DSDP `"d{it:s}{subscript:j}/d{it:p}{subscript:j}"'
+
+. local L_PRICEJ `"{it:p}{subscript:j} simulado"'
+
+. local L_SHARE `"Market share ({it:s}{subscript:j})"'
+
+. 
 . * 1. Share vs preço, com rótulos de produto para inspeção de outliers.
 . use "$OUTDATA/prepared_data_stata.dta", clear
 
 . twoway (scatter share price, mlabel(product) mlabsize(vsmall)), ///
 >     title("Share e preço por segmento") ///
 >     xtitle("Preço de transação") ///
->     ytitle("Market share interno") ///
+>     ytitle("`L_SHARE'") ///
 >     legend(off)
 
 . graph export "$FIGPDF/01_share_vs_transaction_price.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/01_share_vs_transaction_price
-    > .pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/01_share_vs_transaction_price.pdf saved as PDF format
 
 . graph export "$FIGPNG/01_share_vs_transaction_price.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/01_share_vs_transaction_price
-    > .png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/01_share_vs_transaction_price.png saved as PNG format
 
 . 
 . * 2. Top 15 produtos por market share.
@@ -2200,12 +2234,12 @@ file
 >     title("Maiores produtos por market share") ytitle("Market share")
 
 . graph export "$FIGPDF/02_top15_market_shares.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/02_top15_market_shares.pdf
-    saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/02_top15_market_shares.pdf saved as PDF format
 
 . graph export "$FIGPNG/02_top15_market_shares.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/02_top15_market_shares.png
-    saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/02_top15_market_shares.png saved as PNG format
 
 . 
 . * 3. Distribuição de preço por segmento/nest.
@@ -2216,28 +2250,28 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/f
 >     ytitle("Preço de transação")
 
 . graph export "$FIGPDF/03_price_by_segment.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/03_price_by_segment.pdf
-    saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/03_price_by_segment.pdf saved as PDF format
 
 . graph export "$FIGPNG/03_price_by_segment.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/03_price_by_segment.png
-    saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/03_price_by_segment.png saved as PNG format
 
 . 
 . * 4. Relação entre delta de Berry e preço, com ajuste linear auxiliar.
 . twoway (scatter delta price) (lfit delta price), ///
 >     title("Inversão logit de Berry e preço") ///
 >     xtitle("Preço de transação") ///
->     ytitle("delta = ln(s_j)-ln(s_0)") ///
+>     ytitle("`L_DELTA'") ///
 >     legend(off)
 
 . graph export "$FIGPDF/04_delta_vs_price.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/04_delta_vs_price.pdf saved
-    as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/04_delta_vs_price.pdf saved as PDF format
 
 . graph export "$FIGPNG/04_delta_vs_price.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/04_delta_vs_price.png saved
-    as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/04_delta_vs_price.png saved as PNG format
 
 . 
 . * 5. Comparação dos coeficientes de preço entre especificações.
@@ -2267,22 +2301,20 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/f
 . use `pricecomp', clear
 
 . export delimited using "$OUTDATA/price_parameter_comparison_stata_graph.csv", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/price_parameter_comparison_stata_grap
-> h.csv saved
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/data/price_parameter_
+> comparison_stata_graph.csv saved
 
 . graph hbar price_coef, over(model, label(labsize(tiny))) ///
 >     title("Comparação das estimativas de preço") ///
->     ytitle("Coeficiente do preço (= -alpha)")
+>     ytitle("`L_PRICECOEF'")
 
 . graph export "$FIGPDF/05_price_coefficient_comparison.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/05_price_coefficient_comparis
-    > on.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/05_price_coefficient_comparison.pdf saved as PDF format
 
 . graph export "$FIGPNG/05_price_coefficient_comparison.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/05_price_coefficient_comparis
-    > on.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/05_price_coefficient_comparison.png saved as PNG format
 
 . 
 . * 6. Matriz de elasticidades para os 12 maiores produtos.
@@ -2354,20 +2386,18 @@ xij variables:
 
 . twoway (scatter row col, msymbol(square) msize(large)) ///
 >        (scatter row col, msymbol(none) mlabel(label_e) mlabsize(tiny)), ///
->        title("Matriz de elasticidades-preço - subconjunto") ///
->        xtitle("Produto k") ytitle("Produto j") ///
+>        title("Matriz de elasticidades-preço ({&epsilon}{subscript:jk})") ///
+>        xtitle("Produto {it:k}") ytitle("Produto {it:j}") ///
 >        xlabel(1(1)12, labsize(vsmall)) ylabel(1(1)12, labsize(vsmall)) ///
 >        legend(off)
 
 . graph export "$FIGPDF/06_elasticity_matrix_subset.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/06_elasticity_matrix_subset.p
-    > df saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/06_elasticity_matrix_subset.pdf saved as PDF format
 
 . graph export "$FIGPNG/06_elasticity_matrix_subset.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/06_elasticity_matrix_subset.p
-    > ng saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/06_elasticity_matrix_subset.png saved as PNG format
 
 . 
 . * 7. Elasticidades próprias mais intensas.
@@ -2378,59 +2408,47 @@ file
 . gsort own_elasticity_simple_logit
 
 . graph hbar own_elasticity_simple_logit in 1/15, over(product, label(labsize(vsmall))) ///
->     title("Elasticidades próprias mais intensas") ///
->     ytitle("Elasticidade própria")
+>     title("Elasticidades próprias mais intensas ({&epsilon}{subscript:jj})") ///
+>     ytitle("`L_EJJ'")
 
 . graph export "$FIGPDF/07_own_price_elasticities.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/07_own_price_elasticities.pdf
-    saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/07_own_price_elasticities.pdf saved as PDF format
 
 . graph export "$FIGPNG/07_own_price_elasticities.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/07_own_price_elasticities.png
-    saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/07_own_price_elasticities.png saved as PNG format
 
 . 
 . * 18. Distribuição das elasticidades próprias: histograma + densidade kernel.
 . histogram own_elasticity_simple_logit, density kdensity ///
 >     xline(0) ///
->     title("Distribuição das elasticidades próprias") ///
->     xtitle("Elasticidade própria") ///
+>     title("Distribuição das elasticidades próprias ({&epsilon}{subscript:jj})") ///
+>     xtitle("`L_EJJ'") ///
 >     ytitle("Densidade")
 (bin=7, start=2.0085902, width=.37105662)
 
 . graph export "$FIGPDF/18_own_elasticity_hist_density.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/18_own_elasticity_hist_densit
-    > y.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/18_own_elasticity_hist_density.pdf saved as PDF format
 
 . graph export "$FIGPNG/18_own_elasticity_hist_density.png", replace width(2400)
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/18_own_elasticity_hist_densit
-    > y.png not found)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/18_own_elasticity_hist_densit
-    > y.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/18_own_elasticity_hist_density.png saved as PNG format
 
 . 
 . * 20. Boxplot das elasticidades próprias.
 . graph box own_elasticity_simple_logit, ///
->     title("Boxplot das elasticidades próprias") ///
->     ytitle("Elasticidade própria")
+>     title("Boxplot das elasticidades próprias ({&epsilon}{subscript:jj})") ///
+>     ytitle("`L_EJJ'")
 
 . graph export "$FIGPDF/20_own_elasticity_boxplot.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/20_own_elasticity_boxplot.pdf
-    saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/20_own_elasticity_boxplot.pdf saved as PDF format
 
 . graph export "$FIGPNG/20_own_elasticity_boxplot.png", replace width(2400)
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/20_own_elasticity_boxplot.png
-    not found)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/20_own_elasticity_boxplot.png
-    saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/20_own_elasticity_boxplot.png saved as PNG format
 
 . 
 . * 8. Markups monoproduto versus multiproduto para os maiores markups multiproduto.
@@ -2447,12 +2465,12 @@ file
 >     legend(order(1 "Monoproduto" 2 "Multiproduto") rows(1))
 
 . graph export "$FIGPDF/08_markups_mono_vs_multi.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/08_markups_mono_vs_multi.pdf
-    saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/08_markups_mono_vs_multi.pdf saved as PDF format
 
 . graph export "$FIGPNG/08_markups_mono_vs_multi.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/08_markups_mono_vs_multi.png
-    saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/08_markups_mono_vs_multi.png saved as PNG format
 
 . 
 . * 9. Preço observado versus markup multiproduto.
@@ -2461,14 +2479,12 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/f
 >     xtitle("Preço observado") ytitle("Markup multiproduto")
 
 . graph export "$FIGPDF/09_price_vs_multiproduct_markup.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/09_price_vs_multiproduct_mark
-    > up.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/09_price_vs_multiproduct_markup.pdf saved as PDF format
 
 . graph export "$FIGPNG/09_price_vs_multiproduct_markup.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/09_price_vs_multiproduct_mark
-    > up.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/09_price_vs_multiproduct_markup.png saved as PNG format
 
 . 
 . * 19. Distribuição dos markups multiproduto: histograma + densidade kernel.
@@ -2480,17 +2496,12 @@ file
 (bin=1, start=0, width=1)
 
 . graph export "$FIGPDF/19_markup_multiproduct_hist_density.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/19_markup_multiproduct_hist_d
-    > ensity.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/19_markup_multiproduct_hist_density.pdf saved as PDF format
 
 . graph export "$FIGPNG/19_markup_multiproduct_hist_density.png", replace width(2400)
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/19_markup_multiproduct_hist_d
-    > ensity.png not found)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/19_markup_multiproduct_hist_d
-    > ensity.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/19_markup_multiproduct_hist_density.png saved as PNG format
 
 . 
 . * 21. Boxplot dos markups multiproduto.
@@ -2499,17 +2510,12 @@ file
 >     ytitle("Markup multiproduto")
 
 . graph export "$FIGPDF/21_markup_multiproduct_boxplot.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/21_markup_multiproduct_boxplo
-    > t.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/21_markup_multiproduct_boxplot.pdf saved as PDF format
 
 . graph export "$FIGPNG/21_markup_multiproduct_boxplot.png", replace width(2400)
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/21_markup_multiproduct_boxplo
-    > t.png not found)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/21_markup_multiproduct_boxplo
-    > t.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/21_markup_multiproduct_boxplot.png saved as PNG format
 
 . 
 . * 10. Diagnóstico de força dos instrumentos: F/Wald-F robusto dos primeiros estágios.
@@ -2527,8 +2533,8 @@ file
 . global ZNESTALL "$ZOWN $ZRIVAL $ZNEST"
 
 . reg price $XVARS $ZBOTH, vce(robust)
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 
 Linear regression                               Number of obs     =         50
@@ -2541,16 +2547,16 @@ Linear regression                               Number of obs     =         50
              |               Robust
        price | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-        cals |          0  (omitted)
+        cals |  -.0047293   .0022813    -2.07   0.044    -.0093299   -.0001286
          fat |          0  (omitted)
        sugar |   .0231264   .0240092     0.96   0.341    -.0252927    .0715456
-    own_cals |     .00368   .0023552     1.56   0.125    -.0010696    .0084296
+    own_cals |  -.0010493   .0015325    -0.68   0.497    -.0041398    .0020413
      own_fat |  -.0368122   .0479435    -0.77   0.447    -.1334995    .0598751
    own_sugar |   .0191069   .0237163     0.81   0.425    -.0287216    .0669355
-  rival_cals |   .0047293   .0022813     2.07   0.044     .0001286    .0093299
+  rival_cals |          0  (omitted)
    rival_fat |  -.0025582   .0710037    -0.04   0.971    -.1457508    .1406344
  rival_sugar |          0  (omitted)
-       _cons |  -30.79941   16.15031    -1.91   0.063    -63.36961    1.770797
+       _cons |   3.634262     5.5582     0.65   0.517    -7.574917    14.84344
 ------------------------------------------------------------------------------
 
 . test $ZBOTH
@@ -2558,20 +2564,21 @@ Linear regression                               Number of obs     =         50
  ( 1)  own_cals = 0
  ( 2)  own_fat = 0
  ( 3)  own_sugar = 0
- ( 4)  rival_cals = 0
+ ( 4)  o.rival_cals = 0
  ( 5)  rival_fat = 0
  ( 6)  o.rival_sugar = 0
+       Constraint 4 dropped
        Constraint 6 dropped
 
-       F(  5,    43) =    2.28
-            Prob > F =    0.0638
+       F(  4,    43) =    1.07
+            Prob > F =    0.3828
 
 . scalar F_simple = r(F)
 
 . reg price $XVARS $ZNESTALL, vce(robust)
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
 note: sugar omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 note: n_same_nest_other omitted because of collinearity.
 note: n_rival_nest omitted because of collinearity.
@@ -2589,13 +2596,13 @@ Linear regression                               Number of obs     =         50
                   |               Robust
             price | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ------------------+----------------------------------------------------------------
-             cals |          0  (omitted)
+             cals |  -.0031607   .0028255    -1.12   0.270    -.0088669    .0025454
               fat |          0  (omitted)
             sugar |          0  (omitted)
-         own_cals |   .0020227      .0029     0.70   0.489     -.003834    .0078794
+         own_cals |   -.001138   .0015569    -0.73   0.469    -.0042822    .0020061
           own_fat |  -.0149283   .0420618    -0.35   0.724    -.0998739    .0700172
         own_sugar |   .0224969   .0241964     0.93   0.358    -.0263687    .0713625
-       rival_cals |   .0031607   .0028255     1.12   0.270    -.0025454    .0088669
+       rival_cals |          0  (omitted)
         rival_fat |   .0303246   .0668084     0.45   0.652    -.1045978    .1652469
       rival_sugar |          0  (omitted)
 n_same_nest_other |          0  (omitted)
@@ -2606,7 +2613,7 @@ n_same_nest_other |          0  (omitted)
   nest_rival_cals |   .0010262   .0003283     3.13   0.003     .0003632    .0016893
    nest_rival_fat |          0  (omitted)
  nest_rival_sugar |  -.0554197   .0260259    -2.13   0.039    -.1079801   -.0028592
-            _cons |  -5.059662   15.19926    -0.33   0.741    -35.75519    25.63587
+            _cons |   17.95374   10.68981     1.68   0.101    -3.634775    39.54225
 -----------------------------------------------------------------------------------
 
 . test $ZNESTALL
@@ -2614,7 +2621,7 @@ n_same_nest_other |          0  (omitted)
  ( 1)  own_cals = 0
  ( 2)  own_fat = 0
  ( 3)  own_sugar = 0
- ( 4)  rival_cals = 0
+ ( 4)  o.rival_cals = 0
  ( 5)  rival_fat = 0
  ( 6)  o.rival_sugar = 0
  ( 7)  o.n_same_nest_other = 0
@@ -2625,6 +2632,7 @@ n_same_nest_other |          0  (omitted)
  (12)  nest_rival_cals = 0
  (13)  o.nest_rival_fat = 0
  (14)  nest_rival_sugar = 0
+       Constraint 4 dropped
        Constraint 6 dropped
        Constraint 7 dropped
        Constraint 8 dropped
@@ -2632,15 +2640,15 @@ n_same_nest_other |          0  (omitted)
        Constraint 10 dropped
        Constraint 13 dropped
 
-       F(  8,    41) =    4.43
-            Prob > F =    0.0006
+       F(  7,    41) =    3.09
+            Prob > F =    0.0104
 
 . scalar F_nested_price = r(F)
 
 . reg log_share_within_nest $XVARS $ZNESTALL, vce(robust)
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
 note: sugar omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 note: n_same_nest_other omitted because of collinearity.
 note: n_rival_nest omitted because of collinearity.
@@ -2658,13 +2666,13 @@ Linear regression                               Number of obs     =         50
                   |               Robust
 log_share_withi~t | Coefficient  std. err.      t    P>|t|     [95% conf. interval]
 ------------------+----------------------------------------------------------------
-             cals |          0  (omitted)
+             cals |   .0047697   .0033955     1.40   0.168    -.0020876     .011627
               fat |          0  (omitted)
             sugar |          0  (omitted)
-         own_cals |  -.0050495   .0032672    -1.55   0.130    -.0116478    .0015487
+         own_cals |  -.0002799   .0012106    -0.23   0.818    -.0027248    .0021651
           own_fat |  -.0117904    .057577    -0.20   0.839    -.1280695    .1044888
         own_sugar |   .0097602   .0187916     0.52   0.606    -.0281902    .0477105
-       rival_cals |  -.0047697   .0033955    -1.40   0.168     -.011627    .0020876
+       rival_cals |          0  (omitted)
         rival_fat |   .0219505   .0694076     0.32   0.753    -.1182211     .162122
       rival_sugar |          0  (omitted)
 n_same_nest_other |          0  (omitted)
@@ -2675,7 +2683,7 @@ n_same_nest_other |          0  (omitted)
   nest_rival_cals |   .0011995   .0003479     3.45   0.001      .000497    .0019021
    nest_rival_fat |          0  (omitted)
  nest_rival_sugar |   .0178947   .0265924     0.67   0.505    -.0358097     .071599
-            _cons |   10.33636   16.65728     0.62   0.538     -23.3037    43.97642
+            _cons |  -24.39158   11.89529    -2.05   0.047    -48.41461   -.3685514
 -----------------------------------------------------------------------------------
 
 . test $ZNESTALL
@@ -2683,7 +2691,7 @@ n_same_nest_other |          0  (omitted)
  ( 1)  own_cals = 0
  ( 2)  own_fat = 0
  ( 3)  own_sugar = 0
- ( 4)  rival_cals = 0
+ ( 4)  o.rival_cals = 0
  ( 5)  rival_fat = 0
  ( 6)  o.rival_sugar = 0
  ( 7)  o.n_same_nest_other = 0
@@ -2694,6 +2702,7 @@ n_same_nest_other |          0  (omitted)
  (12)  nest_rival_cals = 0
  (13)  o.nest_rival_fat = 0
  (14)  nest_rival_sugar = 0
+       Constraint 4 dropped
        Constraint 6 dropped
        Constraint 7 dropped
        Constraint 8 dropped
@@ -2701,8 +2710,8 @@ n_same_nest_other |          0  (omitted)
        Constraint 10 dropped
        Constraint 13 dropped
 
-       F(  8,    41) =   13.34
-            Prob > F =    0.0000
+       F(  7,    41) =    6.20
+            Prob > F =    0.0001
 
 . scalar F_nested_lnsjg = r(F)
 
@@ -2720,7 +2729,7 @@ Number of observations (_N) was 0, now 3.
 . replace endogenous_variable = "price_nested" in 2
 (1 real change made)
 
-. replace endogenous_variable = "ln_share_within_nest" in 3
+. replace endogenous_variable = "ln(s_j|g)" in 3
 (1 real change made)
 
 . gen robust_Wald_F_manual = .
@@ -2736,8 +2745,8 @@ Number of observations (_N) was 0, now 3.
 (1 real change made)
 
 . export delimited using "$OUTDATA/first_stage_diagnostics_for_graph_stata.csv", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/data/first_stage_diagnostics_for_graph_sta
-> ta.csv saved
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/data/first_stage_diag
+> nostics_for_graph_stata.csv saved
 
 . graph bar robust_Wald_F_manual, over(endogenous_variable, label(labsize(small))) ///
 >     yline(10, lpattern(dash)) ///
@@ -2745,12 +2754,12 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/d
 >     ytitle("F/Wald-F robusto")
 
 . graph export "$FIGPDF/10_first_stage_robust_f.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/10_first_stage_robust_f.pdf
-    saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/10_first_stage_robust_f.pdf saved as PDF format
 
 . graph export "$FIGPNG/10_first_stage_robust_f.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/10_first_stage_robust_f.png
-    saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/10_first_stage_robust_f.png saved as PNG format
 
 . 
 . /****************************************************************************************
@@ -2791,6 +2800,30 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/f
 . scalar pricecoeflogit = _b[/bp]
 
 . 
+. /*
+> Correção para os gráficos de curva de demanda e efeito marginal:
+> - Em Stata, pricecoeflogit é o coeficiente estimado diretamente sobre price.
+> - Pela notação da lista, esse coeficiente corresponde a -alpha.
+> - Como as curvas didáticas 12, 13 e 17 devem representar demanda decrescente,
+>   usamos alpha_plot_logit = abs(pricecoeflogit) e a inclinação simulada
+>   price_slope_plot = -alpha_plot_logit.
+> - Se o coeficiente estimado vier positivo por ruído/endogeneidade/fragilidade dos
+>   instrumentos, o gráfico deixa isso registrado em nota, mas não desenha uma
+>   curva de demanda positivamente inclinada.
+> */
+. scalar alpha_plot_logit = abs(pricecoeflogit)
+
+. scalar price_slope_plot = -alpha_plot_logit
+
+. 
+. local note_slope "Inclinação do preço usada nas curvas: -|coeficiente estimado do preço|, garantindo demanda decrescen
+> te."
+
+. if (pricecoeflogit < 0) {
+.     local note_slope "Inclinação do preço usada nas curvas igual ao coeficiente estimado, pois ele já é negativo."
+. }
+
+. 
 . gen v_no_price = b0logit + bcalslogit*cals + bfatlogit*fat + bsugarlogit*sugar
 
 . gen vhat_logit = v_no_price + pricecoeflogit*price
@@ -2802,6 +2835,11 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/f
 . gen share_pred_logit = expv_logit/(1 + total_exp_logit)
 
 . 
+. * Intercepto ajustado para curvas didáticas decrescentes, preservando o
+. * índice médio previsto no preço observado de cada produto.
+. gen v_intercept_plot = vhat_logit - price_slope_plot*price
+
+. 
 . gsort -share
 
 . scalar focal_vhat = vhat_logit[1]
@@ -2811,6 +2849,8 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/f
 . scalar focal_share = share[1]
 
 . scalar focal_v_no_price = v_no_price[1]
+
+. scalar focal_v_intercept_plot = v_intercept_plot[1]
 
 . scalar focal_expv = expv_logit[1]
 
@@ -2836,18 +2876,16 @@ Number of observations (_N) was 0, now 250.
 
 .     twoway (line share_pred rel_grid), ///
 >         title("Curva clássica do logit - produto focal") ///
->         xtitle("Utilidade relativa V_j - ln(C_j)") ///
->         ytitle("Share previsto")
+>         xtitle("`L_VREL'") ///
+>         ytitle("`L_SJ'")
 
 .     graph export "$FIGPDF/11_classic_logit_curve_share_vs_utility.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/11_classic_logit_curve_share_
-    > vs_utility.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/11_classic_logit_curve_share_vs_utility.pdf saved as PDF format
 
 .     graph export "$FIGPNG/11_classic_logit_curve_share_vs_utility.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/11_classic_logit_curve_share_
-    > vs_utility.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/11_classic_logit_curve_share_vs_utility.png saved as PNG format
 
 . restore
 
@@ -2866,24 +2904,23 @@ Number of observations (_N) was 0, now 250.
 
 .     gen price_grid = p_low + (_n - 1)*((p_high - p_low)/249)
 
-.     gen v_price = focal_v_no_price + pricecoeflogit*price_grid
+.     gen v_price = focal_v_intercept_plot + price_slope_plot*price_grid
 
 .     gen share_pred = exp(v_price)/(C_focal + exp(v_price))
 
 .     twoway (line share_pred price_grid), ///
 >         title("Resposta do share ao preço - produto focal") ///
->         xtitle("Preço simulado do produto focal") ///
->         ytitle("Share previsto")
+>         xtitle("`L_PRICEJ'") ///
+>         ytitle("`L_SJ'") ///
+>         note("`note_slope'", size(vsmall))
 
 .     graph export "$FIGPDF/12_focal_product_share_vs_price.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/12_focal_product_share_vs_pri
-    > ce.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/12_focal_product_share_vs_price.pdf saved as PDF format
 
 .     graph export "$FIGPNG/12_focal_product_share_vs_price.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/12_focal_product_share_vs_pri
-    > ce.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/12_focal_product_share_vs_price.png saved as PNG format
 
 . restore
 
@@ -2898,27 +2935,30 @@ Number of observations (_N) was 0, now 250.
 
 .     gen price_grid = p_low + (_n - 1)*((p_high - p_low)/249)
 
-.     gen v_price = focal_v_no_price + pricecoeflogit*price_grid
+.     gen v_price = focal_v_intercept_plot + price_slope_plot*price_grid
 
 .     gen share_pred = exp(v_price)/(C_focal + exp(v_price))
 
-.     gen marginal_effect = pricecoeflogit*share_pred*(1-share_pred)
+. 
+.     * Efeito marginal próprio correto: ds_j/dp_j = -alpha*s_j*(1-s_j).
+.     * Como price_slope_plot = -alpha_plot_logit < 0, a curva fica abaixo de zero.
+.     gen marginal_effect = price_slope_plot*share_pred*(1-share_pred)
 
+. 
 .     twoway (line marginal_effect price_grid), ///
->         yline(0) ///
+>         yline(0, lpattern(dash)) ///
 >         title("Efeito marginal do preço - produto focal") ///
->         xtitle("Preço simulado do produto focal") ///
->         ytitle("Efeito marginal ds_j/dp_j")
+>         xtitle("`L_PRICEJ'") ///
+>         ytitle("`L_DSDP'") ///
+>         note("`note_slope'", size(vsmall))
 
 .     graph export "$FIGPDF/13_focal_product_marginal_effect_vs_price.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/13_focal_product_marginal_eff
-    > ect_vs_price.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/13_focal_product_marginal_effect_vs_price.pdf saved as PDF format
 
 .     graph export "$FIGPNG/13_focal_product_marginal_effect_vs_price.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/13_focal_product_marginal_eff
-    > ect_vs_price.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/13_focal_product_marginal_effect_vs_price.png saved as PNG format
 
 . restore
 
@@ -2946,64 +2986,55 @@ file
 
 . twoway (scatter share share_pred_logit) (function y=x, range(`lo' `hi')), ///
 >     title("Share observado versus previsto") ///
->     xtitle("Share previsto pelo logit simples") ///
->     ytitle("Share observado") ///
+>     xtitle("`L_SJ'") ///
+>     ytitle("`L_SOBS'") ///
 >     legend(off)
 
 . graph export "$FIGPDF/14_observed_vs_predicted_shares_simple_logit.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/14_observed_vs_predicted_shar
-    > es_simple_logit.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/14_observed_vs_predicted_shares_simple_logit.pdf saved as PDF format
 
 . graph export "$FIGPNG/14_observed_vs_predicted_shares_simple_logit.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/14_observed_vs_predicted_shar
-    > es_simple_logit.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/14_observed_vs_predicted_shares_simple_logit.png saved as PNG format
 
 . 
 . * 15. Histograma dos resíduos estruturais com curva de densidade kernel.
 . histogram xi_gmm_both, density kdensity ///
 >     xline(0) ///
->     title("Distribuição dos resíduos estruturais") ///
->     xtitle("Resíduo estrutural estimado") ///
+>     title("Distribuição dos resíduos estruturais ({&xi}{subscript:j})") ///
+>     xtitle("`L_XI'") ///
 >     ytitle("Densidade")
 (bin=7, start=-1.1600895, width=.55462241)
 
 . graph export "$FIGPDF/15_structural_residual_hist_density.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/15_structural_residual_hist_d
-    > ensity.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/15_structural_residual_hist_density.pdf saved as PDF format
 
 . graph export "$FIGPNG/15_structural_residual_hist_density.png", replace width(2400)
-(file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/15_structural_residual_hist_d
-    > ensity.png not found)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/15_structural_residual_hist_d
-    > ensity.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/15_structural_residual_hist_density.png saved as PNG format
 
 . 
 . * 16. QQ plot dos resíduos estruturais.
 . qnorm xi_gmm_both, ///
->     title("QQ plot dos resíduos estruturais") ///
->     ytitle("Quantis dos resíduos") ///
+>     title("QQ plot dos resíduos estruturais ({&xi}{subscript:j})") ///
+>     ytitle("Quantis de {&xi}{subscript:j}") ///
 >     xtitle("Quantis teóricos normais")
 
 . graph export "$FIGPDF/16_structural_residual_qqplot.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/16_structural_residual_qqplot
-    > .pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/16_structural_residual_qqplot.pdf saved as PDF format
 
 . graph export "$FIGPNG/16_structural_residual_qqplot.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/16_structural_residual_qqplot
-    > .png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/16_structural_residual_qqplot.png saved as PNG format
 
 . 
 . * 17. Curvas de resposta ao preço dos cinco maiores produtos.
 . preserve
 
-.     keep product share price v_no_price expv_logit
+.     keep product share price v_no_price vhat_logit v_intercept_plot expv_logit
 
 .     gsort -share
 
@@ -3043,7 +3074,7 @@ file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000007.tmp saved as .dta f
 
 .     gen price_grid = price*grid_scale
 
-.     gen v_grid = v_no_price + pricecoeflogit*price_grid
+.     gen v_grid = v_intercept_plot + price_slope_plot*price_grid
 
 .     gen share_grid = exp(v_grid)/(C_i + exp(v_grid))
 
@@ -3055,19 +3086,18 @@ file C:\Users\B03531~1\AppData\Local\Temp\21\ST_11918_000007.tmp saved as .dta f
 >         (line share_grid price_grid if id==4, sort) ///
 >         (line share_grid price_grid if id==5, sort), ///
 >         title("Curvas de resposta ao preço - top 5 produtos") ///
->         xtitle("Preço simulado") ///
->         ytitle("Share previsto") ///
+>         xtitle("Preço simulado ({it:p}{subscript:j})") ///
+>         ytitle("`L_SJ'") ///
+>         note("`note_slope'", size(vsmall)) ///
 >         legend(order(1 "Produto 1" 2 "Produto 2" 3 "Produto 3" 4 "Produto 4" 5 "Produto 5") rows(1))
 
 .     graph export "$FIGPDF/17_price_response_curves_top5_products.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/17_price_response_curves_top5
-    > _products.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/17_price_response_curves_top5_products.pdf saved as PDF format
 
 .     graph export "$FIGPNG/17_price_response_curves_top5_products.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/17_price_response_curves_top5
-    > _products.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/17_price_response_curves_top5_products.png saved as PNG format
 
 . restore
 
@@ -3089,6 +3119,15 @@ end of do-file
 > 07 - Visualizações extras para enriquecer a resposta
 > ****************************************************************************************/
 . 
+. 
+. /****************************************************************************************
+> Rótulos matemáticos para gráficos do Stata via SMCL.
+> ****************************************************************************************/
+. local L_XI `"{&xi}{subscript:j} estimado"'
+
+. local L_SHARE_AGG `"Market share agregado"'
+
+. 
 . use "$OUTDATA/prepared_data_stata.dta", clear
 
 . 
@@ -3099,17 +3138,15 @@ end of do-file
 
 .     graph hbar share, over(firm, sort(share) descending label(labsize(vsmall))) ///
 >         title("Concentração de market share por firma") ///
->         ytitle("Share agregado")
+>         ytitle("`L_SHARE_AGG'")
 
 .     graph export "$FIGPDF/extra_01_firm_share_concentration.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_01_firm_share_concentra
-    > tion.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/extra_01_firm_share_concentration.pdf saved as PDF format
 
 .     graph export "$FIGPNG/extra_01_firm_share_concentration.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_01_firm_share_concentra
-    > tion.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/extra_01_firm_share_concentration.png saved as PNG format
 
 . restore
 
@@ -3121,15 +3158,15 @@ file
 
 .     graph bar share, over(segment, label(labsize(small))) ///
 >         title("Tamanho dos nests") ///
->         ytitle("Share agregado")
+>         ytitle("`L_SHARE_AGG'")
 
 .     graph export "$FIGPDF/extra_02_nest_sizes.pdf", replace
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_02_nest_sizes.pdf
-    saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/extra_02_nest_sizes.pdf saved as PDF format
 
 .     graph export "$FIGPNG/extra_02_nest_sizes.png", replace width(2400)
-file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_02_nest_sizes.png
-    saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/extra_02_nest_sizes.png saved as PNG format
 
 . restore
 
@@ -3145,24 +3182,18 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/f
   6.         graph export "$FIGPNG/extra_03_mean_`x'_by_segment.png", replace width(2400)
   7.     restore
   8. }
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_03_mean_cals_by_segment
-    > .pdf saved as PDF format
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_03_mean_cals_by_segment
-    > .png saved as PNG format
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_03_mean_fat_by_segment.
-    > pdf saved as PDF format
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_03_mean_fat_by_segment.
-    > png saved as PNG format
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_03_mean_sugar_by_segmen
-    > t.pdf saved as PDF format
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_03_mean_sugar_by_segmen
-    > t.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/extra_03_mean_cals_by_segment.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/extra_03_mean_cals_by_segment.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/extra_03_mean_fat_by_segment.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/extra_03_mean_fat_by_segment.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/extra_03_mean_sugar_by_segment.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/extra_03_mean_sugar_by_segment.png saved as PNG format
 
 . 
 . * extra_04: correlação entre instrumentos excluídos.
@@ -3235,14 +3266,12 @@ xij variables:
 >        legend(off)
 
 . graph export "$FIGPDF/extra_04_instrument_correlation_matrix.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_04_instrument_correlati
-    > on_matrix.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/extra_04_instrument_correlation_matrix.pdf saved as PDF format
 
 . graph export "$FIGPNG/extra_04_instrument_correlation_matrix.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_04_instrument_correlati
-    > on_matrix.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/extra_04_instrument_correlation_matrix.png saved as PNG format
 
 . 
 . * extra_05: resíduos estruturais contra preço.
@@ -3250,36 +3279,32 @@ file
 
 . twoway (scatter xi_gmm_both price) (lfit xi_gmm_both price), ///
 >     yline(0) ///
->     title("Resíduos estruturais e preço") ///
+>     title("Resíduos estruturais ({&xi}{subscript:j}) e preço") ///
 >     xtitle("Preço de transação") ///
->     ytitle("Resíduo estrutural estimado") ///
+>     ytitle("`L_XI'") ///
 >     legend(off)
 
 . graph export "$FIGPDF/extra_05_structural_residuals_vs_price.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_05_structural_residuals
-    > _vs_price.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/extra_05_structural_residuals_vs_price.pdf saved as PDF format
 
 . graph export "$FIGPNG/extra_05_structural_residuals_vs_price.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_05_structural_residuals
-    > _vs_price.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/extra_05_structural_residuals_vs_price.png saved as PNG format
 
 . 
 . * extra_06: resíduos estruturais por firma.
 . graph box xi_gmm_both, over(firm, label(labsize(vsmall))) ///
->     title("Resíduos estruturais por firma") ///
->     ytitle("Resíduo estrutural")
+>     title("Resíduos estruturais ({&xi}{subscript:j}) por firma") ///
+>     ytitle("`L_XI'")
 
 . graph export "$FIGPDF/extra_06_structural_residuals_by_firm.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_06_structural_residuals
-    > _by_firm.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/extra_06_structural_residuals_by_firm.pdf saved as PDF format
 
 . graph export "$FIGPNG/extra_06_structural_residuals_by_firm.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_06_structural_residuals
-    > _by_firm.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/extra_06_structural_residuals_by_firm.png saved as PNG format
 
 . 
 . * extra_07: primeiro estágio, preço observado versus ajustado.
@@ -3288,8 +3313,8 @@ file
 . global ZBOTH "$ZOWN $ZRIVAL"
 
 . reg price $XVARS $ZBOTH
-note: cals omitted because of collinearity.
 note: fat omitted because of collinearity.
+note: rival_cals omitted because of collinearity.
 note: rival_sugar omitted because of collinearity.
 
       Source |       SS           df       MS      Number of obs   =        50
@@ -3302,16 +3327,16 @@ note: rival_sugar omitted because of collinearity.
 ------------------------------------------------------------------------------
        price | Coefficient  Std. err.      t    P>|t|     [95% conf. interval]
 -------------+----------------------------------------------------------------
-        cals |          0  (omitted)
+        cals |  -.0047293    .002801    -1.69   0.099     -.010378    .0009195
          fat |          0  (omitted)
        sugar |   .0231264   .0248398     0.93   0.357    -.0269677    .0732206
-    own_cals |     .00368   .0025404     1.45   0.155    -.0014432    .0088032
+    own_cals |  -.0010493   .0015443    -0.68   0.501    -.0041636    .0020651
      own_fat |  -.0368122   .0589171    -0.62   0.535    -.1556299    .0820055
    own_sugar |   .0191069   .0236848     0.81   0.424     -.028658    .0668719
-  rival_cals |   .0047293    .002801     1.69   0.099    -.0009195     .010378
+  rival_cals |          0  (omitted)
    rival_fat |  -.0025582   .0704447    -0.04   0.971    -.1446236    .1395072
  rival_sugar |          0  (omitted)
-       _cons |  -30.79941   19.59761    -1.57   0.123    -70.32175    8.722936
+       _cons |   3.634262   5.593268     0.65   0.519    -7.645637    14.91416
 ------------------------------------------------------------------------------
 
 . predict price_hat, xb
@@ -3348,14 +3373,12 @@ note: rival_sugar omitted because of collinearity.
 >     legend(off)
 
 . graph export "$FIGPDF/extra_07_first_stage_price_fit.pdf", replace
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/pdf/extra_07_first_stage_price_fi
-    > t.pdf saved as PDF format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/pdf/extra_07_first_stage_price_fit.pdf saved as PDF format
 
 . graph export "$FIGPNG/extra_07_first_stage_price_fit.png", replace width(2400)
-file
-    C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/figures/png/extra_07_first_stage_price_fi
-    > t.png saved as PNG format
+file C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista
+    3/outputs/stata/figures/png/extra_07_first_stage_price_fit.png saved as PNG format
 
 . 
 end of do-file
@@ -3376,7 +3399,8 @@ end of do-file
 . 
 . log close
       name:  <unnamed>
-       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista3/outputs/stata/logs/run_all_stata.log
+       log:  C:\Users\B03531855158\Documents\Replication\Economia Industrial_Lista 1\Lista 3/outputs/stata/logs/run_all_
+> stata.log
   log type:  text
- closed on:   3 Jun 2026, 12:34:57
+ closed on:   4 Jun 2026, 11:58:19
 ------------------------------------------------------------------------------------------------------------------------
