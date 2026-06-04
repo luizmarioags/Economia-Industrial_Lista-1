@@ -1,0 +1,15 @@
+#########################################################################
+#                            INÍCIO                                     #
+#             Lista Berry/BLP - Replicação em Python                    #
+#########################################################################
+Base preparada: 50 produtos.
+Modelos de logit simples estimados e salvos.
+Nested GMM estimado. Sigma = 0.6341
+Elasticidades e markups calculados. alpha = 0.21787
+Diagnósticos de primeiro estágio calculados.
+Tabelas CSV/TEX exportadas.
+Gráficos principais exportados.
+Gráficos extras exportados.
+#########################################################################
+#                            FIM                                        #
+#########################################################################
