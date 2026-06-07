@@ -149,8 +149,7 @@ $$
 O estimador GMM resolve:
 
 $$
-\widehat{\theta}_{GMM}
-=
+\widehat{\theta}_{GMM}=
 \arg\min_{\theta}
 \left[g_N(\theta)'W_Ng_N(\theta)\right].
 $$
