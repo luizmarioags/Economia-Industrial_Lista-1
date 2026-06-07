@@ -1,5 +1,12 @@
 """Executor geral do pacote Python de replicação AIDS."""
 
+# Elaborado por:
+# Luiz Mario Andrade (Matrícula: 252029360)
+# Felipe Santos (Matrícula: 232010719)
+# Luiza Nodari (Matrícula: 242011335)
+# Diogo Martins (Matrícula: 232001578)
+# Sarah Moura (Matrícula: 211060316)
+# Pedro Bijos (Matrícula: 241003849)
 from __future__ import annotations
 
 from pathlib import Path

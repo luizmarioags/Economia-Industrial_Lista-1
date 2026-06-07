@@ -106,8 +106,19 @@ class AIDSConfig:
             path.mkdir(parents=True, exist_ok=True)
 
 
+def find_project_root(start: str | Path | None = None) -> Path:
+    """Localiza a raiz do pacote, procurando data/raw/meatdata.csv na pasta atual ou nas pastas superiores."""
+    base = Path.cwd() if start is None else Path(start)
+    base = base.resolve()
+    candidates = [base, *base.parents]
+    for cand in candidates:
+        if (cand / "data" / "raw" / "meatdata.csv").exists():
+            return cand
+    return base
+
+
 def default_config(root: str | Path | None = None, output_tag: str = "PY") -> AIDSConfig:
-    return AIDSConfig(root=Path.cwd() if root is None else Path(root), output_tag=output_tag)
+    return AIDSConfig(root=find_project_root(root), output_tag=output_tag)
 
 
 def required_columns_for_goods(goods: Iterable[str]) -> list[str]:

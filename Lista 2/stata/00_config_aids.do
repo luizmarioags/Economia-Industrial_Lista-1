@@ -1,8 +1,14 @@
 /*******************************************************************************
 Arquivo: stata/00_config_aids.do
 Objetivo: definir diretórios, nomes de arquivos e opções gerais do pacote AIDS.
-Autor: ChatGPT
 Observação: rode este arquivo a partir da raiz do pacote.
+Elaborado por:
+Luiz Mario Andrade (Matrícula: 252029360)
+Felipe Santos (Matrícula: 232010719)
+Luiza Nodari (Matrícula: 242011335)
+Diogo Martins (Matrícula: 232001578)
+Sarah Moura (Matrícula: 211060316)
+Pedro Bijos (Matrícula: 241003849)
 *******************************************************************************/
 
 version 18.0                                      // Define a versão mínima esperada do Stata.

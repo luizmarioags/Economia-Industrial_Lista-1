@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/01_prepare_aids_data.log
   log type:  text
- opened on:   1 Jun 2026, 09:34:50
+ opened on:   7 Jun 2026, 19:06:17
 
 . 
 . import delimited using "$RAW_CSV", clear varnames(1) case(lower) // Importa o CSV e coloca nomes em minúsculas.
@@ -272,5 +272,5 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/p
       name:  <unnamed>
        log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/01_prepare_aids_data.log
   log type:  text
- closed on:   1 Jun 2026, 09:34:50
+ closed on:   7 Jun 2026, 19:06:17
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

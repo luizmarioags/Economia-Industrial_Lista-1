@@ -261,7 +261,8 @@ def wald_test(model: AIDSModel, R: np.ndarray, r: np.ndarray, nome: str) -> pd.D
     r = np.asarray(r, dtype=float).reshape(-1, 1)
     diff = R @ theta - r
     V_R = R @ model.V.to_numpy(dtype=float) @ R.T
-    W = float(diff.T @ safe_solve(V_R) @ diff)
+    W_mat = diff.T @ safe_solve(V_R) @ diff
+    W = float(np.asarray(W_mat).reshape(-1)[0])
     df = int(R.shape[0])
     return pd.DataFrame({"teste": [nome], "estatistica": [W], "gl": [df], "p_valor": [chi2_sf(W, df)]})
 

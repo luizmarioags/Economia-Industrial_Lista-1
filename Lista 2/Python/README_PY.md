@@ -1,5 +1,14 @@
 # Pacote Python de replicação — sistema AIDS
 
+## Elaborado por
+
+- Luiz Mario Andrade — Matrícula: 252029360
+- Felipe Santos — Matrícula: 232010719
+- Luiza Nodari — Matrícula: 242011335
+- Diogo Martins — Matrícula: 232001578
+- Sarah Moura — Matrícula: 211060316
+- Pedro Bijos — Matrícula: 241003849
+
 Este pacote replica, em Python, o fluxo dos scripts R enviados para a lista AIDS:
 
 1. `prepare_aids_data.py` — prepara a base `meatdata.csv`, cria participações, logs, índice de Stone, defasagens e diagnósticos básicos.
@@ -12,15 +21,17 @@ Este pacote replica, em Python, o fluxo dos scripts R enviados para a lista AIDS
 
 ## Estrutura esperada
 
-Rode a partir da raiz do projeto:
+A raiz do pacote é a pasta `Códigos_Lista2/`. O executor Python fica em `Códigos_Lista2/Python/` e localiza automaticamente a base em `../data/raw/meatdata.csv`.
 
 ```text
-.
+Códigos_Lista2/
 ├── data/
 │   └── raw/
 │       └── meatdata.csv
 ├── output/
-└── py_aids_replication/
+└── Python/
+    ├── run_all_aids_py.py
+    └── py_aids_replication/
 ```
 
 ## Instalação rápida

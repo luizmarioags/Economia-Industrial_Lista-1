@@ -2,7 +2,7 @@
       name:  <unnamed>
        log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/02_estimate_aids_stata.log
   log type:  text
- opened on:   1 Jun 2026, 09:34:50
+ opened on:   7 Jun 2026, 19:06:17
 
 . 
 . use "$PROC_DTA", clear                             // Abre os dados processados pela etapa 01.
@@ -325,5 +325,5 @@ file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/c
       name:  <unnamed>
        log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/02_estimate_aids_stata.log
   log type:  text
- closed on:   1 Jun 2026, 09:34:54
+ closed on:   7 Jun 2026, 19:06:20
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------

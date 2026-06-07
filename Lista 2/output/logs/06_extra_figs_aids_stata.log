@@ -1,0 +1,994 @@
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/06_extra_figs_aids_stata.log
+  log type:  text
+ opened on:   7 Jun 2026, 19:06:42
+
+. 
+. ********************************************************************************
+. * Subdiretorios de saida.
+. ********************************************************************************
+. 
+. global EXTRA_FIGS "$FIGURES/Extra_Figs"
+
+. global EXTRA_PDF  "$EXTRA_FIGS/PDF"
+
+. global EXTRA_PNG  "$EXTRA_FIGS/PNG"
+
+. 
+. capture mkdir "$EXTRA_FIGS"
+
+. capture mkdir "$EXTRA_PDF"
+
+. capture mkdir "$EXTRA_PNG"
+
+. 
+. ********************************************************************************
+. * Padrao visual.
+. ********************************************************************************
+. 
+. set scheme s2color
+
+. graph set window fontface "Arial"
+
+. 
+. local cor_bovina   "navy"
+
+. local cor_suina    "cranberry"
+
+. local cor_frango   "forest_green"
+
+. local cor_pescados "orange"
+
+. local cor_pos      "navy"
+
+. local cor_neg      "cranberry"
+
+. local cor_neutro   "gs8"
+
+. local cor_extra    "purple"
+
+. 
+. local tema_base "graphregion(color(white)) plotregion(color(white)) bgcolor(white)"
+
+. local eixo_grid "xlabel(, labsize(small) grid glcolor(gs14)) ylabel(, labsize(small) grid glcolor(gs14))"
+
+. 
+. ********************************************************************************
+. * Checagem dos arquivos necessarios.
+. ********************************************************************************
+. 
+. foreach arq in ///
+>     "$TABLES/elasticidades_marshallianas_hsym_stata.csv" ///
+>     "$TABLES/elasticidades_compensadas_hsym_stata.csv" ///
+>     "$TABLES/elasticidade_dispendio_hsym_stata.csv" ///
+>     "$TABLES/diagnostico_primeira_etapa_stata.csv" ///
+>     "$TABLES/comparacao_modelos_stata.csv" {
+  2. 
+.     capture confirm file "`arq'"
+  3.     if _rc {
+  4.         di as error "Arquivo necessario nao encontrado: `arq'"
+  5.         di as error "Rode primeiro as etapas 02, 03, 04 e 05 do pacote."
+  6.         log close
+  7.         exit 601
+  8.     }
+  9. }
+
+. 
+. ********************************************************************************
+. * 1. Elasticidades proprias: Marshallianas versus compensadas.
+. ********************************************************************************
+. 
+. tempfile own_em own_eh own_all
+
+. 
+. import delimited using "$TABLES/elasticidades_marshallianas_hsym_stata.csv", clear case(lower)
+(encoding automatically selected: ISO-8859-2)
+(5 vars, 4 obs)
+
+. 
+. rename bfvl  valor_bfvl
+
+. rename pork  valor_pork
+
+. rename poult valor_poult
+
+. rename fish  valor_fish
+
+. 
+. reshape long valor_, i(produto_linha) j(produto_coluna) string
+(j = bfvl fish pork poult)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations                4   ->   16          
+Number of variables                   5   ->   3           
+j variable (4 values)                     ->   produto_coluna
+xij variables:
+  valor_bfvl valor_fish ... valor_poult   ->   valor_
+-----------------------------------------------------------------------------
+
+. keep if produto_linha == produto_coluna
+(12 observations deleted)
+
+. 
+. rename valor_ elasticidade
+
+. gen str20 tipo = "Marshalliana"
+
+. 
+. save `own_em', replace
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_2b24_000001.tmp not found)
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_2b24_000001.tmp saved as .dta format
+
+. 
+. import delimited using "$TABLES/elasticidades_compensadas_hsym_stata.csv", clear case(lower)
+(encoding automatically selected: ISO-8859-2)
+(5 vars, 4 obs)
+
+. 
+. rename bfvl  valor_bfvl
+
+. rename pork  valor_pork
+
+. rename poult valor_poult
+
+. rename fish  valor_fish
+
+. 
+. reshape long valor_, i(produto_linha) j(produto_coluna) string
+(j = bfvl fish pork poult)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations                4   ->   16          
+Number of variables                   5   ->   3           
+j variable (4 values)                     ->   produto_coluna
+xij variables:
+  valor_bfvl valor_fish ... valor_poult   ->   valor_
+-----------------------------------------------------------------------------
+
+. keep if produto_linha == produto_coluna
+(12 observations deleted)
+
+. 
+. rename valor_ elasticidade
+
+. gen str20 tipo = "Compensada"
+
+. 
+. append using `own_em'
+
+. 
+. gen byte ordem_produto = .
+(8 missing values generated)
+
+. replace ordem_produto = 1 if produto_linha == "bfvl"
+(2 real changes made)
+
+. replace ordem_produto = 2 if produto_linha == "pork"
+(2 real changes made)
+
+. replace ordem_produto = 3 if produto_linha == "poult"
+(2 real changes made)
+
+. replace ordem_produto = 4 if produto_linha == "fish"
+(2 real changes made)
+
+. 
+. gen byte ordem_tipo = .
+(8 missing values generated)
+
+. replace ordem_tipo = 1 if tipo == "Marshalliana"
+(4 real changes made)
+
+. replace ordem_tipo = 2 if tipo == "Compensada"
+(4 real changes made)
+
+. 
+. gen double xpos = ordem_produto
+
+. replace xpos = xpos - 0.13 if tipo == "Marshalliana"
+(4 real changes made)
+
+. replace xpos = xpos + 0.13 if tipo == "Compensada"
+(4 real changes made)
+
+. 
+. gen str8 rotulo = string(elasticidade, "%5.2f")
+
+. 
+. twoway ///
+>     (bar elasticidade xpos if tipo == "Marshalliana", barwidth(0.22) fcolor(`cor_bovina'%65) lcolor(`cor_bovina')) ///
+>     (bar elasticidade xpos if tipo == "Compensada",   barwidth(0.22) fcolor(`cor_suina'%65)  lcolor(`cor_suina')) ///
+>     (scatter elasticidade xpos, msymbol(i) mlabel(rotulo) mlabposition(12) mlabsize(vsmall) mlabcolor(black)), ///
+>     yline(0, lcolor(black) lpattern(dash) lwidth(thin)) ///
+>     xlabel(1 "bfvl" 2 "pork" 3 "poult" 4 "fish", labsize(small)) ///
+>     ylabel(, labsize(small) grid glcolor(gs14)) ///
+>     title("Elasticidades-preco proprias", size(medsmall)) ///
+>     subtitle("Comparacao entre Marshallianas e compensadas", size(small)) ///
+>     xtitle("Produto", size(small)) ///
+>     ytitle("Elasticidade-preco propria", size(small)) ///
+>     legend(order(1 "Marshalliana" 2 "Compensada") cols(1) position(3) ring(1) region(lcolor(none) fcolor(none)) size(small)) ///
+>     `tema_base' ///
+>     name(g_extra_own, replace)
+
+. 
+. graph export "$EXTRA_PDF/stata_extra_01_elasticidades_proprias_marshallianas_compensadas.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PDF/stata_extra_01_elasticidades_proprias_marshallianas_compensadas.pdf saved as PDF format
+
+. graph export "$EXTRA_PNG/stata_extra_01_elasticidades_proprias_marshallianas_compensadas.png", replace width(2400)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PNG/stata_extra_01_elasticidades_proprias_marshallianas_compensadas.png saved as PNG format
+
+. 
+. ********************************************************************************
+. * 2. Heatmap da diferenca Slutsky: compensada - Marshalliana.
+. ********************************************************************************
+. 
+. tempfile em_long eh_long diff_long
+
+. 
+. import delimited using "$TABLES/elasticidades_marshallianas_hsym_stata.csv", clear case(lower)
+(encoding automatically selected: ISO-8859-2)
+(5 vars, 4 obs)
+
+. 
+. rename bfvl  em_bfvl
+
+. rename pork  em_pork
+
+. rename poult em_poult
+
+. rename fish  em_fish
+
+. 
+. reshape long em_, i(produto_linha) j(produto_coluna) string
+(j = bfvl fish pork poult)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations                4   ->   16          
+Number of variables                   5   ->   3           
+j variable (4 values)                     ->   produto_coluna
+xij variables:
+           em_bfvl em_fish ... em_poult   ->   em_
+-----------------------------------------------------------------------------
+
+. rename em_ em
+
+. save `em_long', replace
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_2b24_000004.tmp not found)
+file C:\Users\B03531~1\AppData\Local\Temp\21\ST_2b24_000004.tmp saved as .dta format
+
+. 
+. import delimited using "$TABLES/elasticidades_compensadas_hsym_stata.csv", clear case(lower)
+(encoding automatically selected: ISO-8859-2)
+(5 vars, 4 obs)
+
+. 
+. rename bfvl  eh_bfvl
+
+. rename pork  eh_pork
+
+. rename poult eh_poult
+
+. rename fish  eh_fish
+
+. 
+. reshape long eh_, i(produto_linha) j(produto_coluna) string
+(j = bfvl fish pork poult)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations                4   ->   16          
+Number of variables                   5   ->   3           
+j variable (4 values)                     ->   produto_coluna
+xij variables:
+           eh_bfvl eh_fish ... eh_poult   ->   eh_
+-----------------------------------------------------------------------------
+
+. rename eh_ eh
+
+. 
+. merge 1:1 produto_linha produto_coluna using `em_long', nogenerate
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                                16  
+    -----------------------------------------
+
+. 
+. gen double diff = eh - em
+
+. gen str8 rotulo = string(diff, "%5.2f")
+
+. gen double peso = abs(diff) + 0.05
+
+. 
+. gen byte row = .
+(16 missing values generated)
+
+. replace row = 4 if produto_linha == "bfvl"
+(4 real changes made)
+
+. replace row = 3 if produto_linha == "pork"
+(4 real changes made)
+
+. replace row = 2 if produto_linha == "poult"
+(4 real changes made)
+
+. replace row = 1 if produto_linha == "fish"
+(4 real changes made)
+
+. 
+. gen byte col = .
+(16 missing values generated)
+
+. replace col = 1 if produto_coluna == "bfvl"
+(4 real changes made)
+
+. replace col = 2 if produto_coluna == "pork"
+(4 real changes made)
+
+. replace col = 3 if produto_coluna == "poult"
+(4 real changes made)
+
+. replace col = 4 if produto_coluna == "fish"
+(4 real changes made)
+
+. 
+. twoway ///
+>     (scatter row col if diff >= 0 [aw=peso], msymbol(square) msize(vlarge) mcolor(`cor_pos'%65) mlabcolor(black) mlabel(rotulo) mlabposition(0) mlabsize(small)) ///
+>     (scatter row col if diff < 0  [aw=peso], msymbol(square) msize(vlarge) mcolor(`cor_neg'%65) mlabcolor(black) mlabel(rotulo) mlabposition(0) mlabsize(small)), ///
+>     xlabel(1 "bfvl" 2 "pork" 3 "poult" 4 "fish", angle(0) labsize(small)) ///
+>     ylabel(1 "fish" 2 "poult" 3 "pork" 4 "bfvl", labsize(small)) ///
+>     title("Diferenca entre elasticidades compensadas e Marshallianas", size(medsmall)) ///
+>     subtitle("Efeito-renda removido pela relacao de Slutsky: EH - EM", size(small)) ///
+>     xtitle("Preco", size(small)) ///
+>     ytitle("Demanda", size(small)) ///
+>     legend(order(1 "Diferenca positiva" 2 "Diferenca negativa") cols(1) position(3) ring(1) region(lcolor(none) fcolor(none)) size(small)) ///
+>     `tema_base' ///
+>     name(g_extra_diff, replace)
+
+. 
+. graph export "$EXTRA_PDF/stata_extra_02_heatmap_diferenca_slutsky.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PDF/stata_extra_02_heatmap_diferenca_slutsky.pdf saved as PDF format
+
+. graph export "$EXTRA_PNG/stata_extra_02_heatmap_diferenca_slutsky.png", replace width(2400)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PNG/stata_extra_02_heatmap_diferenca_slutsky.png saved as PNG format
+
+. 
+. ********************************************************************************
+. * 3. Rede simplificada das elasticidades cruzadas compensadas.
+. *    Seta: preco do produto de origem -> demanda do produto de destino.
+. ********************************************************************************
+. 
+. import delimited using "$TABLES/elasticidades_compensadas_hsym_stata.csv", clear case(lower)
+(encoding automatically selected: ISO-8859-2)
+(5 vars, 4 obs)
+
+. 
+. rename bfvl  valor_bfvl
+
+. rename pork  valor_pork
+
+. rename poult valor_poult
+
+. rename fish  valor_fish
+
+. 
+. reshape long valor_, i(produto_linha) j(produto_coluna) string
+(j = bfvl fish pork poult)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations                4   ->   16          
+Number of variables                   5   ->   3           
+j variable (4 values)                     ->   produto_coluna
+xij variables:
+  valor_bfvl valor_fish ... valor_poult   ->   valor_
+-----------------------------------------------------------------------------
+
+. rename valor_ elasticidade
+
+. 
+. keep if produto_linha != produto_coluna
+(4 observations deleted)
+
+. gen double abs_elast = abs(elasticidade)
+
+. 
+. * Mantem relacoes economicamente mais visiveis no grafico.
+. keep if abs_elast >= 0.10
+(5 observations deleted)
+
+. 
+. gen byte sinal = .
+(7 missing values generated)
+
+. replace sinal = 1  if elasticidade > 0
+(5 real changes made)
+
+. replace sinal = -1 if elasticidade < 0
+(2 real changes made)
+
+. 
+. gen double x_from = .
+(7 missing values generated)
+
+. gen double y_from = .
+(7 missing values generated)
+
+. gen double x_to   = .
+(7 missing values generated)
+
+. gen double y_to   = .
+(7 missing values generated)
+
+. 
+. * Coordenadas do produto cujo preco varia.
+. replace x_from = 0 if produto_coluna == "bfvl"
+(2 real changes made)
+
+. replace y_from = 1 if produto_coluna == "bfvl"
+(2 real changes made)
+
+. 
+. replace x_from = 1 if produto_coluna == "pork"
+(2 real changes made)
+
+. replace y_from = 1 if produto_coluna == "pork"
+(2 real changes made)
+
+. 
+. replace x_from = 1 if produto_coluna == "poult"
+(2 real changes made)
+
+. replace y_from = 0 if produto_coluna == "poult"
+(2 real changes made)
+
+. 
+. replace x_from = 0 if produto_coluna == "fish"
+(1 real change made)
+
+. replace y_from = 0 if produto_coluna == "fish"
+(1 real change made)
+
+. 
+. * Coordenadas do produto cuja demanda responde.
+. replace x_to = 0 if produto_linha == "bfvl"
+(2 real changes made)
+
+. replace y_to = 1 if produto_linha == "bfvl"
+(2 real changes made)
+
+. 
+. replace x_to = 1 if produto_linha == "pork"
+(1 real change made)
+
+. replace y_to = 1 if produto_linha == "pork"
+(1 real change made)
+
+. 
+. replace x_to = 1 if produto_linha == "poult"
+(2 real changes made)
+
+. replace y_to = 0 if produto_linha == "poult"
+(2 real changes made)
+
+. 
+. replace x_to = 0 if produto_linha == "fish"
+(2 real changes made)
+
+. replace y_to = 0 if produto_linha == "fish"
+(2 real changes made)
+
+. 
+. gen str28 nome_from = ""
+(7 missing values generated)
+
+. replace nome_from = "Carne bovina e vitela" if produto_coluna == "bfvl"
+(2 real changes made)
+
+. replace nome_from = "Carne suina"           if produto_coluna == "pork"
+(2 real changes made)
+
+. replace nome_from = "Frango"                if produto_coluna == "poult"
+(2 real changes made)
+
+. replace nome_from = "Pescados"              if produto_coluna == "fish"
+(1 real change made)
+
+. 
+. bysort produto_coluna: gen byte tag_node = (_n == 1)
+
+. 
+. twoway ///
+>     (pcarrow y_from x_from y_to x_to if sinal == 1, lcolor(`cor_pos'%55) mcolor(`cor_pos'%55) lwidth(medthick)) ///
+>     (pcarrow y_from x_from y_to x_to if sinal == -1, lcolor(`cor_neg'%55) mcolor(`cor_neg'%55) lwidth(medthick)) ///
+>     (scatter y_from x_from if tag_node == 1, msymbol(circle) msize(large) mcolor(gs14) mlcolor(black) mlabel(nome_from) mlabposition(12) mlabsize(small) mlabcolor(black)), ///
+>     xscale(range(-0.25 1.35) off) ///
+>     yscale(range(-0.20 1.25) off) ///
+>     xlabel(none) ylabel(none) ///
+>     title("Rede de elasticidades cruzadas compensadas", size(medsmall)) ///
+>     subtitle("Setas positivas indicam substituicao; negativas indicam relacao negativa", size(vsmall)) ///
+>     legend(order(1 "Elasticidade cruzada positiva" 2 "Elasticidade cruzada negativa") cols(1) position(6) ring(0) region(lcolor(none) fcolor(none)) size(small)) ///
+>     aspectratio(1) ///
+>     `tema_base' ///
+>     name(g_extra_rede, replace)
+
+. 
+. graph export "$EXTRA_PDF/stata_extra_03_rede_elasticidades_cruzadas_compensadas.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PDF/stata_extra_03_rede_elasticidades_cruzadas_compensadas.pdf saved as PDF format
+
+. graph export "$EXTRA_PNG/stata_extra_03_rede_elasticidades_cruzadas_compensadas.png", replace width(2400)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PNG/stata_extra_03_rede_elasticidades_cruzadas_compensadas.png saved as PNG format
+
+. 
+. ********************************************************************************
+. * 4. Residuos por equacao ao longo do tempo, incluindo a equacao omitida recuperada.
+. ********************************************************************************
+. 
+. use "$PROC_DTA", clear
+
+. 
+. drop if missing(w_bfvl, w_pork, w_poult, w_fish, lngp_bfvl, lngp_pork, lngp_poult, lngp_fish, ln_real_x)
+(0 observations deleted)
+
+. 
+. estimates use "$MODELS/aids_hsym.ster"
+
+. 
+. scalar a_bfvl = _b[/a_bfvl]
+
+. scalar a_pork = _b[/a_pork]
+
+. scalar a_fish = _b[/a_fish]
+
+. 
+. scalar b_bfvl = _b[/b_bfvl]
+
+. scalar b_pork = _b[/b_pork]
+
+. scalar b_fish = _b[/b_fish]
+
+. 
+. scalar g11 = _b[/g11]
+
+. scalar g12 = _b[/g12]
+
+. scalar g14 = _b[/g14]
+
+. scalar g22 = _b[/g22]
+
+. scalar g24 = _b[/g24]
+
+. scalar g44 = _b[/g44]
+
+. 
+. gen double fit_bfvl = a_bfvl + g11*(lngp_bfvl-lngp_poult) + g12*(lngp_pork-lngp_poult) + g14*(lngp_fish-lngp_poult) + b_bfvl*ln_real_x
+
+. gen double fit_pork = a_pork + g12*(lngp_bfvl-lngp_poult) + g22*(lngp_pork-lngp_poult) + g24*(lngp_fish-lngp_poult) + b_pork*ln_real_x
+
+. gen double fit_fish = a_fish + g14*(lngp_bfvl-lngp_poult) + g24*(lngp_pork-lngp_poult) + g44*(lngp_fish-lngp_poult) + b_fish*ln_real_x
+
+. gen double fit_poult = 1 - fit_bfvl - fit_pork - fit_fish
+
+. 
+. gen double res_bfvl  = w_bfvl  - fit_bfvl
+
+. gen double res_pork  = w_pork  - fit_pork
+
+. gen double res_poult = w_poult - fit_poult
+
+. gen double res_fish  = w_fish  - fit_fish
+
+. 
+. preserve
+
+. 
+. keep year res_bfvl res_pork res_poult res_fish
+
+. 
+. reshape long res_, i(year) j(produto) string
+(j = bfvl fish pork poult)
+
+Data                               Wide   ->   Long
+-----------------------------------------------------------------------------
+Number of observations               41   ->   164         
+Number of variables                   5   ->   3           
+j variable (4 values)                     ->   produto
+xij variables:
+        res_bfvl res_fish ... res_poult   ->   res_
+-----------------------------------------------------------------------------
+
+. rename res_ residuo
+
+. 
+. gen str28 produto_nome = ""
+(164 missing values generated)
+
+. replace produto_nome = "Carne bovina e vitela" if produto == "bfvl"
+(41 real changes made)
+
+. replace produto_nome = "Carne suina"           if produto == "pork"
+(41 real changes made)
+
+. replace produto_nome = "Frango"                if produto == "poult"
+(41 real changes made)
+
+. replace produto_nome = "Pescados"              if produto == "fish"
+(41 real changes made)
+
+. 
+. twoway ///
+>     (line residuo year, lcolor(`cor_bovina') lwidth(medthick)), ///
+>     by(produto_nome, cols(2) note("") graphregion(color(white))) ///
+>     yline(0, lcolor(black) lpattern(dash) lwidth(thin)) ///
+>     title("Residuos do modelo AIDS por equacao", size(medsmall)) ///
+>     xtitle("Ano", size(small)) ///
+>     ytitle("Residuo da participacao no dispendio", size(small)) ///
+>     xlabel(, labsize(small) grid glcolor(gs14)) ///
+>     ylabel(, labsize(small) grid glcolor(gs14)) ///
+>     legend(off) ///
+>     `tema_base' ///
+>     name(g_extra_residuos, replace)
+
+. 
+. graph export "$EXTRA_PDF/stata_extra_04_residuos_por_equacao_tempo.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PDF/stata_extra_04_residuos_por_equacao_tempo.pdf saved as PDF format
+
+. graph export "$EXTRA_PNG/stata_extra_04_residuos_por_equacao_tempo.png", replace width(2400)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PNG/stata_extra_04_residuos_por_equacao_tempo.png saved as PNG format
+
+. 
+. restore
+
+. 
+. ********************************************************************************
+. * 5. Primeira etapa: observado versus ajustado para cada preco endogeno.
+. ********************************************************************************
+. 
+. use "$PROC_DTA", clear
+
+. 
+. drop if missing(ln_real_x, L1_lngp_bfvl, L1_lngp_pork, L1_lngp_poult, L1_lngp_fish)
+(1 observation deleted)
+
+. 
+. foreach g in bfvl pork poult fish {
+  2. 
+.     quietly regress lngp_`g' ln_real_x L1_lngp_bfvl L1_lngp_pork L1_lngp_poult L1_lngp_fish
+  3.     predict double fit_lngp_`g' if e(sample), xb
+  4. 
+.     quietly summarize lngp_`g' if e(sample), meanonly
+  5.     local lo = r(min)
+  6.     local hi = r(max)
+  7. 
+.     quietly summarize fit_lngp_`g' if e(sample), meanonly
+  8.     if r(min) < `lo' local lo = r(min)
+  9.     if r(max) > `hi' local hi = r(max)
+ 10. 
+.     local titulo ""
+ 11.     if "`g'" == "bfvl"  local titulo "Carne bovina e vitela"
+ 12.     if "`g'" == "pork"  local titulo "Carne suina"
+ 13.     if "`g'" == "poult" local titulo "Frango"
+ 14.     if "`g'" == "fish"  local titulo "Pescados"
+ 15. 
+.     twoway ///
+>         (scatter lngp_`g' fit_lngp_`g' if e(sample), mcolor(`cor_bovina'%70) msymbol(circle) msize(medium)) ///
+>         (function y = x, range(`lo' `hi') lcolor(black) lpattern(dash) lwidth(thin)), ///
+>         title("`titulo'", size(small)) ///
+>         xtitle("Preco ajustado na primeira etapa", size(vsmall)) ///
+>         ytitle("Preco observado", size(vsmall)) ///
+>         xlabel(, labsize(vsmall) grid glcolor(gs14)) ///
+>         ylabel(, labsize(vsmall) grid glcolor(gs14)) ///
+>         legend(off) ///
+>         `tema_base' ///
+>         name(g_fs_`g', replace)
+ 16. }
+
+. 
+. graph combine g_fs_bfvl g_fs_pork g_fs_poult g_fs_fish, ///
+>     cols(2) ///
+>     title("Primeira etapa: observado versus ajustado", size(medsmall)) ///
+>     note("Instrumentos: primeira defasagem dos log-precos normalizados.", size(vsmall)) ///
+>     graphregion(color(white)) ///
+>     name(g_extra_firststage_fit, replace)
+
+. 
+. graph export "$EXTRA_PDF/stata_extra_05_primeira_etapa_observado_ajustado.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PDF/stata_extra_05_primeira_etapa_observado_ajustado.pdf saved as PDF format
+
+. graph export "$EXTRA_PNG/stata_extra_05_primeira_etapa_observado_ajustado.png", replace width(2400)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PNG/stata_extra_05_primeira_etapa_observado_ajustado.png saved as PNG format
+
+. 
+. ********************************************************************************
+. * 6. Estabilidade das elasticidades proprias por especificacao.
+. ********************************************************************************
+. 
+. use "$PROC_DTA", clear
+
+. 
+. drop if missing(w_bfvl, w_pork, w_poult, w_fish, lngp_bfvl, lngp_pork, lngp_poult, lngp_fish, ln_real_x, L1_lngp_bfvl, L1_lngp_pork, L1_lngp_poult, L1_lngp_fish)
+(1 observation deleted)
+
+. 
+. foreach g in bfvl pork poult fish {
+  2.     quietly summarize w_`g', meanonly
+  3.     scalar wbar_`g' = r(mean)
+  4. }
+
+. 
+. matrix WBAR = (scalar(wbar_bfvl) \ scalar(wbar_pork) \ scalar(wbar_poult) \ scalar(wbar_fish))
+
+. matrix rownames WBAR = bfvl pork poult fish
+
+. matrix colnames WBAR = wbar
+
+. 
+. capture program drop _post_own_elast
+
+. program define _post_own_elast
+  1.     syntax , HANDLE(name) SPEC(string) MODELPATH(string) LABEL(string)
+  2. 
+.     estimates use "`modelpath'"
+  3. 
+.     scalar a_bfvl = _b[/a_bfvl]
+  4.     scalar a_pork = _b[/a_pork]
+  5.     scalar a_fish = _b[/a_fish]
+  6.     scalar a_poult = 1 - a_bfvl - a_pork - a_fish
+  7. 
+.     scalar b_bfvl = _b[/b_bfvl]
+  8.     scalar b_pork = _b[/b_pork]
+  9.     scalar b_fish = _b[/b_fish]
+ 10.     scalar b_poult = - b_bfvl - b_pork - b_fish
+ 11. 
+.     matrix BETA = (b_bfvl \ b_pork \ b_poult \ b_fish)
+ 12.     matrix rownames BETA = bfvl pork poult fish
+ 13.     matrix colnames BETA = beta
+ 14. 
+.     matrix GAMMA = J(4,4,.)
+ 15.     matrix rownames GAMMA = bfvl pork poult fish
+ 16.     matrix colnames GAMMA = bfvl pork poult fish
+ 17. 
+.     if "`spec'" == "unres" {
+ 18. 
+.         scalar g11 = _b[/gbfvl_bfvl]
+ 19.         scalar g12 = _b[/gbfvl_pork]
+ 20.         scalar g13 = _b[/gbfvl_poult]
+ 21.         scalar g14 = _b[/gbfvl_fish]
+ 22. 
+.         scalar g21 = _b[/gpork_bfvl]
+ 23.         scalar g22 = _b[/gpork_pork]
+ 24.         scalar g23 = _b[/gpork_poult]
+ 25.         scalar g24 = _b[/gpork_fish]
+ 26. 
+.         scalar g41 = _b[/gfish_bfvl]
+ 27.         scalar g42 = _b[/gfish_pork]
+ 28.         scalar g43 = _b[/gfish_poult]
+ 29.         scalar g44 = _b[/gfish_fish]
+ 30. 
+.         scalar g31 = -(g11 + g21 + g41)
+ 31.         scalar g32 = -(g12 + g22 + g42)
+ 32.         scalar g33 = -(g13 + g23 + g43)
+ 33.         scalar g34 = -(g14 + g24 + g44)
+ 34.     }
+ 35. 
+.     if "`spec'" == "hom" {
+ 36. 
+.         scalar g11 = _b[/gbfvl_bfvl]
+ 37.         scalar g12 = _b[/gbfvl_pork]
+ 38.         scalar g14 = _b[/gbfvl_fish]
+ 39.         scalar g13 = -(g11 + g12 + g14)
+ 40. 
+.         scalar g21 = _b[/gpork_bfvl]
+ 41.         scalar g22 = _b[/gpork_pork]
+ 42.         scalar g24 = _b[/gpork_fish]
+ 43.         scalar g23 = -(g21 + g22 + g24)
+ 44. 
+.         scalar g41 = _b[/gfish_bfvl]
+ 45.         scalar g42 = _b[/gfish_pork]
+ 46.         scalar g44 = _b[/gfish_fish]
+ 47.         scalar g43 = -(g41 + g42 + g44)
+ 48. 
+.         scalar g31 = -(g11 + g21 + g41)
+ 49.         scalar g32 = -(g12 + g22 + g42)
+ 50.         scalar g33 = -(g13 + g23 + g43)
+ 51.         scalar g34 = -(g14 + g24 + g44)
+ 52.     }
+ 53. 
+.     if inlist("`spec'", "hsym", "hsym_L2") {
+ 54. 
+.         scalar g11 = _b[/g11]
+ 55.         scalar g12 = _b[/g12]
+ 56.         scalar g14 = _b[/g14]
+ 57.         scalar g22 = _b[/g22]
+ 58.         scalar g24 = _b[/g24]
+ 59.         scalar g44 = _b[/g44]
+ 60. 
+.         scalar g13 = -(g11 + g12 + g14)
+ 61.         scalar g21 = g12
+ 62.         scalar g23 = -(g21 + g22 + g24)
+ 63.         scalar g31 = g13
+ 64.         scalar g32 = g23
+ 65.         scalar g34 = -(g14 + g24 + g44)
+ 66.         scalar g41 = g14
+ 67.         scalar g42 = g24
+ 68.         scalar g43 = g34
+ 69.         scalar g33 = -(g31 + g32 + g34)
+ 70.     }
+ 71. 
+.     matrix GAMMA[1,1] = g11
+ 72.     matrix GAMMA[1,2] = g12
+ 73.     matrix GAMMA[1,3] = g13
+ 74.     matrix GAMMA[1,4] = g14
+ 75. 
+.     matrix GAMMA[2,1] = g21
+ 76.     matrix GAMMA[2,2] = g22
+ 77.     matrix GAMMA[2,3] = g23
+ 78.     matrix GAMMA[2,4] = g24
+ 79. 
+.     matrix GAMMA[3,1] = g31
+ 80.     matrix GAMMA[3,2] = g32
+ 81.     matrix GAMMA[3,3] = g33
+ 82.     matrix GAMMA[3,4] = g34
+ 83. 
+.     matrix GAMMA[4,1] = g41
+ 84.     matrix GAMMA[4,2] = g42
+ 85.     matrix GAMMA[4,3] = g43
+ 86.     matrix GAMMA[4,4] = g44
+ 87. 
+.     forvalues i = 1/4 {
+ 88. 
+.         scalar wi = WBAR[`i',1]
+ 89.         scalar bi = BETA[`i',1]
+ 90. 
+.         scalar eta_i = 1 + bi/wi
+ 91.         scalar em_ii = -1 + GAMMA[`i',`i']/wi - bi
+ 92.         scalar eh_ii = em_ii + eta_i*wi
+ 93. 
+.         local produto : word `i' of bfvl pork poult fish
+ 94. 
+.         post `handle' ("`label'") ("`produto'") (eta_i) (em_ii) (eh_ii)
+ 95.     }
+ 96. end
+
+. 
+. tempfile elast_modelos
+
+. tempname postelast
+
+. 
+. postfile `postelast' str24 modelo str8 produto double eta em_propria eh_propria using `elast_modelos', replace
+(file C:\Users\B03531~1\AppData\Local\Temp\21\ST_2b24_000008.tmp not found)
+
+. 
+. _post_own_elast, handle(`postelast') spec(unres)   modelpath("$MODELS/aids_unrestricted.ster") label("Irrestrito")
+
+. _post_own_elast, handle(`postelast') spec(hom)     modelpath("$MODELS/aids_homogeneity.ster")  label("Homogeneidade")
+
+. _post_own_elast, handle(`postelast') spec(hsym)    modelpath("$MODELS/aids_hsym.ster")         label("Homog. + simetria")
+
+. _post_own_elast, handle(`postelast') spec(hsym_L2) modelpath("$MODELS/aids_hsym_L2.ster")      label("Homog. + simetria L2")
+
+. 
+. postclose `postelast'
+
+. 
+. use `elast_modelos', clear
+
+. export delimited using "$TABLES/elasticidades_proprias_por_modelo_stata.csv", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/tables/elasticidades_proprias_por_modelo_stata.csv saved
+
+. 
+. gen byte ordem_produto = .
+(16 missing values generated)
+
+. replace ordem_produto = 1 if produto == "bfvl"
+(4 real changes made)
+
+. replace ordem_produto = 2 if produto == "pork"
+(4 real changes made)
+
+. replace ordem_produto = 3 if produto == "poult"
+(4 real changes made)
+
+. replace ordem_produto = 4 if produto == "fish"
+(4 real changes made)
+
+. 
+. gen byte ordem_modelo = .
+(16 missing values generated)
+
+. replace ordem_modelo = 1 if modelo == "Irrestrito"
+(4 real changes made)
+
+. replace ordem_modelo = 2 if modelo == "Homogeneidade"
+(4 real changes made)
+
+. replace ordem_modelo = 3 if modelo == "Homog. + simetria"
+(4 real changes made)
+
+. replace ordem_modelo = 4 if modelo == "Homog. + simetria L2"
+(4 real changes made)
+
+. 
+. gen double xpos = ordem_produto + (ordem_modelo - 2.5)*0.14
+
+. 
+. twoway ///
+>     (bar em_propria xpos if modelo == "Irrestrito",            barwidth(0.12) fcolor(`cor_bovina'%65)   lcolor(`cor_bovina')) ///
+>     (bar em_propria xpos if modelo == "Homogeneidade",         barwidth(0.12) fcolor(`cor_suina'%65)    lcolor(`cor_suina')) ///
+>     (bar em_propria xpos if modelo == "Homog. + simetria",     barwidth(0.12) fcolor(`cor_frango'%65)   lcolor(`cor_frango')) ///
+>     (bar em_propria xpos if modelo == "Homog. + simetria L2",  barwidth(0.12) fcolor(`cor_pescados'%65) lcolor(`cor_pescados')), ///
+>     yline(0, lcolor(black) lpattern(dash) lwidth(thin)) ///
+>     xlabel(1 "bfvl" 2 "pork" 3 "poult" 4 "fish", labsize(small)) ///
+>     ylabel(, labsize(small) grid glcolor(gs14)) ///
+>     title("Estabilidade das elasticidades-preco proprias", size(medsmall)) ///
+>     subtitle("Elasticidades Marshallianas por especificacao", size(small)) ///
+>     xtitle("Produto", size(small)) ///
+>     ytitle("Elasticidade-preco propria", size(small)) ///
+>     legend(order(1 "Irrestrito" 2 "Homogeneidade" 3 "Homog. + simetria" 4 "Homog. + simetria L2") cols(1) position(3) ring(1) region(lcolor(none) fcolor(none)) size(small)) ///
+>     `tema_base' ///
+>     name(g_extra_stability, replace)
+
+. 
+. graph export "$EXTRA_PDF/stata_extra_06_estabilidade_elasticidades_proprias.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PDF/stata_extra_06_estabilidade_elasticidades_proprias.pdf saved as PDF format
+
+. graph export "$EXTRA_PNG/stata_extra_06_estabilidade_elasticidades_proprias.png", replace width(2400)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PNG/stata_extra_06_estabilidade_elasticidades_proprias.png saved as PNG format
+
+. 
+. ********************************************************************************
+. * 7. Estatistica objetivo do GMM por especificacao.
+. ********************************************************************************
+. 
+. import delimited using "$TABLES/comparacao_modelos_stata.csv", clear case(lower)
+(encoding automatically selected: ISO-8859-1)
+(6 vars, 4 obs)
+
+. 
+. capture confirm variable j_obj
+
+. if _rc {
+.     di as error "A variavel j_obj nao foi encontrada em comparacao_modelos_stata.csv."
+. }
+
+. else {
+. 
+.     gen str30 modelo_nome = modelo
+.     replace modelo_nome = "Irrestrito"              if modelo == "aids_unrestricted"
+(1 real change made)
+.     replace modelo_nome = "Homogeneidade"           if modelo == "aids_homogeneity"
+(1 real change made)
+.     replace modelo_nome = "Homog. + simetria"       if modelo == "aids_hsym"
+(1 real change made)
+.     replace modelo_nome = "Homog. + simetria L2"    if modelo == "aids_hsym_L2"
+(1 real change made)
+. 
+.     graph bar j_obj if !missing(j_obj), ///
+>         over(modelo_nome, label(angle(25) labsize(vsmall))) ///
+>         title("Estatistica objetivo do GMM por especificacao", size(medsmall)) ///
+>         ytitle("J do GMM", size(small)) ///
+>         ylabel(, labsize(small) grid glcolor(gs14)) ///
+>         bar(1, fcolor(`cor_extra'%65) lcolor(`cor_extra')) ///
+>         graphregion(color(white)) plotregion(color(white)) ///
+>         name(g_extra_j, replace)
+. 
+.     graph export "$EXTRA_PDF/stata_extra_07_estatistica_objetivo_gmm.pdf", replace
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PDF/stata_extra_07_estatistica_objetivo_gmm.pdf saved as PDF format
+.     graph export "$EXTRA_PNG/stata_extra_07_estatistica_objetivo_gmm.png", replace width(2400)
+file C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/figures/Extra_Figs/PNG/stata_extra_07_estatistica_objetivo_gmm.png saved as PNG format
+. }
+
+. 
+. log close
+      name:  <unnamed>
+       log:  C:\Users\B03531855158\Documents\Replication\Códigos_Lista2/output/logs/06_extra_figs_aids_stata.log
+  log type:  text
+ closed on:   7 Jun 2026, 19:06:54
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
