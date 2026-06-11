@@ -39,13 +39,13 @@ O coeficiente estimado sobre preço corresponde a $-\alpha$. Sob demanda decresc
 O preço pode ser endógeno porque firmas escolhem preços conhecendo componentes de qualidade observados pelos consumidores, mas não observados pelo econometrista. Assim, em geral:
 
 $$
-E[p_j\xi_j]\neq 0.
+\mathbb{E}[p_j\xi_j]\neq 0.
 $$
 
 A identificação exige instrumentos $Z_j$ tais que:
 
 $$
-E[Z_j\xi_j]=0
+\mathbb{E}[Z_j\xi_j]=0
 $$
 
 com relevância para explicar $p_j$.
