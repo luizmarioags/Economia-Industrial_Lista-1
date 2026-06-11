@@ -1,47 +1,26 @@
 /****************************************************************************************
  b_program_operational.do
  ---------------------------------------------------------------------------------------
- Base operacional inspirada no arquivo original b_program.do de Victor Gomes (2022).
+ Versão corrigida para a lista Berry/BLP.
 
- O arquivo original definia:
-   1) uma função Mata GMM_OBJ(todo, betas, Y, X, Z, W, crit, g, H);
-   2) um programa eclass gmm_code que carregava uma base, montava Y, X, Z,
-      otimizava o critério GMM em Mata e postava os coeficientes no ereturn.
+ Correção central:
+ - Como os modelos estimados são lineares nos parâmetros depois da inversão de Berry,
+   o GMM é calculado por fórmula fechada, e não por Nelder-Mead.
+ - Isso evita problemas de convergência/escala do otimizador e deixa o step(1) igual ao
+   IV/GMM linear usual com W = (Z'Z/N)^(-1).
+ - O step(2) atualiza W com a matriz robusta dos momentos e reestima.
 
- Esta versão generaliza a mesma lógica para o pacote Berry/BLP da lista:
-   - o usuário define Y, X, Z e os nomes dos parâmetros via globals;
-   - o programa berry_gmm_code carrega a base indicada em $BERRY_usefile;
-   - o critério estimado é N * gbar(theta)' W gbar(theta), com
-     gbar(theta) = N^{-1} Z' [Y - X beta];
-   - step(1): W = [N^{-1} Z'Z]^{-1};
-   - step(2): primeiro estima com W inicial, depois atualiza W com a matriz robusta
-     dos momentos e reotimiza;
-   - o resultado é postado como eclass, permitindo estimates store/restore,
-     eststo, _b[bp], _se[bp], e(Q), e(N), e(step), etc.
+ Momentos:
+     g_N(beta) = (1/N) Z'(Y - X beta)
 
- Observação técnica importante:
-   - O Mata que executa a estimação fica em funções Mata fora do program Stata.
-   - Dentro de um program Stata, blocos Mata multilinha podem fazer o `end' ser lido
-     como fim do program. Isso causava o erro "matrix BERRY_b not found" ao carregar
-     o wrapper. Por isso berry_gmm_code chama Mata em uma linha:
-         mata: BERRY_RUN_GMM("...", "...", "...", "...")
+ Critério:
+     J_N(beta) = N g_N(beta)' W g_N(beta)
 ****************************************************************************************/
 
 capture program drop berry_gmm_code
 mata: mata clear
 
 mata:
-void BERRY_GMM_OBJ(todo, betas, Y, X, Z, W, crit, g, H)
-{
-    real scalar N
-    real matrix XI, Gbar
-
-    N    = rows(Z)
-    XI   = Y - X * betas'
-    Gbar = (quadcross(Z, XI)) / N
-    crit = N * (Gbar)' * W * (Gbar)
-}
-
 real matrix BERRY_SYMINV(real matrix A)
 {
     real matrix B
@@ -50,29 +29,18 @@ real matrix BERRY_SYMINV(real matrix A)
     return(B)
 }
 
-real rowvector BERRY_OPTIMIZE(real matrix Y, real matrix X, real matrix Z,
-                              real matrix W, real rowvector start)
+real colvector BERRY_LINGMM(real matrix Y, real matrix X, real matrix Z, real matrix W)
 {
-    transmorphic S
-    real rowvector p
+    real scalar N
+    real matrix ZX, ZY, A, b
 
-    S = optimize_init()
-    optimize_init_evaluator(S, &BERRY_GMM_OBJ())
-    optimize_init_evaluatortype(S, "d0")
-    optimize_init_technique(S, "nm")
-    optimize_init_nmsimplexdeltas(S, 0.01)
-    optimize_init_conv_vtol(S, 1e-12)
-    optimize_init_conv_ptol(S, 1e-10)
-    optimize_init_conv_maxiter(S, 20000)
-    optimize_init_which(S, "min")
-    optimize_init_params(S, start)
-    optimize_init_argument(S, 1, Y)
-    optimize_init_argument(S, 2, X)
-    optimize_init_argument(S, 3, Z)
-    optimize_init_argument(S, 4, W)
+    N  = rows(Y)
+    ZX = quadcross(Z, X) / N
+    ZY = quadcross(Z, Y) / N
 
-    p = optimize(S)
-    return(p)
+    A = ZX' * W * ZX
+    b = BERRY_SYMINV(A) * (ZX' * W * ZY)
+    return(b)
 }
 
 void BERRY_RUN_GMM(string scalar yvars,
@@ -80,10 +48,8 @@ void BERRY_RUN_GMM(string scalar yvars,
                    string scalar zvars,
                    string scalar step_s)
 {
-    real scalar N, k, step, q
-    real matrix Y, X, Z, XX, XY, W, xi, Zxi, Szz, Gbar, D, A, B, Ainv, V
-    real rowvector bstart, p
-    real scalar Q
+    real scalar N, k, q, step, Q
+    real matrix Y, X, Z, W, b, xi, Zxi, Szz, Gbar, G, A, B, Ainv, V
 
     Y = st_data(., tokens(yvars))
     X = st_data(., tokens(xvars))
@@ -96,35 +62,41 @@ void BERRY_RUN_GMM(string scalar yvars,
     k = cols(X)
     q = cols(Z)
 
-    XX = quadcross(X, X)
-    XY = quadcross(X, Y)
-    bstart = (BERRY_SYMINV(XX) * XY)'
-    if (sum(missing(bstart)) > 0) bstart = J(1, k, 0)
+    if (N <= k) {
+        errprintf("Número de observações insuficiente para o número de parâmetros.\n")
+        exit(3498)
+    }
+    if (q < k) {
+        errprintf("Modelo subidentificado: número de instrumentos menor que número de parâmetros.\n")
+        exit(3498)
+    }
 
+    /* Step 1: matriz de ponderação inicial */
     W = BERRY_SYMINV(quadcross(Z, Z) / N)
-    p = BERRY_OPTIMIZE(Y, X, Z, W, bstart)
+    b = BERRY_LINGMM(Y, X, Z, W)
 
-    xi = Y - X * p'
+    xi  = Y - X * b
     Zxi = Z :* (xi * J(1, q, 1))
     Szz = quadcross(Zxi, Zxi) / N
 
+    /* Step 2: GMM eficiente com matriz robusta dos momentos */
     if (step == 2) {
         W = BERRY_SYMINV(Szz)
-        p = BERRY_OPTIMIZE(Y, X, Z, W, p)
-        xi = Y - X * p'
+        b = BERRY_LINGMM(Y, X, Z, W)
+        xi  = Y - X * b
         Zxi = Z :* (xi * J(1, q, 1))
         Szz = quadcross(Zxi, Zxi) / N
     }
 
     Gbar = quadcross(Z, xi) / N
-    D = -quadcross(Z, X) / N
-    A = D' * W * D
-    B = D' * W * Szz * W * D
+    G    = quadcross(Z, X) / N
+    A    = G' * W * G
+    B    = G' * W * Szz * W * G
     Ainv = BERRY_SYMINV(A)
-    V = Ainv * B * Ainv / N
-    Q = N * (Gbar)' * W * (Gbar)
+    V    = Ainv * B * Ainv / N
+    Q    = N * Gbar' * W * Gbar
 
-    st_matrix("BERRY_b", p)
+    st_matrix("BERRY_b", b')
     st_matrix("BERRY_V", V)
     st_numscalar("BERRY_Q", Q)
     st_numscalar("BERRY_N", N)
@@ -194,7 +166,6 @@ program define berry_gmm_code, eclass
         exit 198
     }
 
-    * A estimação em Mata é chamada em uma única linha para não fechar o program.
     mata: BERRY_RUN_GMM("`y'", "`x'", "`z'", "`step'")
 
     matrix colnames BERRY_b = `bnames'
@@ -215,7 +186,7 @@ program define berry_gmm_code, eclass
     ereturn local vcetype "Robust"
     ereturn local vce "robust"
     ereturn local cmd "berry_gmm_code"
-    ereturn local title "Berry/BLP GMM operacional baseado em b_program.do"
+    ereturn local title "Berry/BLP GMM linear operacional"
 
     restore
 end

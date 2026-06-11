@@ -20,8 +20,14 @@ ROOT <- get_script_root()
 
 S0 <- 0.2429
 XVARS <- c("cals", "fat", "sugar")
+
+# Variável de preço observada e variável estrutural usada na estimação.
+# O modelo teórico é delta_j = X_j'beta - alpha*p_j + xi_j.
+# Para estimar alpha diretamente, a regressão usa neg_price = -price.
 PRICE <- "price"
+NEG_PRICE <- "neg_price"
 DELTA <- "delta"
+
 ZOWN <- c("own_cals", "own_fat", "own_sugar")
 ZRIVAL <- c("rival_cals", "rival_fat", "rival_sugar")
 ZBOTH <- c(ZOWN, ZRIVAL)

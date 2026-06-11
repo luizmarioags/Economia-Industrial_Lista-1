@@ -21,8 +21,8 @@ def _diag(df, y, excluded, spec):
 def main():
     df = pd.read_pickle(config.OUTDATA / "prepared_data_python.pkl")
     out = pd.DataFrame([
-        _diag(df, "price", config.ZBOTH, "simple_logit_both"),
-        _diag(df, "price", config.ZNESTALL, "nested_logit"),
+        _diag(df, "neg_price", config.ZBOTH, "simple_logit_both"),
+        _diag(df, "neg_price", config.ZNESTALL, "nested_logit"),
         _diag(df, "log_share_within_nest", config.ZNESTALL, "nested_logit"),
     ])
     out.to_pickle(config.OUTDATA / "first_stage_diagnostics_python.pkl")

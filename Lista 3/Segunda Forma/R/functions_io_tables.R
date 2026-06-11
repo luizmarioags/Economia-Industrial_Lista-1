@@ -22,24 +22,28 @@ format_cell <- function(x, digits = 4) {
 write_latex_table <- function(df, path, caption = "Tabela", label = "tab:tabela", digits = 4) {
   con <- file(path, open = "w", encoding = "UTF-8")
   on.exit(close(con), add = TRUE)
+
   align <- paste0("l", paste(rep("r", max(0, ncol(df)-1)), collapse = ""))
+
   writeLines("% Tabela gerada automaticamente pela replicação em R", con)
   writeLines("\\begingroup", con)
   writeLines("\\scriptsize", con)
   writeLines(sprintf("\\begin{longtable}{@{}%s@{}}", align), con)
   writeLines(sprintf("\\caption{%s}\\label{%s}\\\\", latex_escape(caption), label), con)
   writeLines("\\toprule", con)
-  writeLines(paste(latex_escape(names(df)), collapse = " & ") |> paste0(" \\\\"), con)
+  writeLines(paste0(paste(latex_escape(names(df)), collapse = " & "), " \\\\"), con)
   writeLines("\\midrule", con)
   writeLines("\\endfirsthead", con)
   writeLines("\\toprule", con)
-  writeLines(paste(latex_escape(names(df)), collapse = " & ") |> paste0(" \\\\"), con)
+  writeLines(paste0(paste(latex_escape(names(df)), collapse = " & "), " \\\\"), con)
   writeLines("\\midrule", con)
   writeLines("\\endhead", con)
+
   for (i in seq_len(nrow(df))) {
     vals <- vapply(seq_along(df), function(j) format_cell(df[[j]][i], digits), character(1))
-    writeLines(paste(vals, collapse = " & ") |> paste0(" \\\\"), con)
+    writeLines(paste0(paste(vals, collapse = " & "), " \\\\"), con)
   }
+
   writeLines("\\bottomrule", con)
   writeLines("\\end{longtable}", con)
   writeLines("\\endgroup", con)

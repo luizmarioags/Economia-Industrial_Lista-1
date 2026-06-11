@@ -3,12 +3,21 @@ COMENTÁRIOS DETALHADOS
 - clear matrix limpa matrizes antigas para evitar contaminação entre execuções.
 - set scheme s1color o tema visual padrão dos gráficos exportados pelo Stata.
 - set linesize e set matsize ajustam a exibição e o tamanho máximo das matrizes.
-- As globals S0, XVARS, PRICE, DELTA e ENDOG_* padronizam os nomes usados nos scripts seguintes.
+- As globals S0, XVARS, PRICE, PRICE_ORIG, DELTA e ENDOG_* padronizam os nomes usados nos scripts seguintes.
 - capture which verifica se um comando/pacote existe; se não existir, capture ssc install tenta instalar.
 ****************************************************************************************/
 /****************************************************************************************
-Configuração comum - Stata
+Elaborado por: 
+Luiz Mario Andrade (Matrícula: 252029360)
+Felipe Santos (Matrícula: 232010719)
+Luiza Nodari (Matrícula: 242011335)
+Diogo Martins (Matrícula: 232001578)
+Sarah Moura (Matrícula: 211060316)
+Pedro Bijos (Matrícula: 241003849)
+*******************************************************************************/
 ****************************************************************************************/
+
+
 clear matrix
 set scheme s1color
 capture graph set window fontface "Arial"
@@ -24,10 +33,11 @@ set matsize 11000
 
 global S0 = 0.2429
 global XVARS "cals fat sugar"
-global PRICE "price"
+global PRICE "neg_price"
+global PRICE_ORIG "price"
 global DELTA "delta"
-global ENDOG_SIMPLE "price"
-global ENDOG_NESTED "price log_share_within_nest"
+global ENDOG_SIMPLE "neg_price"
+global ENDOG_NESTED "neg_price log_share_within_nest"
 
 * Pacotes opcionais/consolidados. O pacote roda melhor com estout, ivreg2 e weakivtest.
 capture which esttab

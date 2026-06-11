@@ -1,5 +1,17 @@
-"""Run all - Lista Berry/BLP em Python.
-Execute a partir da pasta python/ ou da raiz do pacote:
+# /*******************************************************************************
+# Arquivo: python/run_all_python.py
+# Objetivo: rodar, em ordem, toda a resolução Python da Lista 3 - Nested Logit/Berry.
+# Elaborado por:
+# Luiz Mario Andrade (Matrícula: 252029360)
+# Felipe Santos (Matrícula: 232010719)
+# Luiza Nodari (Matrícula: 242011335)
+# Diogo Martins (Matrícula: 232001578)
+# Sarah Moura (Matrícula: 211060316)
+# Pedro Bijos (Matrícula: 241003849)
+# *******************************************************************************/
+"""Run all - Lista 3 Nested Logit/Berry em Python.
+
+Execute a partir da raiz do pacote:
     python python/run_all_python.py
 """
 from __future__ import annotations
@@ -21,16 +33,24 @@ from visualizations import main as visualizations
 from extra_visualizations import main as extra_visualizations
 
 
+class Tee:
+    def __init__(self, *files):
+        self.files = files
+
+    def write(self, data):
+        for f in self.files:
+            f.write(data)
+            f.flush()
+
+    def flush(self):
+        for f in self.files:
+            f.flush()
+
+
 def main() -> None:
     config.clean_outputs()
     log_path = config.LOG_DIR / "run_all_python.log"
     with open(log_path, "w", encoding="utf-8") as log:
-        class Tee:
-            def __init__(self, *files): self.files = files
-            def write(self, data):
-                for f in self.files: f.write(data); f.flush()
-            def flush(self):
-                for f in self.files: f.flush()
         old_stdout = sys.stdout
         old_stderr = sys.stderr
         sys.stdout = Tee(old_stdout, log)
@@ -38,7 +58,7 @@ def main() -> None:
         try:
             print("#########################################################################")
             print("#                            INÍCIO                                     #")
-            print("#             Lista Berry/BLP - Replicação em Python                    #")
+            print("#             Lista 3 - Nested Logit/Berry - Python                     #")
             print("#########################################################################")
             prepare_data()
             estimate_simple()

@@ -1,5 +1,7 @@
 # functions_gmm.R ----------------------------------------------------------
 # Núcleo operacional equivalente ao eberry/b_program em R.
+# Correção central: GMM linear fechado para a inversão de Berry.
+# Não há imposição de demanda decrescente; alpha é estimado diretamente usando neg_price = -price.
 
 safe_solve <- function(A) {
   out <- tryCatch(solve(A), error = function(e) NULL)
@@ -10,6 +12,22 @@ as_matrix <- function(df, vars) {
   m <- as.matrix(df[, vars, drop = FALSE])
   storage.mode(m) <- "double"
   m
+}
+
+extract_alpha <- function(mod) {
+  b <- mod$coefficients
+  if ("alpha" %in% names(b)) return(as.numeric(b["alpha"]))
+  if ("bp" %in% names(b)) return(as.numeric(-b["bp"]))
+  if ("price" %in% names(b)) return(as.numeric(-b["price"]))
+  NA_real_
+}
+
+extract_alpha_se <- function(mod) {
+  se <- mod$se
+  if ("alpha" %in% names(se)) return(as.numeric(se["alpha"]))
+  if ("bp" %in% names(se)) return(as.numeric(se["bp"]))
+  if ("price" %in% names(se)) return(as.numeric(se["price"]))
+  NA_real_
 }
 
 fit_ols <- function(df, y, xvars, bnames = xvars, hc1 = TRUE) {
@@ -40,7 +58,8 @@ fit_iv_2sls <- function(df, y, xvars, zvars, bnames = xvars) {
   Z <- as_matrix(d, zvars)
   N <- nrow(X); k <- ncol(X); q <- ncol(Z)
   W <- safe_solve(crossprod(Z) / N)
-  b <- safe_solve(t(X) %*% Z %*% W %*% t(Z) %*% X) %*% (t(X) %*% Z %*% W %*% t(Z) %*% Y)
+  b <- safe_solve(t(X) %*% Z %*% W %*% t(Z) %*% X) %*%
+    (t(X) %*% Z %*% W %*% t(Z) %*% Y)
   u <- as.numeric(Y - X %*% b)
   Z_u <- Z * as.numeric(u)
   S <- crossprod(Z_u) / N
@@ -58,6 +77,11 @@ fit_iv_2sls <- function(df, y, xvars, zvars, bnames = xvars) {
   out
 }
 
+linear_gmm_beta <- function(Y, X, Z, W) {
+  safe_solve(t(X) %*% Z %*% W %*% t(Z) %*% X) %*%
+    (t(X) %*% Z %*% W %*% t(Z) %*% Y)
+}
+
 berry_gmm_fit <- function(df, y, xvars, zvars, bnames, step = 2, maxit = 20000) {
   d <- df[, unique(c(y, xvars, zvars)), drop = FALSE]
   d <- d[stats::complete.cases(d), , drop = FALSE]
@@ -66,38 +90,35 @@ berry_gmm_fit <- function(df, y, xvars, zvars, bnames, step = 2, maxit = 20000) 
   Z <- as_matrix(d, zvars)
   N <- nrow(X); k <- ncol(X); q <- ncol(Z)
   if (length(bnames) != k) stop("Número de bnames difere do número de colunas de X.")
-  bstart <- as.numeric(safe_solve(crossprod(X)) %*% crossprod(X, Y))
-  bstart[!is.finite(bstart)] <- 0
-  obj <- function(beta, W) {
-    xi <- as.numeric(Y - X %*% beta)
-    gbar <- crossprod(Z, xi) / N
-    as.numeric(N * t(gbar) %*% W %*% gbar)
-  }
+
+  # Primeira etapa: matriz de ponderação padrão (Z'Z/N)^(-1).
   W <- safe_solve(crossprod(Z) / N)
-  opt1 <- optim(bstart, obj, W = W, method = "Nelder-Mead",
-                control = list(maxit = maxit, reltol = 1e-12))
-  p <- opt1$par
-  xi <- as.numeric(Y - X %*% p)
+  b <- linear_gmm_beta(Y, X, Z, W)
+  xi <- as.numeric(Y - X %*% b)
   Zxi <- Z * xi
   Szz <- crossprod(Zxi) / N
+
+  # Segunda etapa: matriz eficiente baseada em E[Z Z' xi^2].
   if (step == 2) {
     W <- safe_solve(Szz)
-    opt2 <- optim(p, obj, W = W, method = "Nelder-Mead",
-                  control = list(maxit = maxit, reltol = 1e-12))
-    p <- opt2$par
-    xi <- as.numeric(Y - X %*% p)
+    b <- linear_gmm_beta(Y, X, Z, W)
+    xi <- as.numeric(Y - X %*% b)
     Zxi <- Z * xi
     Szz <- crossprod(Zxi) / N
   }
+
   gbar <- crossprod(Z, xi) / N
   D <- -crossprod(Z, X) / N
   A <- t(D) %*% W %*% D
   B <- t(D) %*% W %*% Szz %*% W %*% D
   V <- safe_solve(A) %*% B %*% safe_solve(A) / N
   Q <- as.numeric(N * t(gbar) %*% W %*% gbar)
+
+  p <- as.numeric(b)
   names(p) <- bnames
   rownames(V) <- colnames(V) <- bnames
   se <- sqrt(pmax(diag(V), 0))
+
   out <- list(model = paste0("GMM_step", step), coefficients = p, vcov = V, se = se,
               residuals = xi, N = N, k = k, q = q, Q = Q, J = q-k, step = step,
               xvars = xvars, zvars = zvars, bnames = bnames)

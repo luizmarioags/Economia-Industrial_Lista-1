@@ -1,14 +1,20 @@
 """Exportação de tabelas CSV e LaTeX simples."""
 from __future__ import annotations
-import pandas as pd
 from pathlib import Path
+import pandas as pd
 
 
 def latex_escape(value) -> str:
     s = "" if pd.isna(value) else str(value)
     repl = {
-        "\\": r"\textbackslash{}", "_": r"\_", "%": r"\%", "&": r"\&",
-        "#": r"\#", "$": r"\$", "{": r"\{", "}": r"\}",
+        "\\": r"\textbackslash{}",
+        "_": r"\_",
+        "%": r"\%",
+        "&": r"\&",
+        "#": r"\#",
+        "$": r"\$",
+        "{": r"\{",
+        "}": r"\}",
     }
     for a, b in repl.items():
         s = s.replace(a, b)

@@ -8,24 +8,39 @@ from gmm_core import fit_ols, fit_iv_2sls, berry_gmm_fit, load_models, save_mode
 def main():
     df = pd.read_pickle(config.OUTDATA / "prepared_data_python.pkl")
     models = load_models()
-    models["OLS"] = fit_ols(df, "delta", ["cons", "price"] + config.XVARS, ["b0", "price"] + config.XVARS)
-    models["IV_own"] = fit_iv_2sls(df, "delta", ["cons"] + config.XVARS + ["price"], ["cons"] + config.XVARS + config.ZOWN, ["b0"] + config.XVARS + ["price"])
-    models["IV_rival"] = fit_iv_2sls(df, "delta", ["cons"] + config.XVARS + ["price"], ["cons"] + config.XVARS + config.ZRIVAL, ["b0"] + config.XVARS + ["price"])
-    models["IV_both"] = fit_iv_2sls(df, "delta", ["cons"] + config.XVARS + ["price"], ["cons"] + config.XVARS + config.ZBOTH, ["b0"] + config.XVARS + ["price"])
-    bnames = ["b0", "bcals", "bfat", "bsugar", "bp"]
-    models["GMM_own_1"] = berry_gmm_fit(df, "delta", ["cons"] + config.XVARS + ["price"], ["cons"] + config.XVARS + config.ZOWN, bnames, step=1)
-    models["GMM_own_2"] = berry_gmm_fit(df, "delta", ["cons"] + config.XVARS + ["price"], ["cons"] + config.XVARS + config.ZOWN, bnames, step=2)
-    models["GMM_rival_1"] = berry_gmm_fit(df, "delta", ["cons"] + config.XVARS + ["price"], ["cons"] + config.XVARS + config.ZRIVAL, bnames, step=1)
-    models["GMM_rival_2"] = berry_gmm_fit(df, "delta", ["cons"] + config.XVARS + ["price"], ["cons"] + config.XVARS + config.ZRIVAL, bnames, step=2)
-    models["GMM_both_1"] = berry_gmm_fit(df, "delta", ["cons"] + config.XVARS + ["price"], ["cons"] + config.XVARS + config.ZBOTH, bnames, step=1)
-    models["GMM_both_2"] = berry_gmm_fit(df, "delta", ["cons"] + config.XVARS + ["price"], ["cons"] + config.XVARS + config.ZBOTH, bnames, step=2)
+
+    x_simple = ["cons"] + config.XVARS + ["neg_price"]
+    z_own = ["cons"] + config.XVARS + config.ZOWN
+    z_rival = ["cons"] + config.XVARS + config.ZRIVAL
+    z_both = ["cons"] + config.XVARS + config.ZBOTH
+    bnames = ["b0", "bcals", "bfat", "bsugar", "alpha"]
+
+    models["OLS"] = fit_ols(df, "delta", x_simple, bnames)
+    models["IV_own"] = fit_iv_2sls(df, "delta", x_simple, z_own, bnames)
+    models["IV_rival"] = fit_iv_2sls(df, "delta", x_simple, z_rival, bnames)
+    models["IV_both"] = fit_iv_2sls(df, "delta", x_simple, z_both, bnames)
+
+    models["GMM_own_1"] = berry_gmm_fit(df, "delta", x_simple, z_own, bnames, step=1)
+    models["GMM_own_2"] = berry_gmm_fit(df, "delta", x_simple, z_own, bnames, step=2)
+    models["GMM_rival_1"] = berry_gmm_fit(df, "delta", x_simple, z_rival, bnames, step=1)
+    models["GMM_rival_2"] = berry_gmm_fit(df, "delta", x_simple, z_rival, bnames, step=2)
+    models["GMM_both_1"] = berry_gmm_fit(df, "delta", x_simple, z_both, bnames, step=1)
+    models["GMM_both_2"] = berry_gmm_fit(df, "delta", x_simple, z_both, bnames, step=2)
+
     m = models["GMM_both_2"].coefficients
     df_after = df.copy()
-    df_after["xi_gmm_both"] = df_after["delta"] - m["b0"] - m["bcals"]*df_after["cals"] - m["bfat"]*df_after["fat"] - m["bsugar"]*df_after["sugar"] - m["bp"]*df_after["price"]
+    df_after["xi_gmm_both"] = (
+        df_after["delta"]
+        - m["b0"]
+        - m["bcals"] * df_after["cals"]
+        - m["bfat"] * df_after["fat"]
+        - m["bsugar"] * df_after["sugar"]
+        - m["alpha"] * df_after["neg_price"]
+    )
     df_after.to_pickle(config.OUTDATA / "python_after_simple_gmm.pkl")
     df_after.to_csv(config.OUTDATA / "python_after_simple_gmm.csv", index=False)
     save_models(models)
-    print("Modelos de logit simples estimados e salvos.")
+    print(f"Modelos de logit simples estimados e salvos. alpha_GMM_both_2 = {m['alpha']:.5f}")
     return models
 
 

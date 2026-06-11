@@ -102,15 +102,17 @@ postfile pc str32 model double price_coef using `pricecomp', replace
 foreach m in OLS IV_own IV_rival IV_both IV_nested {
     capture estimates restore `m'
     if !_rc {
-        capture scalar bp = _b[price]
-        if !_rc post pc ("`m'") (bp)
+        * Como o modelo corrigido estima alpha em neg_price=-price,
+        * o coeficiente do preço é -alpha.
+        capture scalar a_hat = _b[neg_price]
+        if !_rc post pc ("`m'") (-a_hat)
     }
 }
 foreach m in GMM_own_1 GMM_own_2 GMM_rival_1 GMM_rival_2 GMM_both_1 GMM_both_2 GMM_nested_1 GMM_nested_2 {
     capture estimates restore `m'
     if !_rc {
-        capture scalar bp = _b[bp]
-        if !_rc post pc ("`m'") (bp)
+        capture scalar a_hat = _b[alpha]
+        if !_rc post pc ("`m'") (-a_hat)
     }
 }
 postclose pc
@@ -127,15 +129,20 @@ graph export "$FIGPNG/05_price_coefficient_comparison.png", replace width(2800)
 
 * 6. Matriz de elasticidades para os 12 maiores produtos.
 use "$OUTDATA/stata_after_simple_gmm.dta", clear
+capture drop neg_price
+gen double neg_price = -price
 capture estimates restore GMM_both_2
 if _rc {
     global ZOWN "own_cals own_fat own_sugar"
     global ZRIVAL "rival_cals rival_fat rival_sugar"
     global ZBOTH "$ZOWN $ZRIVAL"
     quietly run "$ROOT/stata/eberry_operational.do"
-    eberry_fit, y("delta") x("cons cals fat sugar price") z("cons cals fat sugar $ZBOTH") bnames("b0 bcals bfat bsugar bp") step(2)
+    eberry_fit, y("delta") x("cons cals fat sugar neg_price") z("cons cals fat sugar $ZBOTH") bnames("b0 bcals bfat bsugar alpha") step(2)
 }
-scalar alpha_graph = -_b[bp]
+scalar alpha_graph = _b[alpha]
+if (alpha_graph <= 0) {
+    display as error "Atenção: alpha <= 0. A matriz de elasticidades é gerada sem impor demanda decrescente."
+}
 gsort -share
 keep in 1/12
 mata:
@@ -170,7 +177,8 @@ graph export "$FIGPNG/06_elasticity_matrix_subset.png", replace width(2800)
 
 * 7. Elasticidades próprias mais intensas.
 import delimited "$TABCsv/05_own_elasticities_simple_logit.csv", clear varnames(1)
-gsort own_elasticity_simple_logit
+gen double abs_own_elasticity_simple_logit = abs(own_elasticity_simple_logit)
+gsort -abs_own_elasticity_simple_logit
 graph hbar own_elasticity_simple_logit in 1/15, over(product, label(labsize(vsmall))) ///
     yline(0, `ZERO_LINE') ///
     title("Elasticidades próprias mais intensas ({&epsilon}{subscript:jj})", size(medsmall) color(black)) ///
@@ -251,15 +259,17 @@ graph export "$FIGPNG/21_markup_multiproduct_boxplot.png", replace width(2800)
 
 * 10. Diagnóstico de força dos instrumentos: F/Wald-F robusto dos primeiros estágios.
 use "$OUTDATA/prepared_data_stata.dta", clear
+capture drop neg_price
+gen double neg_price = -price
 global ZOWN "own_cals own_fat own_sugar"
 global ZRIVAL "rival_cals rival_fat rival_sugar"
 global ZBOTH "$ZOWN $ZRIVAL"
 global ZNEST "n_same_nest_other n_rival_nest nest_own_cals nest_own_fat nest_own_sugar nest_rival_cals nest_rival_fat nest_rival_sugar"
 global ZNESTALL "$ZOWN $ZRIVAL $ZNEST"
-reg price $XVARS $ZBOTH, vce(robust)
+reg neg_price $XVARS $ZBOTH, vce(robust)
 test $ZBOTH
 scalar F_simple = r(F)
-reg price $XVARS $ZNESTALL, vce(robust)
+reg neg_price $XVARS $ZNESTALL, vce(robust)
 test $ZNESTALL
 scalar F_nested_price = r(F)
 reg log_share_within_nest $XVARS $ZNESTALL, vce(robust)
@@ -268,8 +278,8 @@ scalar F_nested_lnsjg = r(F)
 clear
 set obs 3
 gen str32 endogenous_variable = ""
-replace endogenous_variable = "price_simple" in 1
-replace endogenous_variable = "price_nested" in 2
+replace endogenous_variable = "neg_price_simple" in 1
+replace endogenous_variable = "neg_price_nested" in 2
 replace endogenous_variable = "ln(s_j|g)" in 3
 gen robust_Wald_F_manual = .
 replace robust_Wald_F_manual = F_simple in 1
@@ -295,6 +305,8 @@ graph export "$FIGPNG/10_first_stage_robust_f.png", replace width(2800)
 ****************************************************************************************/
 
 use "$OUTDATA/stata_after_simple_gmm.dta", clear
+capture drop neg_price
+gen double neg_price = -price
 
 global ZOWN "own_cals own_fat own_sugar"
 global ZRIVAL "rival_cals rival_fat rival_sugar"
@@ -303,42 +315,35 @@ global ZBOTH "$ZOWN $ZRIVAL"
 capture estimates restore GMM_both_2
 if _rc {
     quietly run "$ROOT/stata/eberry_operational.do"
-    eberry_fit, y("delta") x("cons cals fat sugar price") z("cons cals fat sugar $ZBOTH") bnames("b0 bcals bfat bsugar bp") step(2)
+    eberry_fit, y("delta") x("cons cals fat sugar neg_price") z("cons cals fat sugar $ZBOTH") bnames("b0 bcals bfat bsugar alpha") step(2)
 }
 
 scalar b0logit = _b[b0]
 scalar bcalslogit = _b[bcals]
 scalar bfatlogit = _b[bfat]
 scalar bsugarlogit = _b[bsugar]
-scalar pricecoeflogit = _b[bp]
+scalar alphalogit = _b[alpha]
+scalar pricecoeflogit = -alphalogit
 
 /*
-Correção para os gráficos de curva de demanda e efeito marginal:
-- Em Stata, pricecoeflogit é o coeficiente estimado diretamente sobre price.
-- Pela notação da lista, esse coeficiente corresponde a -alpha.
-- Como as curvas didáticas 12, 13 e 17 devem representar demanda decrescente,
-  usamos alpha_plot_logit = abs(pricecoeflogit) e a inclinação simulada
-  price_slope_plot = -alpha_plot_logit.
-- Se o coeficiente estimado vier positivo por ruído/endogeneidade/fragilidade dos
-  instrumentos, o gráfico deixa isso registrado em nota, mas não desenha uma
-  curva de demanda positivamente inclinada.
+Curvas sem imposição de demanda decrescente:
+- A especificação estimada é delta = X beta + alpha*(-price) + xi.
+- Logo, o coeficiente estimado diretamente do preço é -alpha.
+- O código abaixo usa exatamente o alpha estimado, sem abs().
 */
-scalar alpha_plot_logit = abs(pricecoeflogit)
-scalar price_slope_plot = -alpha_plot_logit
-
-local note_slope "Inclinação do preço usada nas curvas: -|coeficiente estimado do preço|, garantindo demanda decrescente."
-if (pricecoeflogit < 0) {
-    local note_slope "Inclinação do preço usada nas curvas igual ao coeficiente estimado, pois ele já é negativo."
+scalar price_slope_plot = -alphalogit
+local note_slope "Inclinação do preço usada nas curvas: coeficiente estimado do preço = -alpha, sem imposição de demanda decrescente."
+if (alphalogit <= 0) {
+    local note_slope "Atenção: alpha estimado <= 0; curva gerada sem impor demanda decrescente."
 }
 
 gen v_no_price = b0logit + bcalslogit*cals + bfatlogit*fat + bsugarlogit*sugar
-gen vhat_logit = v_no_price + pricecoeflogit*price
+gen vhat_logit = v_no_price + price_slope_plot*price
 gen expv_logit = exp(vhat_logit)
 egen total_exp_logit = total(expv_logit)
 gen share_pred_logit = expv_logit/(1 + total_exp_logit)
 
-* Intercepto ajustado para curvas didáticas decrescentes, preservando o
-* índice médio previsto no preço observado de cada produto.
+* Intercepto ajustado para simular preço mantendo o índice no preço observado.
 gen v_intercept_plot = vhat_logit - price_slope_plot*price
 
 gsort -share
@@ -397,12 +402,11 @@ preserve
     gen v_price = focal_v_intercept_plot + price_slope_plot*price_grid
     gen share_pred = exp(v_price)/(C_focal + exp(v_price))
 
-    * Efeito marginal próprio correto: ds_j/dp_j = -alpha*s_j*(1-s_j).
-    * Como price_slope_plot = -alpha_plot_logit < 0, a curva fica abaixo de zero.
+    * Efeito marginal próprio: ds_j/dp_j = (-alpha)*s_j*(1-s_j).
+    * Aqui usamos o alpha estimado, sem abs() e sem impor sinal.
     gen marginal_effect = price_slope_plot*share_pred*(1-share_pred)
 
     twoway (line marginal_effect price_grid, lcolor(cranberry) lwidth(medthick)), ///
-        yline(0, `ZERO_LINE') ///
         title("Efeito marginal do preço - produto focal", size(medsmall) color(black)) ///
         xtitle("`L_PRICEJ'") ///
         ytitle("`L_DSDP'") ///

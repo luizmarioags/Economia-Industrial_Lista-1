@@ -1,23 +1,14 @@
-/****************************************************************************************
-Run all - Lista Berry/BLP em Stata | versão eberry/b_program operacional
-
-Execute a partir da raiz do pacote:
-    do stata/run_all_stata.do
-
-Saídas:
-    outputs/stata/logs
-    outputs/stata/figures/pdf
-    outputs/stata/figures/png
-    outputs/stata/tables/csv
-    outputs/stata/tables/tex
-
-Diferença central desta versão:
-    Os scripts 02_estimate_logit_iv_gmm.do e 03_nested_gmm.do não usam mais o
-    comando nativo gmm do Stata. O núcleo de estimação GMM passa por:
-        stata/eberry_operational.do
-        stata/b_program_operational.do
-    isto é, pela lógica operacional do eberry/b_program original.
-****************************************************************************************/
+/*******************************************************************************
+Arquivo: stata/run_all_aids_stata.do
+Objetivo: rodar, em ordem, toda a resolução Stata da Lista 3 - Nested Logit/Berry.
+Elaborado por:
+Luiz Mario Andrade (Matrícula: 252029360)
+Felipe Santos (Matrícula: 232010719)
+Luiza Nodari (Matrícula: 242011335)
+Diogo Martins (Matrícula: 232001578)
+Sarah Moura (Matrícula: 211060316)
+Pedro Bijos (Matrícula: 241003849)
+*******************************************************************************/
 
 clear all
 set more off
@@ -83,7 +74,7 @@ log using "$LOG/run_all_stata.log", text replace
 display "#########################################################################"
 display "#                            INÍCIO                                     #"
 display "#             Lista 3 - Modelo Berry/BLP                                #"
-display "#             Versão operacional baseada em eberry/b_program             #"
+display "#             Versão operacional corrigida baseada em eberry/b_program             #"
 display "#########################################################################"
 
 do "$ROOT/stata/00_config.do"

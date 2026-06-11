@@ -18,6 +18,8 @@ df <- raw %>%
     outside_share = S0,
     delta = log(share) - log(S0),
     cons = 1,
+    # Correção de sinal: estima-se alpha diretamente em delta = X beta + alpha*(-price) + xi.
+    neg_price = -price,
     idfirm = as.integer(factor(firm)),
     idsegment = as.integer(factor(segment))
   )
@@ -53,7 +55,7 @@ for (x in XVARS) {
   df[[paste0("nest_rival_", x)]] <- df[[paste0("total_all_", x)]] - df[[paste0("total_nest_", x)]]
 }
 
-df <- df %>% relocate(idProduct, firm, product, segment, price, share, delta, cals, fat, sugar)
+df <- df %>% relocate(idProduct, firm, product, segment, price, neg_price, share, delta, cals, fat, sugar)
 saveRDS(df, file.path(OUTDATA, "prepared_data_R.rds"))
 readr::write_csv(df, file.path(OUTDATA, "prepared_data_R.csv"))
 message("Base preparada: ", nrow(df), " produtos.")

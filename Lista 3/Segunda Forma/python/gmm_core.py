@@ -1,17 +1,22 @@
-"""Núcleo operacional equivalente ao eberry/b_program em Python."""
+"""Núcleo operacional equivalente ao eberry/b_program em Python.
+
+A especificação estimada é linear após a inversão de Berry. Por isso, o GMM
+operacional é calculado por solução fechada, com matriz de ponderação de primeira
+etapa e, quando solicitado, atualização de segunda etapa.
+"""
 from __future__ import annotations
 import pickle
-from dataclasses import dataclass, asdict
+from dataclasses import dataclass
 from pathlib import Path
 from typing import Iterable
 import numpy as np
 import pandas as pd
-from scipy.optimize import minimize
 from scipy.stats import norm
 import config
 
 
 def safe_inv(a: np.ndarray) -> np.ndarray:
+    """Inversa robusta: usa inversa usual quando possível e pseudo-inversa caso contrário."""
     try:
         inv = np.linalg.inv(a)
         if np.all(np.isfinite(inv)):
@@ -47,6 +52,16 @@ def _complete(df: pd.DataFrame, cols: list[str]) -> pd.DataFrame:
     return df.loc[:, list(dict.fromkeys(cols))].dropna().copy()
 
 
+def _robust_vcov_gmm(X: np.ndarray, Z: np.ndarray, u: np.ndarray, W: np.ndarray) -> np.ndarray:
+    N = X.shape[0]
+    Zu = Z * u[:, None]
+    S = (Zu.T @ Zu) / N
+    D = -(Z.T @ X) / N
+    A = D.T @ W @ D
+    B = D.T @ W @ S @ W @ D
+    return safe_inv(A) @ B @ safe_inv(A) / N
+
+
 def fit_ols(df: pd.DataFrame, y: str, xvars: list[str], bnames: list[str] | None = None, hc1: bool = True) -> ModelResult:
     bnames = bnames or xvars
     d = _complete(df, [y] + xvars)
@@ -75,12 +90,7 @@ def fit_iv_2sls(df: pd.DataFrame, y: str, xvars: list[str], zvars: list[str], bn
     W = safe_inv((Z.T @ Z) / N)
     b = safe_inv(X.T @ Z @ W @ Z.T @ X) @ (X.T @ Z @ W @ Z.T @ Y)
     u = (Y - X @ b).ravel()
-    Zu = Z * u[:, None]
-    S = (Zu.T @ Zu) / N
-    D = -(Z.T @ X) / N
-    A = D.T @ W @ D
-    B = D.T @ W @ S @ W @ D
-    V = safe_inv(A) @ B @ safe_inv(A) / N
+    V = _robust_vcov_gmm(X, Z, u, W)
     gbar = (Z.T @ u) / N
     Q = float(N * gbar.T @ W @ gbar)
     b = b.ravel()
@@ -88,7 +98,16 @@ def fit_iv_2sls(df: pd.DataFrame, y: str, xvars: list[str], zvars: list[str], bn
     return ModelResult("IV_2SLS", dict(zip(bnames, b)), V, dict(zip(bnames, se)), u, N, k, q, Q, q-k, xvars, zvars, bnames)
 
 
+def _linear_gmm_closed_form(Y: np.ndarray, X: np.ndarray, Z: np.ndarray, W: np.ndarray) -> np.ndarray:
+    return (safe_inv(X.T @ Z @ W @ Z.T @ X) @ (X.T @ Z @ W @ Z.T @ Y)).ravel()
+
+
 def berry_gmm_fit(df: pd.DataFrame, y: str, xvars: list[str], zvars: list[str], bnames: list[str], step: int = 2, maxiter: int = 20000) -> ModelResult:
+    """Estima o GMM linear da inversão de Berry.
+
+    O argumento maxiter é mantido apenas por compatibilidade com versões antigas do pacote.
+    Nenhuma restrição de sinal é imposta sobre alpha.
+    """
     d = _complete(df, [y] + xvars + zvars)
     Y = matrix(d, [y])
     X = matrix(d, xvars)
@@ -97,32 +116,22 @@ def berry_gmm_fit(df: pd.DataFrame, y: str, xvars: list[str], zvars: list[str], 
     q = Z.shape[1]
     if len(bnames) != k:
         raise ValueError("Número de bnames difere do número de colunas de X.")
-    bstart = (safe_inv(X.T @ X) @ X.T @ Y).ravel()
-    bstart[~np.isfinite(bstart)] = 0.0
-
-    def obj(beta: np.ndarray, W: np.ndarray) -> float:
-        xi = (Y.ravel() - X @ beta)
-        gbar = (Z.T @ xi) / N
-        return float(N * gbar.T @ W @ gbar)
 
     W = safe_inv((Z.T @ Z) / N)
-    opt = minimize(obj, bstart, args=(W,), method="Nelder-Mead", options={"maxiter": maxiter, "xatol": 1e-10, "fatol": 1e-12})
-    p = opt.x
+    p = _linear_gmm_closed_form(Y, X, Z, W)
     xi = Y.ravel() - X @ p
     Zxi = Z * xi[:, None]
     Szz = (Zxi.T @ Zxi) / N
+
     if step == 2:
         W = safe_inv(Szz)
-        opt = minimize(obj, p, args=(W,), method="Nelder-Mead", options={"maxiter": maxiter, "xatol": 1e-10, "fatol": 1e-12})
-        p = opt.x
+        p = _linear_gmm_closed_form(Y, X, Z, W)
         xi = Y.ravel() - X @ p
         Zxi = Z * xi[:, None]
         Szz = (Zxi.T @ Zxi) / N
+
     gbar = (Z.T @ xi) / N
-    D = -(Z.T @ X) / N
-    A = D.T @ W @ D
-    B = D.T @ W @ Szz @ W @ D
-    V = safe_inv(A) @ B @ safe_inv(A) / N
+    V = _robust_vcov_gmm(X, Z, xi, W)
     Q = float(N * gbar.T @ W @ gbar)
     se = np.sqrt(np.maximum(np.diag(V), 0))
     return ModelResult(f"GMM_step{step}", dict(zip(bnames, p)), V, dict(zip(bnames, se)), xi, N, k, q, Q, q-k, xvars, zvars, bnames, step)
@@ -176,4 +185,5 @@ def r2_ols(df: pd.DataFrame, y: str, xvars: list[str]) -> float:
     X = matrix(d, xvars)
     b = safe_inv(X.T @ X) @ X.T @ Y
     u = Y - X @ b
-    return float(1 - (u @ u) / np.sum((Y - Y.mean())**2))
+    denom = np.sum((Y - Y.mean())**2)
+    return float(1 - (u @ u) / denom) if denom > 0 else np.nan

@@ -129,10 +129,15 @@ graph export "$FIGPDF/extra_06_structural_residuals_by_firm.pdf", replace
 graph export "$FIGPNG/extra_06_structural_residuals_by_firm.png", replace width(2800)
 
 * extra_07: primeiro estágio, preço observado versus ajustado.
+* A regressão é feita para neg_price=-price, e o ajustado é convertido de volta para preço.
 use "$OUTDATA/prepared_data_stata.dta", clear
+capture drop neg_price
+capture drop neg_price_hat price_hat
+gen double neg_price = -price
 global ZBOTH "$ZOWN $ZRIVAL"
-reg price $XVARS $ZBOTH
-predict price_hat, xb
+reg neg_price $XVARS $ZBOTH
+predict neg_price_hat, xb
+gen double price_hat = -neg_price_hat
 summarize price price_hat
 local lo = min(r(min), r(min))
 quietly summarize price

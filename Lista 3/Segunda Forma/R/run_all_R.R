@@ -1,3 +1,15 @@
+################################################################################
+# Arquivo: R/run_all_R.R
+# Objetivo: rodar, em ordem, toda a resolução R da Lista 3 - Nested Logit/Berry.
+# Elaborado por:
+# Luiz Mario Andrade (Matrícula: 252029360)
+# Felipe Santos (Matrícula: 232010719)
+# Luiza Nodari (Matrícula: 242011335)
+# Diogo Martins (Matrícula: 232001578)
+# Sarah Moura (Matrícula: 211060316)
+# Pedro Bijos (Matrícula: 241003849)
+################################################################################
+
 cat("\n[run_all_R] Iniciando execução do script principal...\n")
 flush.console()
 
@@ -33,9 +45,7 @@ cat("[run_all_R] Carregando 00_config.R...\n")
 flush.console()
 
 t0_config <- Sys.time()
-
 source(config_path, encoding = "UTF-8", chdir = TRUE)
-
 t1_config <- Sys.time()
 
 cat("[run_all_R] 00_config.R carregado com sucesso.\n")
@@ -57,16 +67,12 @@ flush.console()
 dir.create(LOG_DIR, recursive = TRUE, showWarnings = FALSE)
 
 log_file <- file.path(LOG_DIR, "run_all_R.log")
-
-# Reinicia o log desta execução
 cat("", file = log_file, append = FALSE)
 
 log_cat <- function(...) {
   texto <- paste0(...)
-
   cat(texto)
   flush.console()
-
   cat(texto, file = log_file, append = TRUE)
 }
 

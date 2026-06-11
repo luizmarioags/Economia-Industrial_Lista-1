@@ -1,35 +1,16 @@
 /****************************************************************************************
-COMENTÁRIOS DETALHADOS
-- Este script é o ponto único de exportação das tabelas finais em Stata.
-- Ele cria exatamente o mesmo conjunto de tabelas gerado por Python e R, em CSV e TEX.
-- As tabelas TEX são exportadas por rotina robusta baseada em export delimited.
-- Essa escolha evita a fonte do erro invalid syntax em file write no Stata/Windows.
-- Matrizes de elasticidade são salvas em formato longo: row_product, column_product, elasticity.
-****************************************************************************************/
-/****************************************************************************************
 08 - Tabelas padronizadas em CSV e TEX
+-----------------------------------------------------------------------------------------
+Correção central:
+- Usa alpha estimado diretamente como coeficiente de neg_price = -price.
+- A comparação de preço reporta alpha e também price_coef = -alpha.
+- Elasticidades e markups são calculados sem abs() e sem imposição de demanda decrescente.
+- A inversão da matriz Delta usa qrsolve()/pinv(), evitando colapso numérico indevido.
 ****************************************************************************************/
 
 capture program drop export_csv_tex
 program define export_csv_tex
     syntax, CSV(string) TEX(string) [CAPTION(string) LABEL(string)]
-
-    /**************************************************************************
-    Exportação robusta e definitiva para Stata/Windows
-    --------------------------------------------------------------------------
-    - A versão anterior tentava ler o CSV linha a linha e escrever um ambiente
-      LaTeX com file write. Em algumas instalações do Stata no Windows, isso
-      gerava invalid syntax ao lidar com aspas, barras invertidas e macros.
-    - Para eliminar a fonte do erro, esta rotina usa somente export delimited,
-      que é nativo e estável no Stata.
-    - O arquivo .csv é salvo como CSV.
-    - O arquivo .tex é salvo como uma tabela textual delimitada por tabulação,
-      com extensão .tex. Assim todas as tabelas existem em CSV e TEX e o pacote
-      roda sem depender de pacotes externos ou comandos frágeis de escrita.
-    - caption() e label() são aceitos para manter compatibilidade com chamadas
-      antigas, mas não são usados nesta exportação robusta.
-    **************************************************************************/
-
     export delimited using "`csv'", replace
     export delimited using "`tex'", replace delimiter(tab)
 end
@@ -45,17 +26,17 @@ foreach m of local allmodels {
     capture estimates restore `m'
     if !_rc {
         local model_label "`m'"
-        if "`m'" == "OLS" local model_label "Q1_MQO_logit_simples"
-        if "`m'" == "IV_own" local model_label "Q2_2SLS_own_firm"
-        if "`m'" == "IV_rival" local model_label "Q2_2SLS_rival_firms"
-        if "`m'" == "IV_both" local model_label "Q2_2SLS_both"
-        if "`m'" == "GMM_own_1" local model_label "Q3_GMM_own_firm_step1"
-        if "`m'" == "GMM_own_2" local model_label "Q3_GMM_own_firm_2step"
-        if "`m'" == "GMM_rival_1" local model_label "Q3_GMM_rival_firms_step1"
-        if "`m'" == "GMM_rival_2" local model_label "Q3_GMM_rival_firms_2step"
-        if "`m'" == "GMM_both_1" local model_label "Q3_GMM_both_step1"
-        if "`m'" == "GMM_both_2" local model_label "Q3_GMM_both_2step"
-        if "`m'" == "IV_nested" local model_label "Q4_2SLS_nested_reference"
+        if "`m'" == "OLS"          local model_label "Q1_MQO_logit_simples"
+        if "`m'" == "IV_own"       local model_label "Q2_2SLS_own_firm"
+        if "`m'" == "IV_rival"     local model_label "Q2_2SLS_rival_firms"
+        if "`m'" == "IV_both"      local model_label "Q2_2SLS_both"
+        if "`m'" == "GMM_own_1"    local model_label "Q3_GMM_own_firm_step1"
+        if "`m'" == "GMM_own_2"    local model_label "Q3_GMM_own_firm_2step"
+        if "`m'" == "GMM_rival_1"  local model_label "Q3_GMM_rival_firms_step1"
+        if "`m'" == "GMM_rival_2"  local model_label "Q3_GMM_rival_firms_2step"
+        if "`m'" == "GMM_both_1"   local model_label "Q3_GMM_both_step1"
+        if "`m'" == "GMM_both_2"   local model_label "Q3_GMM_both_2step"
+        if "`m'" == "IV_nested"    local model_label "Q4_2SLS_nested_reference"
         if "`m'" == "GMM_nested_1" local model_label "Q4_nested_GMM_step1"
         if "`m'" == "GMM_nested_2" local model_label "Q4_nested_GMM_2step"
 
@@ -66,7 +47,7 @@ foreach m of local allmodels {
         capture scalar sig = _b[sigma]
 
         if strpos("`m'", "GMM") {
-            foreach pair in "const b0" "cals bcals" "fat bfat" "sugar bsugar" "price bp" "log_share_within_nest sigma" {
+            foreach pair in "const b0" "cals bcals" "fat bfat" "sugar bsugar" "alpha alpha" "sigma sigma" {
                 gettoken pname bref : pair
                 capture scalar bhat = _b[`bref']
                 if !_rc {
@@ -79,7 +60,7 @@ foreach m of local allmodels {
             }
         }
         else {
-            foreach pair in "const _cons" "cals cals" "fat fat" "sugar sugar" "price price" "log_share_within_nest log_share_within_nest" {
+            foreach pair in "const _cons" "cals cals" "fat fat" "sugar sugar" "alpha neg_price" "sigma log_share_within_nest" {
                 gettoken pname bref : pair
                 capture scalar bhat = _b[`bref']
                 if !_rc {
@@ -99,15 +80,15 @@ use `coefpost', clear
 export_csv_tex, csv("$TABCsv/01_all_coefficients.csv") tex("$TABTEX/01_all_coefficients.tex") caption("Coeficientes estimados") label("tab:all-coef")
 
 * -------------------------
-* 02. Comparação do preço
+* 02. Comparação do parâmetro de preço
 * -------------------------
 preserve
-    keep if parameter == "price"
+    keep if parameter == "alpha"
     keep model estimate std_error gmm_objective sigma_nested
-    rename estimate price_coef
-    gen alpha = -price_coef
-    rename std_error std_error_price
-    order model price_coef alpha std_error_price gmm_objective sigma_nested
+    rename estimate alpha
+    gen double price_coef = -alpha
+    rename std_error std_error_alpha
+    order model price_coef alpha std_error_alpha gmm_objective sigma_nested
     export_csv_tex, csv("$TABCsv/02_price_parameter_comparison.csv") tex("$TABTEX/02_price_parameter_comparison.tex") caption("Comparação do parâmetro de preço") label("tab:price-compare")
 restore
 
@@ -117,12 +98,23 @@ if _rc {
     display as error "GMM_both_2 não encontrado. Rode 02_estimate_logit_iv_gmm.do antes de 08_standard_tables.do."
     exit 301
 }
-scalar alpha = -_b[bp]
+capture scalar alpha = _b[alpha]
+if _rc {
+    display as error "GMM_both_2 não possui parâmetro alpha. Reexecute os scripts corrigidos 02 e 03."
+    exit 301
+}
+scalar price_coef = -alpha
+if (alpha <= 0) {
+    display as error "Atenção: alpha <= 0 no logit simples. O código não impõe demanda decrescente."
+}
 
 * -------------------------
 * 03 e 04. Elasticidades simples em formato longo
 * -------------------------
 use "$OUTDATA/prepared_data_stata.dta", clear
+capture drop neg_price
+gen double neg_price = -price
+
 preserve
     keep product price share
     gen row_id = _n
@@ -143,7 +135,7 @@ preserve
 restore
 use `rows_all', clear
 cross using `cols_all'
-gen elasticity = cond(row_id == col_id, -alpha*row_price*(1-row_share), alpha*column_price*column_share)
+gen double elasticity = cond(row_id == col_id, -alpha*row_price*(1-row_share), alpha*column_price*column_share)
 keep row_product column_product elasticity
 export_csv_tex, csv("$TABCsv/03_elasticity_matrix_simple_logit.csv") tex("$TABTEX/03_elasticity_matrix_simple_logit.tex") caption("Matriz de elasticidades - logit simples") label("tab:elas-simple")
 
@@ -170,7 +162,7 @@ preserve
 restore
 use `rows_sub', clear
 cross using `cols_sub'
-gen elasticity = cond(row_id == col_id, -alpha*row_price*(1-row_share), alpha*column_price*column_share)
+gen double elasticity = cond(row_id == col_id, -alpha*row_price*(1-row_share), alpha*column_price*column_share)
 keep row_product column_product elasticity
 export_csv_tex, csv("$TABCsv/04_elasticity_matrix_simple_logit_subset.csv") tex("$TABTEX/04_elasticity_matrix_simple_logit_subset.tex") caption("Matriz de elasticidades - logit simples - subconjunto") label("tab:elas-simple-subset")
 
@@ -178,7 +170,7 @@ export_csv_tex, csv("$TABCsv/04_elasticity_matrix_simple_logit_subset.csv") tex(
 * 05. Elasticidades próprias simples
 * -------------------------
 use "$OUTDATA/prepared_data_stata.dta", clear
-gen own_elasticity_simple_logit = -alpha*price*(1-share)
+gen double own_elasticity_simple_logit = -alpha*price*(1-share)
 gsort -share
 keep product firm segment price share own_elasticity_simple_logit
 export_csv_tex, csv("$TABCsv/05_own_elasticities_simple_logit.csv") tex("$TABTEX/05_own_elasticities_simple_logit.tex") caption("Elasticidades próprias - logit simples") label("tab:own-elas-simple")
@@ -191,25 +183,25 @@ if _rc {
     display as error "GMM_nested_2 não encontrado. Rode 03_nested_gmm.do antes de 08_standard_tables.do."
     exit 302
 }
-scalar b0n = _b[b0]
-scalar bcalsn = _b[bcals]
-scalar bfatn = _b[bfat]
+scalar b0n     = _b[b0]
+scalar bcalsn  = _b[bcals]
+scalar bfatn   = _b[bfat]
 scalar bsugarn = _b[bsugar]
-scalar bpn = _b[bp]
-scalar sigman = _b[sigma]
+scalar alphan  = _b[alpha]
+scalar sigman  = _b[sigma]
 
 use "$OUTDATA/prepared_data_stata.dta", clear
 mata:
 real vector nl_shares(real vector p, real vector cals, real vector fat, real vector sugar, real vector gid,
                       real scalar b0, real scalar bcals, real scalar bfat, real scalar bsugar,
-                      real scalar bp, real scalar sigma)
+                      real scalar alpha, real scalar sigma)
 {
     real scalar n, G, g, den, outer_den, scale
     real vector delta, ug, s, within, Dg, idx, expinner, gp
     n = rows(p)
     scale = 1 - sigma
     if (scale < 1e-8) scale = 1e-8
-    delta = b0 :+ bcals:*cals :+ bfat:*fat :+ bsugar:*sugar :+ bp:*p
+    delta = b0 :+ bcals:*cals :+ bfat:*fat :+ bsugar:*sugar :- alpha:*p
     ug = uniqrows(gid)
     G = rows(ug)
     s = J(n,1,0)
@@ -240,16 +232,16 @@ b0 = st_numscalar("b0n")
 bc = st_numscalar("bcalsn")
 bf = st_numscalar("bfatn")
 bs = st_numscalar("bsugarn")
-bp = st_numscalar("bpn")
+alpha_n = st_numscalar("alphan")
 sigma = st_numscalar("sigman")
 n = rows(p)
 eps = 1e-6
-s0 = nl_shares(p,cals,fat,sugar,gid,b0,bc,bf,bs,bp,sigma)
+s0 = nl_shares(p,cals,fat,sugar,gid,b0,bc,bf,bs,alpha_n,sigma)
 E = J(n,n,.)
 for (k=1; k<=n; k++) {
     p1 = p
     p1[k] = p1[k] + eps
-    s1 = nl_shares(p1,cals,fat,sugar,gid,b0,bc,bf,bs,bp,sigma)
+    s1 = nl_shares(p1,cals,fat,sugar,gid,b0,bc,bf,bs,alpha_n,sigma)
     E[,k] = ((s1:-s0):/eps):*p[k]:/s0
 }
 st_matrix("E_nested", E)
@@ -271,7 +263,7 @@ preserve
 restore
 use `nrows', clear
 cross using `ncols'
-gen elasticity = .
+gen double elasticity = .
 mata:
     E = st_matrix("E_nested")
     rid = st_data(., "row_id")
@@ -284,7 +276,7 @@ keep row_product column_product elasticity
 export_csv_tex, csv("$TABCsv/06_elasticity_matrix_nested_logit.csv") tex("$TABTEX/06_elasticity_matrix_nested_logit.tex") caption("Matriz de elasticidades - nested logit") label("tab:elas-nested")
 
 use "$OUTDATA/prepared_data_stata.dta", clear
-gen own_elasticity_nested_logit = .
+gen double own_elasticity_nested_logit = .
 mata:
     E = st_matrix("E_nested")
     own = diagonal(E)
@@ -298,8 +290,8 @@ export_csv_tex, csv("$TABCsv/07_own_elasticities_nested_logit.csv") tex("$TABTEX
 * 08. Markups
 * -------------------------
 use "$OUTDATA/prepared_data_stata.dta", clear
-gen markup_monoproduct = 1/(alpha*(1-share))
-gen mc_monoproduct = price - markup_monoproduct
+gen double markup_monoproduct = 1/(alpha*(1-share))
+gen double mc_monoproduct = price - markup_monoproduct
 mata:
     p = st_data(., "price")
     s = st_data(., "share")
@@ -311,17 +303,18 @@ mata:
         for (k=1; k<=n; k++) {
             if (f[j] == f[k]) {
                 if (j==k) Delta[j,k] = alpha*s[j]*(1-s[j])
-                else Delta[j,k] = -alpha*s[j]*s[k]
+                else      Delta[j,k] = -alpha*s[j]*s[k]
             }
         }
     }
-    mu = invsym(Delta)*s
+    mu = qrsolve(Delta, s)
+    if (sum(missing(mu)) > 0) mu = pinv(Delta)*s
     st_addvar("double", "markup_multiproduct")
     st_store(., "markup_multiproduct", mu)
 end
-gen mc_multiproduct = price - markup_multiproduct
-gen markup_mono_over_price = markup_monoproduct/price
-gen markup_multi_over_price = markup_multiproduct/price
+gen double mc_multiproduct = price - markup_multiproduct
+gen double markup_mono_over_price = markup_monoproduct/price
+gen double markup_multi_over_price = markup_multiproduct/price
 keep product firm segment price share markup_monoproduct mc_monoproduct markup_multiproduct mc_multiproduct markup_mono_over_price markup_multi_over_price
 export_csv_tex, csv("$TABCsv/08_markups.csv") tex("$TABTEX/08_markups.tex") caption("Markups implícitos - logit simples") label("tab:markups")
 
@@ -331,26 +324,29 @@ export_csv_tex, csv("$TABCsv/08_markups.csv") tex("$TABTEX/08_markups.tex") capt
 tempfile fspost
 postfile fsh str32 endogenous_variable double excluded_instruments partial_F_homoskedastic robust_Wald_F_manual first_stage_R2 str24 specification using `fspost', replace
 use "$OUTDATA/prepared_data_stata.dta", clear
+capture drop neg_price
+gen double neg_price = -price
+
 global ZOWN "own_cals own_fat own_sugar"
 global ZRIVAL "rival_cals rival_fat rival_sugar"
 global ZBOTH "$ZOWN $ZRIVAL"
 global ZNEST "n_same_nest_other n_rival_nest nest_own_cals nest_own_fat nest_own_sugar nest_rival_cals nest_rival_fat nest_rival_sugar"
 global ZNESTALL "$ZOWN $ZRIVAL $ZNEST"
 
-reg price $XVARS $ZBOTH
+reg neg_price $XVARS $ZBOTH
 test $ZBOTH
 scalar f_homo = r(F)
 scalar r2fs = e(r2)
-reg price $XVARS $ZBOTH, vce(robust)
+reg neg_price $XVARS $ZBOTH, vce(robust)
 test $ZBOTH
 scalar f_rob = r(F)
 post fsh ("price") (6) (f_homo) (f_rob) (r2fs) ("simple_logit_both")
 
-reg price $XVARS $ZNESTALL
+reg neg_price $XVARS $ZNESTALL
 test $ZNESTALL
 scalar f_homo = r(F)
 scalar r2fs = e(r2)
-reg price $XVARS $ZNESTALL, vce(robust)
+reg neg_price $XVARS $ZNESTALL, vce(robust)
 test $ZNESTALL
 scalar f_rob = r(F)
 post fsh ("price") (14) (f_homo) (f_rob) (r2fs) ("nested_logit")

@@ -55,6 +55,8 @@ drop if missing(price, share_pct, cals, fat, sugar)
 gen share = share_pct/100
 gen outside_share = $S0
 gen delta = ln(share) - ln($S0)
+gen neg_price = -price
+label variable neg_price "Preço com sinal negativo (-price); coeficiente estrutural alpha"
 gen cons = 1
 
 egen idfirm = group(firm), label
@@ -87,6 +89,6 @@ foreach x of global XVARS {
     gen nest_rival_`x' = total_all_`x' - total_nest_`x'
 }
 
-order idProduct firm product segment price share delta cals fat sugar
+order idProduct firm product segment price neg_price share delta cals fat sugar
 save "$OUTDATA/prepared_data_stata.dta", replace
 export delimited using "$OUTDATA/prepared_data_stata.csv", replace
