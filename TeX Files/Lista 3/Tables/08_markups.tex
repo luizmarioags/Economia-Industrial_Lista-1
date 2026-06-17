@@ -1,0 +1,256 @@
+% ============================================================
+% Markups e custos marginais implícitos por segmento e tipo
+% ============================================================
+
+% Requer no preâmbulo: \usepackage{booktabs}, \usepackage{float} e \usepackage{array}
+
+% ============================================================
+% Segmento: Adultos (Adult) - Mono-produto
+% ============================================================
+
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Markups e custos marginais implícitos - Segmento Adultos (Mono-produto)}
+\label{tab:markups-adult-mono}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}llp{0.16\textwidth}rrrrr@{}}
+\toprule
+Firma & Produto & Segmento & Preço ($p_j$) & Share ($s_j$) & Markup mono ($\mu_j$) & CMg mono ($mc_j$) & Markup/preço mono ($\mu_j/p_j$) \\
+\midrule
+GM & Basic4 & Adult & 3.2700 & 0.0131 & -0.8613 & 4.1313 & -0.2634 \\
+KG & SpecialK & Adult & 3.4800 & 0.0216 & -0.8688 & 4.3488 & -0.2497 \\
+PT & GreatGraines & Adult & 2.9000 & 0.0089 & -0.8577 & 3.7577 & -0.2957 \\
+GM & Triples & Adult & 2.3300 & 0.0112 & -0.8597 & 3.1897 & -0.3690 \\
+KG & Mueslix & Adult & 3.3100 & 0.0153 & -0.8632 & 4.1732 & -0.2608 \\
+GM & OtmlRaisinCrisp & Adult & 2.7100 & 0.0097 & -0.8584 & 3.5684 & -0.3167 \\
+PT & GrapeNuts & Adult & 2.1400 & 0.0212 & -0.8684 & 3.0084 & -0.4058 \\
+QK & 100\%Natural & Adult & 2.2400 & 0.0196 & -0.8670 & 3.1070 & -0.3871 \\
+RL & Muesli & Adult & 3.3400 & 0.0126 & -0.8609 & 4.2009 & -0.2577 \\
+RL & RiceChex & Adult & 3.4000 & 0.0089 & -0.8577 & 4.2577 & -0.2523 \\
+GM & TotalRaisinBran & Adult & 3.0000 & 0.0089 & -0.8577 & 3.8577 & -0.2859 \\
+KG & CracklinOatBran & Adult & 3.1900 & 0.0106 & -0.8591 & 4.0491 & -0.2693 \\
+KG & Crispix & Adult & 3.2800 & 0.0112 & -0.8597 & 4.1397 & -0.2621 \\
+KG & LowFatGranola & Adult & 2.6800 & 0.0117 & -0.8601 & 3.5401 & -0.3209 \\
+KG & FrostedMiniWheats & Adult & 2.6200 & 0.0184 & -0.8660 & 3.4860 & -0.3305 \\
+GM & RaisinNutBran & Adult & 2.9800 & 0.0135 & -0.8617 & 3.8417 & -0.2892 \\
+PT & HoneyBunchesofOats & Adult & 2.8500 & 0.0095 & -0.8582 & 3.7082 & -0.3011 \\
+KG & Product19 & Adult & 3.3800 & 0.0089 & -0.8577 & 4.2377 & -0.2537 \\
+NB & ShreddedWheat & Adult & 2.8200 & 0.0080 & -0.8569 & 3.6769 & -0.3039 \\
+GM & Total & Adult & 3.6100 & 0.0236 & -0.8706 & 4.4806 & -0.2412 \\
+NB & BigBiscuitShdWt & Adult & 2.7900 & 0.0099 & -0.8585 & 3.6485 & -0.3077 \\
+KG & NutriGrain & Adult & 2.8700 & 0.0155 & -0.8634 & 3.7334 & -0.3008 \\
+KG & DoubleDipCrunch & Adult & 3.0100 & 0.0073 & -0.8563 & 3.8663 & -0.2845 \\
+QK & OatSquares & Adult & 2.4300 & 0.0094 & -0.8581 & 3.2881 & -0.3531 \\
+NB & SpoonSizeShdWt & Adult & 2.8100 & 0.0208 & -0.8681 & 3.6781 & -0.3089 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\scriptsize
+\textit{Nota:} O markup é definido como a diferença entre preço e custo marginal: $\mu_j=p_j-mc_j$. A coluna de razão reporta $\mu_j/p_j$ para o cenário mono.
+\end{table}
+\endgroup
+
+% ============================================================
+% Segmento: Adultos (Adult) - Multi-produto
+% ============================================================
+
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Markups e custos marginais implícitos - Segmento Adultos (Multi-produto)}
+\label{tab:markups-adult-multi}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}llp{0.16\textwidth}rrrrr@{}}
+\toprule
+Firma & Produto & Segmento & Preço ($p_j$) & Share ($s_j$) & Markup multi ($\mu_j$) & CMg multi ($mc_j$) & Markup/preço multi ($\mu_j/p_j$) \\
+\midrule
+GM & Basic4 & Adult & 3.2700 & 0.0131 & -1.1454 & 4.4154 & -0.3503 \\
+KG & SpecialK & Adult & 3.4800 & 0.0216 & -1.2606 & 4.7406 & -0.3622 \\
+PT & GreatGraines & Adult & 2.9000 & 0.0089 & -0.9139 & 3.8139 & -0.3151 \\
+GM & Triples & Adult & 2.3300 & 0.0112 & -1.1454 & 3.4754 & -0.4916 \\
+KG & Mueslix & Adult & 3.3100 & 0.0153 & -1.2606 & 4.5706 & -0.3809 \\
+GM & OtmlRaisinCrisp & Adult & 2.7100 & 0.0097 & -1.1454 & 3.8554 & -0.4227 \\
+PT & GrapeNuts & Adult & 2.1400 & 0.0212 & -0.9139 & 3.0539 & -0.4271 \\
+QK & 100\%Natural & Adult & 2.2400 & 0.0196 & -0.8892 & 3.1292 & -0.3969 \\
+RL & Muesli & Adult & 3.3400 & 0.0126 & -0.8687 & 4.2087 & -0.2601 \\
+RL & RiceChex & Adult & 3.4000 & 0.0089 & -0.8687 & 4.2687 & -0.2555 \\
+GM & TotalRaisinBran & Adult & 3.0000 & 0.0089 & -1.1454 & 4.1454 & -0.3818 \\
+KG & CracklinOatBran & Adult & 3.1900 & 0.0106 & -1.2606 & 4.4506 & -0.3952 \\
+KG & Crispix & Adult & 3.2800 & 0.0112 & -1.2606 & 4.5406 & -0.3843 \\
+KG & LowFatGranola & Adult & 2.6800 & 0.0117 & -1.2606 & 3.9406 & -0.4704 \\
+KG & FrostedMiniWheats & Adult & 2.6200 & 0.0184 & -1.2606 & 3.8806 & -0.4812 \\
+GM & RaisinNutBran & Adult & 2.9800 & 0.0135 & -1.1454 & 4.1254 & -0.3844 \\
+PT & HoneyBunchesofOats & Adult & 2.8500 & 0.0095 & -0.9139 & 3.7639 & -0.3207 \\
+KG & Product19 & Adult & 3.3800 & 0.0089 & -1.2606 & 4.6406 & -0.3730 \\
+NB & ShreddedWheat & Adult & 2.8200 & 0.0080 & -0.8843 & 3.7043 & -0.3136 \\
+GM & Total & Adult & 3.6100 & 0.0236 & -1.1454 & 4.7554 & -0.3173 \\
+NB & BigBiscuitShdWt & Adult & 2.7900 & 0.0099 & -0.8843 & 3.6743 & -0.3169 \\
+KG & NutriGrain & Adult & 2.8700 & 0.0155 & -1.2606 & 4.1306 & -0.4392 \\
+KG & DoubleDipCrunch & Adult & 3.0100 & 0.0073 & -1.2606 & 4.2706 & -0.4188 \\
+QK & OatSquares & Adult & 2.4300 & 0.0094 & -0.8892 & 3.3192 & -0.3659 \\
+NB & SpoonSizeShdWt & Adult & 2.8100 & 0.0208 & -0.8843 & 3.6943 & -0.3147 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\scriptsize
+\textit{Nota:} O markup é definido como a diferença entre preço e custo marginal: $\mu_j=p_j-mc_j$. A coluna de razão reporta $\mu_j/p_j$ para o cenário multi.
+\end{table}
+\endgroup
+
+% ============================================================
+% Segmento: Família (Fam) - Mono-produto
+% ============================================================
+
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Markups e custos marginais implícitos - Segmento Família (Mono-produto)}
+\label{tab:markups-fam-mono}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}llp{0.16\textwidth}rrrrr@{}}
+\toprule
+Firma & Produto & Segmento & Preço ($p_j$) & Share ($s_j$) & Markup mono ($\mu_j$) & CMg mono ($mc_j$) & Markup/preço mono ($\mu_j/p_j$) \\
+\midrule
+GM & AppleCinn.Cheerios & Fam & 3.0200 & 0.0106 & -0.8591 & 3.8791 & -0.2845 \\
+GM & Clusters & Fam & 3.1400 & 0.0078 & -0.8567 & 3.9967 & -0.2728 \\
+GM & Cheerios & Fam & 3.1600 & 0.0438 & -0.8890 & 4.0490 & -0.2813 \\
+KG & FrostedFlakes & Fam & 2.5200 & 0.0382 & -0.8838 & 3.4038 & -0.3507 \\
+KG & RiceKrispies & Fam & 2.9600 & 0.0404 & -0.8858 & 3.8458 & -0.2993 \\
+GM & Wheaties & Fam & 2.5500 & 0.0152 & -0.8632 & 3.4132 & -0.3385 \\
+KG & CornPops & Fam & 3.5100 & 0.0146 & -0.8626 & 4.3726 & -0.2458 \\
+PT & RaisinBran & Fam & 2.2300 & 0.0146 & -0.8626 & 3.0926 & -0.3868 \\
+KG & CinnamonMiniBuns & Fam & 2.7500 & 0.0076 & -0.8565 & 3.6065 & -0.3115 \\
+GM & HoneyNutCheerios & Fam & 3.1400 & 0.0226 & -0.8697 & 4.0097 & -0.2770 \\
+GM & MultiGrainCheerios & Fam & 3.3400 & 0.0075 & -0.8565 & 4.1965 & -0.2564 \\
+KG & CornFlakes & Fam & 1.8100 & 0.0567 & -0.9011 & 2.7111 & -0.4979 \\
+KG & RaisinBran & Fam & 2.3400 & 0.0273 & -0.8739 & 3.2139 & -0.3735 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\scriptsize
+\textit{Nota:} O markup é definido como a diferença entre preço e custo marginal: $\mu_j=p_j-mc_j$. A coluna de razão reporta $\mu_j/p_j$ para o cenário mono.
+\end{table}
+\endgroup
+
+% ============================================================
+% Segmento: Família (Fam) - Multi-produto
+% ============================================================
+
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Markups e custos marginais implícitos - Segmento Família (Multi-produto)}
+\label{tab:markups-fam-multi}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}llp{0.16\textwidth}rrrrr@{}}
+\toprule
+Firma & Produto & Segmento & Preço ($p_j$) & Share ($s_j$) & Markup multi ($\mu_j$) & CMg multi ($mc_j$) & Markup/preço multi ($\mu_j/p_j$) \\
+\midrule
+GM & AppleCinn.Cheerios & Fam & 3.0200 & 0.0106 & -1.1454 & 4.1654 & -0.3793 \\
+GM & Clusters & Fam & 3.1400 & 0.0078 & -1.1454 & 4.2854 & -0.3648 \\
+GM & Cheerios & Fam & 3.1600 & 0.0438 & -1.1454 & 4.3054 & -0.3625 \\
+KG & FrostedFlakes & Fam & 2.5200 & 0.0382 & -1.2606 & 3.7806 & -0.5002 \\
+KG & RiceKrispies & Fam & 2.9600 & 0.0404 & -1.2606 & 4.2206 & -0.4259 \\
+GM & Wheaties & Fam & 2.5500 & 0.0152 & -1.1454 & 3.6954 & -0.4492 \\
+KG & CornPops & Fam & 3.5100 & 0.0146 & -1.2606 & 4.7706 & -0.3592 \\
+PT & RaisinBran & Fam & 2.2300 & 0.0146 & -0.9139 & 3.1439 & -0.4098 \\
+KG & CinnamonMiniBuns & Fam & 2.7500 & 0.0076 & -1.2606 & 4.0106 & -0.4584 \\
+GM & HoneyNutCheerios & Fam & 3.1400 & 0.0226 & -1.1454 & 4.2854 & -0.3648 \\
+GM & MultiGrainCheerios & Fam & 3.3400 & 0.0075 & -1.1454 & 4.4854 & -0.3429 \\
+KG & CornFlakes & Fam & 1.8100 & 0.0567 & -1.2606 & 3.0706 & -0.6965 \\
+KG & RaisinBran & Fam & 2.3400 & 0.0273 & -1.2606 & 3.6006 & -0.5387 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\scriptsize
+\textit{Nota:} O markup é definido como a diferença entre preço e custo marginal: $\mu_j=p_j-mc_j$. A coluna de razão reporta $\mu_j/p_j$ para o cenário multi.
+\end{table}
+\endgroup
+
+% ============================================================
+% Segmento: Crianças (Kids) - Mono-produto
+% ============================================================
+
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Markups e custos marginais implícitos - Segmento Crianças (Mono-produto)}
+\label{tab:markups-kids-mono}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}llp{0.16\textwidth}rrrrr@{}}
+\toprule
+Firma & Produto & Segmento & Preço ($p_j$) & Share ($s_j$) & Markup mono ($\mu_j$) & CMg mono ($mc_j$) & Markup/preço mono ($\mu_j/p_j$) \\
+\midrule
+GM & GoldenGrahams & Kids & 3.2400 & 0.0124 & -0.8607 & 4.1007 & -0.2657 \\
+GM & Cinn.ToastCrunch & Kids & 3.3600 & 0.0123 & -0.8606 & 4.2206 & -0.2561 \\
+QK & Popeye & Kids & 1.7700 & 0.0067 & -0.8558 & 2.6258 & -0.4835 \\
+KG & FrootLoops & Kids & 3.5300 & 0.0120 & -0.8604 & 4.3904 & -0.2437 \\
+QK & CaptCrunch & Kids & 2.5500 & 0.0083 & -0.8572 & 3.4072 & -0.3361 \\
+PT & FruityPebbles & Kids & 3.2100 & 0.0083 & -0.8572 & 4.0672 & -0.2670 \\
+GM & CocoaPus & Kids & 3.4600 & 0.0128 & -0.8611 & 4.3211 & -0.2489 \\
+PT & Honeycomb & Kids & 3.4000 & 0.0074 & -0.8564 & 4.2564 & -0.2519 \\
+KG & AppleJacks & Kids & 3.6400 & 0.0084 & -0.8572 & 4.4972 & -0.2355 \\
+GM & Kix & Kids & 3.6700 & 0.0108 & -0.8593 & 4.5293 & -0.2341 \\
+GM & LuckyCharms & Kids & 3.4500 & 0.0108 & -0.8593 & 4.3093 & -0.2491 \\
+GM & Trix & Kids & 3.9600 & 0.0113 & -0.8598 & 4.8198 & -0.2171 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\scriptsize
+\textit{Nota:} O markup é definido como a diferença entre preço e custo marginal: $\mu_j=p_j-mc_j$. A coluna de razão reporta $\mu_j/p_j$ para o cenário mono.
+\end{table}
+\endgroup
+
+% ============================================================
+% Segmento: Crianças (Kids) - Multi-produto
+% ============================================================
+
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Markups e custos marginais implícitos - Segmento Crianças (Multi-produto)}
+\label{tab:markups-kids-multi}
+\scriptsize
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}llp{0.16\textwidth}rrrrr@{}}
+\toprule
+Firma & Produto & Segmento & Preço ($p_j$) & Share ($s_j$) & Markup multi ($\mu_j$) & CMg multi ($mc_j$) & Markup/preço multi ($\mu_j/p_j$) \\
+\midrule
+GM & GoldenGrahams & Kids & 3.2400 & 0.0124 & -1.1454 & 4.3854 & -0.3535 \\
+GM & Cinn.ToastCrunch & Kids & 3.3600 & 0.0123 & -1.1454 & 4.5054 & -0.3409 \\
+QK & Popeye & Kids & 1.7700 & 0.0067 & -0.8892 & 2.6592 & -0.5023 \\
+KG & FrootLoops & Kids & 3.5300 & 0.0120 & -1.2606 & 4.7906 & -0.3571 \\
+QK & CaptCrunch & Kids & 2.5500 & 0.0083 & -0.8892 & 3.4392 & -0.3487 \\
+PT & FruityPebbles & Kids & 3.2100 & 0.0083 & -0.9139 & 4.1239 & -0.2847 \\
+GM & CocoaPus & Kids & 3.4600 & 0.0128 & -1.1454 & 4.6054 & -0.3311 \\
+PT & Honeycomb & Kids & 3.4000 & 0.0074 & -0.9139 & 4.3139 & -0.2688 \\
+KG & AppleJacks & Kids & 3.6400 & 0.0084 & -1.2606 & 4.9006 & -0.3463 \\
+GM & Kix & Kids & 3.6700 & 0.0108 & -1.1454 & 4.8154 & -0.3121 \\
+GM & LuckyCharms & Kids & 3.4500 & 0.0108 & -1.1454 & 4.5954 & -0.3320 \\
+GM & Trix & Kids & 3.9600 & 0.0113 & -1.1454 & 5.1054 & -0.2893 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\scriptsize
+\textit{Nota:} O markup é definido como a diferença entre preço e custo marginal: $\mu_j=p_j-mc_j$. A coluna de razão reporta $\mu_j/p_j$ para o cenário multi.
+\end{table}
+\endgroup
+

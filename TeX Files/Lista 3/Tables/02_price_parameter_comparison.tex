@@ -1,0 +1,112 @@
+% ============================================================
+% Comparação do parâmetro de preço por modelo
+% ============================================================
+
+% Tabela original: 02_price_parameter_comparison.csv
+
+% Requer no preâmbulo: \usepackage{booktabs} e \usepackage{float}
+
+% ============================================================
+% Q1: MQO, logit simples
+% ============================================================
+
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Parâmetro de preço no modelo logit simples por MQO}
+\label{tab:preco-logit-simples}
+\small
+\begin{tabular}{lrrr}
+\toprule
+Modelo & Coef. preço ($-\alpha$) & $\alpha$ & EP preço \\
+\midrule
+MQO, logit simples & -0.2240 & 0.2240 & 0.1987 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A coluna de preço reporta o coeficiente estimado sobre $p_j$. Como a utilidade média é escrita com o termo $-\alpha p_j$, a coluna $\alpha$ recupera o parâmetro estrutural de sensibilidade ao preço.
+\end{table}
+\endgroup
+
+% ============================================================
+% Q2: 2SLS
+% ============================================================
+
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Parâmetro de preço nas especificações 2SLS}
+\label{tab:preco-2sls}
+\small
+\begin{tabular}{lrrr}
+\toprule
+Instrumentos & Coef. preço ($-\alpha$) & $\alpha$ & EP preço \\
+\midrule
+Própria firma & 1.3030 & -1.3030 & 0.8963 \\
+Firmas rivais & 1.3030 & -1.3030 & 0.8963 \\
+Ambos os conjuntos & 1.3030 & -1.3030 & 0.8963 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A coluna de preço reporta o coeficiente estimado sobre $p_j$. Como a utilidade média é escrita com o termo $-\alpha p_j$, a coluna $\alpha$ recupera o parâmetro estrutural de sensibilidade ao preço.
+\end{table}
+\endgroup
+
+% ============================================================
+% Q3: GMM
+% ============================================================
+
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Parâmetro de preço nas especificações GMM}
+\label{tab:preco-gmm}
+\small
+\begin{tabular}{llrrrr}
+\toprule
+Etapa & Instrumentos & Coef. preço ($-\alpha$) & $\alpha$ & EP preço & Objetivo GMM \\
+\midrule
+1ª etapa & Própria firma & 1.3030 & -1.3030 & 0.8963 & 0.2056 \\
+2 etapas & Própria firma & 1.1764 & -1.1764 & 0.8040 & 0.3234 \\
+1ª etapa & Firmas rivais & 1.3030 & -1.3030 & 0.8963 & 0.2056 \\
+2 etapas & Firmas rivais & 1.1764 & -1.1764 & 0.8040 & 0.3234 \\
+1ª etapa & Ambos os conjuntos & 1.3030 & -1.3030 & 0.8963 & 0.2056 \\
+2 etapas & Ambos os conjuntos & 1.1764 & -1.1764 & 0.8040 & 0.3234 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A coluna de preço reporta o coeficiente estimado sobre $p_j$. Como a utilidade média é escrita com o termo $-\alpha p_j$, a coluna $\alpha$ recupera o parâmetro estrutural de sensibilidade ao preço.
+\end{table}
+\endgroup
+
+% ============================================================
+% Q4: Nested logit
+% ============================================================
+
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Parâmetro de preço nas especificações nested logit}
+\label{tab:preco-nested-logit}
+\small
+\begin{tabular}{llrrrrr}
+\toprule
+Etapa & Modelo & Coef. preço ($-\alpha$) & $\alpha$ & EP preço & Objetivo GMM & $\sigma$ \\
+\midrule
+Referência & 2SLS nested & -0.3414 & 0.3414 & 0.2142 &  & 0.4126 \\
+1ª etapa & Nested GMM & -0.3414 & 0.3414 & 0.2142 & 2.8362 & 0.4126 \\
+2 etapas & Nested GMM & -0.4848 & 0.4848 & 0.2216 & 11.6977 & 0.3733 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A coluna de preço reporta o coeficiente estimado sobre $p_j$. Como a utilidade média é escrita com o termo $-\alpha p_j$, a coluna $\alpha$ recupera o parâmetro estrutural de sensibilidade ao preço. No nested logit, $\sigma$ mede a correlação das preferências dentro do mesmo grupo.
+\end{table}
+\endgroup

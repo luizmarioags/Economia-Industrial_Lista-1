@@ -1,0 +1,130 @@
+```latex
+% ------------------------------------------------
+% Questão: Elasticidades-dispêndio e elasticidades-preço
+% ------------------------------------------------
+
+\textbf{Resultados}
+
+As elasticidades foram calculadas a partir do modelo AIDS linear aproximado, avaliadas nas participações médias. A Tabela~\ref{tab:gamma-hsym} apresenta a matriz \(\Gamma\) dos efeitos de preços no modelo com homogeneidade e simetria. Como discutido na apostila na seção sobre o modelo AIDS, os coeficientes \(\gamma_{jk}\) não são elasticidades diretamente interpretáveis: as elasticidades dependem também dos parâmetros de dispêndio e das participações médias de gasto. Por isso, a interpretação econômica deve se apoiar nas Tabelas~\ref{tab:elasticidade-dispendio}, \ref{tab:elasticidades-marshallianas} e~\ref{tab:elasticidades-compensadas}.
+
+\input{Lista_2/tables/tab_gamma_hsym_stata.tex}
+
+\input{Lista_2/tables/tab_elasticidade_dispendio_hsym_stata.tex}
+
+A Tabela~\ref{tab:elasticidade-dispendio} e a Figura~\ref{fig:q7-elasticidades-dispendio} mostram que todas as elasticidades-dispêndio são positivas. Portanto, todos os produtos analisados se comportam como bens normais em relação ao dispêndio total com carnes. Esse resultado é coerente com a interpretação usual da elasticidade-renda: quando a elasticidade é positiva, aumentos na renda, ou no dispêndio relevante, elevam a quantidade demandada.
+
+A carne bovina e vitela apresenta elasticidade-dispêndio de \(1{,}2799\), enquanto o frango apresenta elasticidade de \(1{,}0691\). Como ambas são maiores do que um, a demanda desses bens reage mais do que proporcionalmente ao aumento do dispêndio real com carnes. Já a carne suína, com elasticidade de \(0{,}5896\), e os pescados, com elasticidade de \(0{,}6277\), também são bens normais, mas apresentam resposta menos intensa. Assim, dentro da cesta de carnes, carne suína e pescados parecem se comportar mais como bens necessários, enquanto carne bovina e vitela e frango são mais sensíveis à expansão do dispêndio.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{Lista_2/Figures/Stata/stata_19_elasticidades_dispendio.pdf}
+    \caption{Elasticidades em relação ao dispêndio real.}
+    \label{fig:q7-elasticidades-dispendio}
+\end{figure}
+
+\input{Lista_2/tables/tab_elasticidades_marshallianas_hsym_stata.tex}
+
+A Tabela~\ref{tab:elasticidades-marshallianas} e a Figura~\ref{fig:q7-elasticidades-marshallianas} apresentam as elasticidades-preço Marshallianas. Essas elasticidades medem a reação total da demanda a uma variação de preço, combinando efeito-substituição e efeito-renda. Como esperado pela teoria da demanda, as elasticidades próprias deveriam ser negativas para uma demanda ordinária bem comportada.
+
+Esse padrão aparece em três dos quatro produtos. A elasticidade própria da carne bovina e vitela é \(-1{,}3603\), indicando demanda elástica: um aumento de \(1\%\) no preço reduz sua demanda em aproximadamente \(1{,}36\%\). A carne suína apresenta elasticidade própria de \(-0{,}9688\), muito próxima da unidade. O frango tem a maior sensibilidade ao próprio preço, com elasticidade de \(-3{,}7187\), sugerindo forte reação da demanda a variações de preço. Esse resultado é plausível caso o frango seja percebido pelos consumidores como uma carne com substitutos próximos.
+
+O resultado menos plausível aparece em pescados. A elasticidade própria Marshalliana é positiva, igual a \(0{,}4863\), o que contraria a interpretação usual da demanda: o aumento do próprio preço estaria associado a aumento da quantidade demandada. Esse sinal deve ser lido com cautela, pois pode refletir agregação excessiva da categoria, sazonalidade, choques de qualidade não observados, menor frequência de consumo, problemas de mensuração dos preços ou instabilidade da especificação estimada.
+
+As elasticidades cruzadas permitem avaliar relações de substituição e complementaridade entre as carnes. Como na discussão da apostila sobre elasticidades cruzadas, valores positivos indicam que dois bens tendem a se comportar como substitutos; valores negativos sugerem complementaridade ou, no caso das elasticidades Marshallianas, a influência de efeitos-renda e de composição do dispêndio.
+
+Há evidência de substituição em pares importantes. A elasticidade da demanda de carne bovina e vitela em relação ao preço do frango é \(0{,}7199\), enquanto a elasticidade da demanda de frango em relação ao preço da carne bovina e vitela é \(2{,}0291\). Também há substituição entre carne suína e frango: a demanda de carne suína responde ao preço do frango com elasticidade de \(0{,}5866\), e a demanda de frango responde ao preço da carne suína com elasticidade de \(0{,}6998\). Esses resultados são intuitivos, pois esses produtos podem ocupar posições próximas na escolha do consumidor.
+
+Por outro lado, algumas elasticidades cruzadas têm sinais menos intuitivos. A demanda de carne bovina e vitela reage negativamente ao preço da carne suína, com elasticidade de \(-0{,}2869\), e a demanda de pescados reage negativamente ao preço da carne bovina e vitela, com elasticidade de \(-1{,}1112\). Como as elasticidades Marshallianas incorporam também o efeito-renda, esses sinais não devem ser interpretados automaticamente como complementaridade direta. Eles podem estar associados a diferenças de participação média, composição do dispêndio, agregação dos produtos ou instabilidade dos parâmetros.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{Lista_2/Figures/Stata/stata_20_matriz_elasticidades_marshallianas.pdf}
+    \caption{Matriz de elasticidades-preço Marshallianas.}
+    \label{fig:q7-elasticidades-marshallianas}
+\end{figure}
+
+\input{Lista_2/tables/tab_elasticidades_compensadas_hsym_stata.tex}
+
+A Tabela~\ref{tab:elasticidades-compensadas} e a Figura~\ref{fig:q7-elasticidades-compensadas} apresentam as elasticidades compensadas pela relação de Slutsky. Essas elasticidades retiram o efeito-renda e, por isso, estão mais diretamente associadas ao efeito-substituição entre produtos.
+
+A comparação com as elasticidades Marshallianas reforça a evidência de substituição entre algumas carnes. A elasticidade compensada da demanda de carne bovina e vitela em relação ao preço do frango é \(0{,}9429\), e a elasticidade da demanda de frango em relação ao preço da carne bovina e vitela é \(2{,}5286\). A relação entre carne suína e frango também se torna mais claramente positiva: a elasticidade compensada da carne suína em relação ao preço do frango é \(0{,}6893\), enquanto a do frango em relação ao preço da carne suína é \(0{,}9589\). Isso sugere que parte dos sinais observados nas elasticidades Marshallianas era influenciada pelo efeito-renda.
+
+Ainda assim, as elasticidades compensadas não eliminam todos os problemas de plausibilidade. A elasticidade própria compensada dos pescados permanece positiva, igual a \(0{,}5594\). Como a elasticidade compensada própria deveria ser negativa em um sistema de demanda regular, esse resultado sugere violação de regularidade ou fragilidade da estimação para essa categoria. Além disso, a elasticidade compensada da demanda de pescados em relação ao preço da carne bovina e vitela continua negativa, \(-0{,}8179\), o que também recomenda cautela.
+
+Em síntese, os resultados são parcialmente plausíveis. As elasticidades-dispêndio têm sinais coerentes e indicam que todos os produtos são bens normais. As elasticidades próprias Marshallianas são negativas para carne bovina e vitela, carne suína e frango, mas não para pescados. As elasticidades cruzadas sugerem substituição relevante entre carne bovina e vitela, carne suína e frango, em linha com a análise multi-produto do AIDS. No entanto, os sinais anômalos dos pescados indicam que essa categoria deve ser interpretada com maior cautela e justificam a análise das restrições teóricas e dos instrumentos nos itens seguintes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{Lista_2/Figures/Stata/stata_20_matriz_elasticidades_compensadas.pdf}
+    \caption{Matriz de elasticidades-preço compensadas.}
+    \label{fig:q7-elasticidades-compensadas}
+\end{figure}
+
+
+% ------------------------------------------------
+% Questão: Testes das restrições teóricas
+% ------------------------------------------------
+
+\textbf{Resultados}
+
+Foram avaliadas as restrições teóricas do modelo AIDS por meio da comparação entre três especificações: modelo irrestrito, modelo com homogeneidade e modelo com homogeneidade e simetria. Essas restrições derivam da teoria do consumidor aplicada a sistemas de demanda. No AIDS, as participações de gasto dependem dos log-preços e do dispêndio real; por isso, restrições como aditividade, homogeneidade e simetria aproximam o modelo empírico das propriedades de uma demanda derivada de preferências bem comportadas.
+
+A aditividade está associada à restrição orçamentária: as participações de gasto devem somar um. A homogeneidade implica que as demandas dependem de preços relativos e do dispêndio real, e não do nível nominal comum de preços e renda. Assim, se todos os preços e o dispêndio nominal aumentam na mesma proporção, as participações de gasto não deveriam se alterar. A simetria, por sua vez, está ligada à matriz de substituição de Slutsky: o efeito compensado do preço do bem \(k\) sobre a demanda do bem \(j\) deve ser compatível com o efeito compensado do preço do bem \(j\) sobre a demanda do bem \(k\).
+
+\input{Lista_2/tables/tab_testes_wald_restricoes_stata.tex}
+
+A Tabela~\ref{tab:testes-wald} reporta os testes de Wald das restrições teóricas. Para a homogeneidade, a estatística de Wald é \(78{,}2294\), com \(3\) graus de liberdade e p-valor de \(7{,}36\times 10^{-17}\). Portanto, rejeita-se fortemente a hipótese nula de homogeneidade. Esse resultado indica que os dados não sustentam plenamente a hipótese de que as participações de gasto com carnes dependem apenas de preços relativos e dispêndio real.
+
+No contexto da demanda por carnes, a rejeição da homogeneidade pode refletir mudanças de qualidade não observadas, sazonalidade, diferenças de composição dentro de cada categoria, choques de oferta, comportamento promocional dos preços ou limitações do índice de preços usado na versão linear aproximada do AIDS. Em termos econômicos, o resultado sugere que variações nominais comuns em preços e dispêndio parecem afetar as participações estimadas, o que não deveria ocorrer em um sistema perfeitamente homogêneo de grau zero.
+
+Para a simetria, a estatística de Wald é \(8{,}2347\), com \(3\) graus de liberdade e p-valor de \(0{,}0414\). Assim, a hipótese nula de simetria também é rejeitada ao nível de \(5\%\), embora com evidência menos forte do que no caso da homogeneidade. Essa rejeição sugere que os efeitos cruzados estimados entre os produtos não obedecem perfeitamente à reciprocidade esperada pela teoria.
+
+A apostila ilustra essa restrição com o exemplo de Coca-Cola e Pepsi: o parâmetro da Pepsi na equação da Coca-Cola deveria ser igual ao parâmetro da Coca-Cola na equação da Pepsi. No caso da demanda por carnes, a ideia equivalente é que o parâmetro que relaciona o preço do frango à participação da carne bovina e vitela deveria ser igual ao parâmetro que relaciona o preço da carne bovina e vitela à participação do frango. A rejeição indica que essa reciprocidade não aparece claramente nos dados.
+
+É importante notar que a simetria dos parâmetros \(\gamma_{jk}=\gamma_{kj}\) não implica elasticidades cruzadas numericamente iguais, pois as elasticidades também dependem das participações médias dos produtos. Assim, a rejeição da simetria não deve ser lida como simples diferença entre duas elasticidades cruzadas específicas; ela indica que a estrutura paramétrica estimada não é plenamente compatível com a reciprocidade dos efeitos compensados.
+
+A comparação com a Tabela~\ref{tab:comparacao-modelos}, que reúne as especificações estimadas por GMM, deve ser usada de forma complementar. Se a imposição de homogeneidade e simetria aumenta a estatística objetivo do GMM ou piora os indicadores de ajuste, isso reforça a conclusão dos testes de Wald. Se, por outro lado, a especificação restrita melhora a estabilidade das elasticidades e reduz sinais economicamente problemáticos, há um argumento de parcimônia para mantê-la, mesmo com rejeição estatística das restrições.
+
+No conjunto, os testes indicam que a teoria do consumidor não é perfeitamente confirmada pelos dados nesta aplicação. Isso não invalida o exercício, mas muda a interpretação dos resultados. O modelo com homogeneidade e simetria deve ser visto como uma especificação teoricamente disciplinada, útil para organizar as elasticidades, mas não como uma descrição sem tensões empíricas. A rejeição das restrições é coerente com os problemas observados nas Tabelas~\ref{tab:elasticidades-marshallianas} e~\ref{tab:elasticidades-compensadas}, especialmente o sinal positivo da elasticidade própria dos pescados.
+
+
+% ------------------------------------------------
+% Questão: Diagnóstico dos instrumentos
+% ------------------------------------------------
+
+\textbf{Resultados}
+
+O diagnóstico dos instrumentos foi feito a partir das regressões de primeira etapa para cada preço potencialmente endógeno. Esse procedimento segue a lógica de variáveis instrumentais apresentada na apostila: um bom instrumento deve ser relevante, isto é, explicar a variável endógena, e exógeno, isto é, não estar correlacionado com o erro estrutural da equação de demanda. A primeira etapa avalia diretamente a relevância dos instrumentos. Por isso, são reportados a estatística \(F\) dos instrumentos excluídos e o \(R^2\) parcial.
+
+A apostila discute problema semelhante no exemplo da demanda por cigarros, em que a força dos instrumentos é avaliada por estatísticas de primeira etapa. A lógica é a mesma aqui: se os preços defasados explicam fortemente os preços correntes, há evidência favorável à relevância dos instrumentos. Ainda assim, relevância não garante validade completa, pois a exogeneidade continua sendo uma hipótese econômica.
+
+\input{Lista_2/tables/tab_diagnostico_primeira_etapa_stata.tex}
+
+A Tabela~\ref{tab:diagnostico-primeira-etapa} apresenta o diagnóstico da primeira etapa. Na especificação \texttt{L1}, que usa apenas a primeira defasagem dos log-preços como instrumento, as estatísticas \(F\) são muito elevadas: \(462{,}55\) para carne bovina e vitela, \(360{,}07\) para carne suína, \(358{,}50\) para frango e \(4722{,}92\) para pescados. Todos os p-valores são praticamente nulos. Além disso, os \(R^2\) parciais também são altos: \(0{,}9820\), \(0{,}9769\), \(0{,}9768\) e \(0{,}9982\), respectivamente. Portanto, do ponto de vista da relevância estatística, não há indícios de instrumentos fracos.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{Lista_2/Figures/Stata/stata_21_primeira_etapa_F.pdf}
+    \caption{Estatística \(F\) da primeira etapa por preço e conjunto de instrumentos.}
+    \label{fig:q9-primeira-etapa-f}
+\end{figure}
+
+A Figura~\ref{fig:q9-primeira-etapa-f} reforça visualmente esse resultado. As estatísticas \(F\) ficam muito acima dos valores normalmente associados a instrumentos fracos. O destaque é a equação de primeira etapa dos pescados, cujo \(F\) é extremamente elevado tanto na especificação \texttt{L1} quanto na especificação \texttt{L1\_L2}. Isso indica forte persistência temporal dos preços, isto é, os preços defasados têm grande capacidade de prever os preços correntes.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{Lista_2/Figures/Stata/stata_22_primeira_etapa_R2_parcial.pdf}
+    \caption{\(R^2\) parcial da primeira etapa por preço e conjunto de instrumentos.}
+    \label{fig:q9-primeira-etapa-r2-parcial}
+\end{figure}
+
+A Figura~\ref{fig:q9-primeira-etapa-r2-parcial} mostra que o poder explicativo adicional dos instrumentos também é elevado. Em todas as equações, o \(R^2\) parcial está acima de \(0{,}97\). Assim, condicionalmente aos demais controles da primeira etapa, as defasagens dos preços explicam parcela muito expressiva da variação relevante dos preços correntes.
+
+Na especificação alternativa \texttt{L1\_L2}, que inclui também a segunda defasagem dos log-preços, as estatísticas \(F\) permanecem altas: \(252{,}53\) para carne bovina e vitela, \(275{,}29\) para carne suína, \(161{,}61\) para frango e \(2805{,}65\) para pescados. Os \(R^2\) parciais passam para \(0{,}9853\), \(0{,}9863\), \(0{,}9771\) e \(0{,}9987\), respectivamente. Portanto, a inclusão da segunda defasagem não gera problema de fraqueza dos instrumentos.
+
+Entretanto, a comparação entre \texttt{L1} e \texttt{L1\_L2} sugere que o ganho da segunda defasagem é pequeno. O \(R^2\) parcial aumenta pouco, enquanto a estatística \(F\) cai em todas as equações, em parte porque o número de instrumentos aumenta e o número de observações cai de \(40\) para \(39\). Isso não torna a especificação \texttt{L1\_L2} inadequada, mas recomenda cautela. Em modelos GMM, adicionar instrumentos pode aumentar a relevância, mas também pode gerar excesso de instrumentos, piorar propriedades em amostras pequenas ou tornar os testes de sobreidentificação menos informativos.
+
+A conclusão é que não há evidência de instrumentos fracos. Pelo contrário, os preços defasados são muito relevantes para explicar os preços correntes. A principal cautela está na exogeneidade. Como os preços são variáveis de equilíbrio, eles podem refletir simultaneamente choques de oferta e de demanda. Assim, o uso de preços defasados como instrumentos exige a hipótese de que esses preços afetam as participações correntes apenas por meio dos preços correntes, e não por choques persistentes de demanda não observados.
+
+A estabilidade das elasticidades deve ser avaliada comparando as especificações com instrumentos \texttt{L1} e \texttt{L1\_L2} na Tabela~\ref{tab:comparacao-modelos} e nas Tabelas~\ref{tab:elasticidade-dispendio}, \ref{tab:elasticidades-marshallianas} e~\ref{tab:elasticidades-compensadas}. Caso as elasticidades mudem muito com a inclusão da segunda defasagem, isso seria sinal de instabilidade. Caso permaneçam semelhantes, a especificação com uma defasagem pode ser preferível por parcimônia. Considerando os resultados da primeira etapa, os instrumentos são fortes, mas a especificação com mais defasagens deve ser usada apenas se trouxer ganho claro de ajuste ou maior estabilidade econômica das elasticidades.
+

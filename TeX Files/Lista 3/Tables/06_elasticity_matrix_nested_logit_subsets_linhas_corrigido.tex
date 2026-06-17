@@ -1,0 +1,1321 @@
+% ============================================================
+% Matriz de elasticidades do nested logit dividida em subsets
+% ============================================================
+
+% Requer no preâmbulo: \usepackage{booktabs}, \usepackage{float}, \usepackage{array}, \usepackage{pdflscape}
+% Estrutura: cada bloco de colunas foi dividido também por blocos de linhas.
+% O label original de cada bloco de colunas foi preservado no Painel A.
+
+% ============================================================
+% Matriz de elasticidades do nested logit - colunas 1 a 6
+% ============================================================
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 1 a 6 -- Painel A: produtos adultos I (linhas 1 a 13)}
+\label{tab:elasticity-nested-logit-global}
+\label{tab:elasticity-nested-logit-cols-01-06}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & Basic4 & SpecialK & GreatGraines & Triples & Mueslix & OtmlRaisinCrisp \\
+\midrule
+Basic4 & -2.4891 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+SpecialK & 0.0403 & -2.6470 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+GreatGraines & 0.0403 & 0.0449 & -2.1926 & 0.0681 & 0.0388 & 0.0424 \\
+Triples & 0.0403 & 0.0449 & 0.0507 & -1.7343 & 0.0388 & 0.0424 \\
+Mueslix & 0.0403 & 0.0449 & 0.0507 & 0.0681 & -2.5216 & 0.0424 \\
+OtmlRaisinCrisp & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & -2.0539 \\
+GrapeNuts & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+100\%Natural & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+Muesli & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+RiceChex & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+TotalRaisinBran & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+CracklinOatBran & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+Crispix & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+\bottomrule
+\end{tabular}
+
+
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 1 a 6 -- Painel B: produtos adultos II (linhas 14 a 25)}
+\label{tab:elasticity-nested-logit-cols-01-06-adulto-ii}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & Basic4 & SpecialK & GreatGraines & Triples & Mueslix & OtmlRaisinCrisp \\
+\midrule
+LowFatGranola & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+FrostedMiniWheats & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+RaisinNutBran & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+HoneyBunchesofOats & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+Product19 & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+ShreddedWheat & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+Total & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+BigBiscuitShdWt & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+NutriGrain & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+DoubleDipCrunch & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+OatSquares & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+SpoonSizeShdWt & 0.0403 & 0.0449 & 0.0507 & 0.0681 & 0.0388 & 0.0424 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 1 a 6 -- Painel C: produtos família (linhas 26 a 38)}
+\label{tab:elasticity-nested-logit-cols-01-06-familia}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & Basic4 & SpecialK & GreatGraines & Triples & Mueslix & OtmlRaisinCrisp \\
+\midrule
+AppleCinn.Cheerios & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+Clusters & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+Cheerios & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+FrostedFlakes & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+RiceKrispies & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+Wheaties & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+CornPops & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+RaisinBran (1) & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+CinnamonMiniBuns & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+HoneyNutCheerios & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+MultiGrainCheerios & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+CornFlakes & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+RaisinBran (2) & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 1 a 6 -- Painel D: produtos infantis (linhas 39 a 50)}
+\label{tab:elasticity-nested-logit-cols-01-06-infantil}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & Basic4 & SpecialK & GreatGraines & Triples & Mueslix & OtmlRaisinCrisp \\
+\midrule
+GoldenGrahams & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+Cinn.ToastCrunch & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+Popeye & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+FrootLoops & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+CaptCrunch & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+FruityPebbles & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+CocoaPus & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+Honeycomb & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+AppleJacks & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+Kix & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+LuckyCharms & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+Trix & 0.0146 & 0.0163 & 0.0184 & 0.0247 & 0.0141 & 0.0154 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+% ============================================================
+% Matriz de elasticidades do nested logit - colunas 7 a 12
+% ============================================================
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 7 a 12 -- Painel A: produtos adultos I (linhas 1 a 13)}
+\label{tab:elasticity-nested-logit-cols-07-12}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & GrapeNuts & 100\%Natural & Muesli & RiceChex & TotalRaisinBran & CracklinOatBran \\
+\midrule
+Basic4 & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+SpecialK & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+GreatGraines & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+Triples & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+Mueslix & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+OtmlRaisinCrisp & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+GrapeNuts & -1.5842 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+100\%Natural & 0.0712 & -1.6714 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+Muesli & 0.0712 & 0.0614 & -2.5468 & 0.0480 & 0.0369 & 0.0394 \\
+RiceChex & 0.0712 & 0.0614 & 0.0369 & -2.5820 & 0.0369 & 0.0394 \\
+TotalRaisinBran & 0.0712 & 0.0614 & 0.0369 & 0.0480 & -2.2837 & 0.0394 \\
+CracklinOatBran & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & -2.4282 \\
+Crispix & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 7 a 12 -- Painel B: produtos adultos II (linhas 14 a 25)}
+\label{tab:elasticity-nested-logit-cols-07-12-adulto-ii}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & GrapeNuts & 100\%Natural & Muesli & RiceChex & TotalRaisinBran & CracklinOatBran \\
+\midrule
+LowFatGranola & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+FrostedMiniWheats & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+RaisinNutBran & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+HoneyBunchesofOats & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+Product19 & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+ShreddedWheat & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+Total & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+BigBiscuitShdWt & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+NutriGrain & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+DoubleDipCrunch & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+OatSquares & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+SpoonSizeShdWt & 0.0712 & 0.0614 & 0.0369 & 0.0480 & 0.0369 & 0.0394 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 7 a 12 -- Painel C: produtos família (linhas 26 a 38)}
+\label{tab:elasticity-nested-logit-cols-07-12-familia}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & GrapeNuts & 100\%Natural & Muesli & RiceChex & TotalRaisinBran & CracklinOatBran \\
+\midrule
+AppleCinn.Cheerios & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+Clusters & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+Cheerios & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+FrostedFlakes & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+RiceKrispies & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+Wheaties & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+CornPops & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+RaisinBran (1) & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+CinnamonMiniBuns & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+HoneyNutCheerios & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+MultiGrainCheerios & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+CornFlakes & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+RaisinBran (2) & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 7 a 12 -- Painel D: produtos infantis (linhas 39 a 50)}
+\label{tab:elasticity-nested-logit-cols-07-12-infantil}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & GrapeNuts & 100\%Natural & Muesli & RiceChex & TotalRaisinBran & CracklinOatBran \\
+\midrule
+GoldenGrahams & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+Cinn.ToastCrunch & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+Popeye & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+FrootLoops & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+CaptCrunch & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+FruityPebbles & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+CocoaPus & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+Honeycomb & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+AppleJacks & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+Kix & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+LuckyCharms & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+Trix & 0.0258 & 0.0223 & 0.0134 & 0.0174 & 0.0134 & 0.0143 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+% ============================================================
+% Matriz de elasticidades do nested logit - colunas 13 a 18
+% ============================================================
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 13 a 18 -- Painel A: produtos adultos I (linhas 1 a 13)}
+\label{tab:elasticity-nested-logit-cols-13-18}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & Crispix & LowFatGranola & FrostedMiniWheats & RaisinNutBran & HoneyBunchesofOats & Product19 \\
+\midrule
+Basic4 & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+SpecialK & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+GreatGraines & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+Triples & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+Mueslix & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+OtmlRaisinCrisp & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+GrapeNuts & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+100\%Natural & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+Muesli & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+RiceChex & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+TotalRaisinBran & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+CracklinOatBran & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+Crispix & -2.4878 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 13 a 18 -- Painel B: produtos adultos II (linhas 14 a 25)}
+\label{tab:elasticity-nested-logit-cols-13-18-adulto-ii}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & Crispix & LowFatGranola & FrostedMiniWheats & RaisinNutBran & HoneyBunchesofOats & Product19 \\
+\midrule
+LowFatGranola & 0.0494 & -2.0210 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+FrostedMiniWheats & 0.0494 & 0.0520 & -1.9715 & 0.0418 & 0.0563 & 0.0458 \\
+RaisinNutBran & 0.0494 & 0.0520 & 0.0552 & -2.2634 & 0.0563 & 0.0458 \\
+HoneyBunchesofOats & 0.0494 & 0.0520 & 0.0552 & 0.0418 & -2.1483 & 0.0458 \\
+Product19 & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & -2.5688 \\
+ShreddedWheat & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+Total & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+BigBiscuitShdWt & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+NutriGrain & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+DoubleDipCrunch & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+OatSquares & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+SpoonSizeShdWt & 0.0494 & 0.0520 & 0.0552 & 0.0418 & 0.0563 & 0.0458 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 13 a 18 -- Painel C: produtos família (linhas 26 a 38)}
+\label{tab:elasticity-nested-logit-cols-13-18-familia}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & Crispix & LowFatGranola & FrostedMiniWheats & RaisinNutBran & HoneyBunchesofOats & Product19 \\
+\midrule
+AppleCinn.Cheerios & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+Clusters & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+Cheerios & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+FrostedFlakes & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+RiceKrispies & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+Wheaties & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+CornPops & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+RaisinBran (1) & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+CinnamonMiniBuns & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+HoneyNutCheerios & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+MultiGrainCheerios & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+CornFlakes & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+RaisinBran (2) & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 13 a 18 -- Painel D: produtos infantis (linhas 39 a 50)}
+\label{tab:elasticity-nested-logit-cols-13-18-infantil}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & Crispix & LowFatGranola & FrostedMiniWheats & RaisinNutBran & HoneyBunchesofOats & Product19 \\
+\midrule
+GoldenGrahams & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+Cinn.ToastCrunch & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+Popeye & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+FrootLoops & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+CaptCrunch & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+FruityPebbles & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+CocoaPus & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+Honeycomb & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+AppleJacks & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+Kix & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+LuckyCharms & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+Trix & 0.0179 & 0.0189 & 0.0200 & 0.0151 & 0.0204 & 0.0166 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+% ============================================================
+% Matriz de elasticidades do nested logit - colunas 19 a 24
+% ============================================================
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 19 a 24 -- Painel A: produtos adultos I (linhas 1 a 13)}
+\label{tab:elasticity-nested-logit-cols-19-24}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & ShreddedWheat & Total & BigBiscuitShdWt & NutriGrain & DoubleDipCrunch & OatSquares \\
+\midrule
+Basic4 & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+SpecialK & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+GreatGraines & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+Triples & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+Mueslix & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+OtmlRaisinCrisp & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+GrapeNuts & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+100\%Natural & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+Muesli & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+RiceChex & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+TotalRaisinBran & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+CracklinOatBran & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+Crispix & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 19 a 24 -- Painel B: produtos adultos II (linhas 14 a 25)}
+\label{tab:elasticity-nested-logit-cols-19-24-adulto-ii}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & ShreddedWheat & Total & BigBiscuitShdWt & NutriGrain & DoubleDipCrunch & OatSquares \\
+\midrule
+LowFatGranola & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+FrostedMiniWheats & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+RaisinNutBran & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+HoneyBunchesofOats & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+Product19 & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+ShreddedWheat & -2.1149 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+Total & 0.0665 & -2.7523 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+BigBiscuitShdWt & 0.0665 & 0.0402 & -2.1061 & 0.0649 & 0.0450 & 0.0624 \\
+NutriGrain & 0.0665 & 0.0402 & 0.0521 & -2.1552 & 0.0450 & 0.0624 \\
+DoubleDipCrunch & 0.0665 & 0.0402 & 0.0521 & 0.0649 & -2.2834 & 0.0624 \\
+OatSquares & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & -1.8173 \\
+SpoonSizeShdWt & 0.0665 & 0.0402 & 0.0521 & 0.0649 & 0.0450 & 0.0624 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 19 a 24 -- Painel C: produtos família (linhas 26 a 38)}
+\label{tab:elasticity-nested-logit-cols-19-24-familia}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & ShreddedWheat & Total & BigBiscuitShdWt & NutriGrain & DoubleDipCrunch & OatSquares \\
+\midrule
+AppleCinn.Cheerios & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+Clusters & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+Cheerios & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+FrostedFlakes & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+RiceKrispies & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+Wheaties & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+CornPops & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+RaisinBran (1) & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+CinnamonMiniBuns & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+HoneyNutCheerios & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+MultiGrainCheerios & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+CornFlakes & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+RaisinBran (2) & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 19 a 24 -- Painel D: produtos infantis (linhas 39 a 50)}
+\label{tab:elasticity-nested-logit-cols-19-24-infantil}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & ShreddedWheat & Total & BigBiscuitShdWt & NutriGrain & DoubleDipCrunch & OatSquares \\
+\midrule
+GoldenGrahams & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+Cinn.ToastCrunch & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+Popeye & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+FrootLoops & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+CaptCrunch & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+FruityPebbles & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+CocoaPus & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+Honeycomb & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+AppleJacks & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+Kix & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+LuckyCharms & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+Trix & 0.0241 & 0.0146 & 0.0189 & 0.0235 & 0.0163 & 0.0226 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+% ============================================================
+% Matriz de elasticidades do nested logit - colunas 25 a 30
+% ============================================================
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 25 a 30 -- Painel A: produtos adultos I (linhas 1 a 13)}
+\label{tab:elasticity-nested-logit-cols-25-30}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & SpoonSizeShdWt & AppleCinn.Cheerios & Clusters & Cheerios & FrostedFlakes & RiceKrispies \\
+\midrule
+Basic4 & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+SpecialK & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+GreatGraines & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+Triples & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+Mueslix & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+OtmlRaisinCrisp & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+GrapeNuts & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+100\%Natural & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+Muesli & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+RiceChex & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+TotalRaisinBran & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+CracklinOatBran & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+Crispix & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 25 a 30 -- Painel B: produtos adultos II (linhas 14 a 25)}
+\label{tab:elasticity-nested-logit-cols-25-30-adulto-ii}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & SpoonSizeShdWt & AppleCinn.Cheerios & Clusters & Cheerios & FrostedFlakes & RiceKrispies \\
+\midrule
+LowFatGranola & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+FrostedMiniWheats & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+RaisinNutBran & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+HoneyBunchesofOats & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+Product19 & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+ShreddedWheat & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+Total & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+BigBiscuitShdWt & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+NutriGrain & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+DoubleDipCrunch & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+OatSquares & 0.0668 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+SpoonSizeShdWt & -2.1068 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 25 a 30 -- Painel C: produtos família (linhas 26 a 38)}
+\label{tab:elasticity-nested-logit-cols-25-30-familia}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & SpoonSizeShdWt & AppleCinn.Cheerios & Clusters & Cheerios & FrostedFlakes & RiceKrispies \\
+\midrule
+AppleCinn.Cheerios & 0.0242 & -2.2675 & 0.0647 & 0.0891 & 0.0829 & 0.0909 \\
+Clusters & 0.0242 & 0.0686 & -2.3642 & 0.0891 & 0.0829 & 0.0909 \\
+Cheerios & 0.0242 & 0.0686 & 0.0647 & -2.3553 & 0.0829 & 0.0909 \\
+FrostedFlakes & 0.0242 & 0.0686 & 0.0647 & 0.0891 & -1.8665 & 0.0909 \\
+RiceKrispies & 0.0242 & 0.0686 & 0.0647 & 0.0891 & 0.0829 & -2.1988 \\
+Wheaties & 0.0242 & 0.0686 & 0.0647 & 0.0891 & 0.0829 & 0.0909 \\
+CornPops & 0.0242 & 0.0686 & 0.0647 & 0.0891 & 0.0829 & 0.0909 \\
+RaisinBran (1) & 0.0242 & 0.0686 & 0.0647 & 0.0891 & 0.0829 & 0.0909 \\
+CinnamonMiniBuns & 0.0242 & 0.0686 & 0.0647 & 0.0891 & 0.0829 & 0.0909 \\
+HoneyNutCheerios & 0.0242 & 0.0686 & 0.0647 & 0.0891 & 0.0829 & 0.0909 \\
+MultiGrainCheerios & 0.0242 & 0.0686 & 0.0647 & 0.0891 & 0.0829 & 0.0909 \\
+CornFlakes & 0.0242 & 0.0686 & 0.0647 & 0.0891 & 0.0829 & 0.0909 \\
+RaisinBran (2) & 0.0242 & 0.0686 & 0.0647 & 0.0891 & 0.0829 & 0.0909 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 25 a 30 -- Painel D: produtos infantis (linhas 39 a 50)}
+\label{tab:elasticity-nested-logit-cols-25-30-infantil}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & SpoonSizeShdWt & AppleCinn.Cheerios & Clusters & Cheerios & FrostedFlakes & RiceKrispies \\
+\midrule
+GoldenGrahams & 0.0242 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+Cinn.ToastCrunch & 0.0242 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+Popeye & 0.0242 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+FrootLoops & 0.0242 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+CaptCrunch & 0.0242 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+FruityPebbles & 0.0242 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+CocoaPus & 0.0242 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+Honeycomb & 0.0242 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+AppleJacks & 0.0242 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+Kix & 0.0242 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+LuckyCharms & 0.0242 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+Trix & 0.0242 & 0.0194 & 0.0183 & 0.0252 & 0.0235 & 0.0258 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+% ============================================================
+% Matriz de elasticidades do nested logit - colunas 31 a 36
+% ============================================================
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 31 a 36 -- Painel A: produtos adultos I (linhas 1 a 13)}
+\label{tab:elasticity-nested-logit-cols-31-36}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & Wheaties & CornPops & RaisinBran (1) & CinnamonMiniBuns & HoneyNutCheerios & MultiGrainCheerios \\
+\midrule
+Basic4 & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+SpecialK & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+GreatGraines & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+Triples & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+Mueslix & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+OtmlRaisinCrisp & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+GrapeNuts & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+100\%Natural & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+Muesli & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+RiceChex & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+TotalRaisinBran & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+CracklinOatBran & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+Crispix & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 31 a 36 -- Painel B: produtos adultos II (linhas 14 a 25)}
+\label{tab:elasticity-nested-logit-cols-31-36-adulto-ii}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & Wheaties & CornPops & RaisinBran (1) & CinnamonMiniBuns & HoneyNutCheerios & MultiGrainCheerios \\
+\midrule
+LowFatGranola & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+FrostedMiniWheats & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+RaisinNutBran & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+HoneyBunchesofOats & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+Product19 & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+ShreddedWheat & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+Total & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+BigBiscuitShdWt & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+NutriGrain & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+DoubleDipCrunch & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+OatSquares & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+SpoonSizeShdWt & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 31 a 36 -- Painel C: produtos família (linhas 26 a 38)}
+\label{tab:elasticity-nested-logit-cols-31-36-familia}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & Wheaties & CornPops & RaisinBran (1) & CinnamonMiniBuns & HoneyNutCheerios & MultiGrainCheerios \\
+\midrule
+AppleCinn.Cheerios & 0.1053 & 0.0522 & 0.0772 & 0.0781 & 0.0683 & 0.0555 \\
+Clusters & 0.1053 & 0.0522 & 0.0772 & 0.0781 & 0.0683 & 0.0555 \\
+Cheerios & 0.1053 & 0.0522 & 0.0772 & 0.0781 & 0.0683 & 0.0555 \\
+FrostedFlakes & 0.1053 & 0.0522 & 0.0772 & 0.0781 & 0.0683 & 0.0555 \\
+RiceKrispies & 0.1053 & 0.0522 & 0.0772 & 0.0781 & 0.0683 & 0.0555 \\
+Wheaties & -1.8672 & 0.0522 & 0.0772 & 0.0781 & 0.0683 & 0.0555 \\
+CornPops & 0.1053 & -2.6629 & 0.0772 & 0.0781 & 0.0683 & 0.0555 \\
+RaisinBran (1) & 0.1053 & 0.0522 & -1.6478 & 0.0781 & 0.0683 & 0.0555 \\
+CinnamonMiniBuns & 0.1053 & 0.0522 & 0.0772 & -2.0492 & 0.0683 & 0.0555 \\
+HoneyNutCheerios & 0.1053 & 0.0522 & 0.0772 & 0.0781 & -2.3606 & 0.0555 \\
+MultiGrainCheerios & 0.1053 & 0.0522 & 0.0772 & 0.0781 & 0.0683 & -2.5281 \\
+CornFlakes & 0.1053 & 0.0522 & 0.0772 & 0.0781 & 0.0683 & 0.0555 \\
+RaisinBran (2) & 0.1053 & 0.0522 & 0.0772 & 0.0781 & 0.0683 & 0.0555 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 31 a 36 -- Painel D: produtos infantis (linhas 39 a 50)}
+\label{tab:elasticity-nested-logit-cols-31-36-infantil}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & Wheaties & CornPops & RaisinBran (1) & CinnamonMiniBuns & HoneyNutCheerios & MultiGrainCheerios \\
+\midrule
+GoldenGrahams & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+Cinn.ToastCrunch & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+Popeye & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+FrootLoops & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+CaptCrunch & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+FruityPebbles & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+CocoaPus & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+Honeycomb & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+AppleJacks & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+Kix & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+LuckyCharms & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+Trix & 0.0299 & 0.0148 & 0.0219 & 0.0221 & 0.0194 & 0.0157 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+% ============================================================
+% Matriz de elasticidades do nested logit - colunas 37 a 42
+% ============================================================
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 37 a 42 -- Painel A: produtos adultos I (linhas 1 a 13)}
+\label{tab:elasticity-nested-logit-cols-37-42}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & CornFlakes & RaisinBran (2) & GoldenGrahams & Cinn.ToastCrunch & Popeye & FrootLoops \\
+\midrule
+Basic4 & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+SpecialK & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+GreatGraines & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+Triples & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+Mueslix & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+OtmlRaisinCrisp & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+GrapeNuts & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+100\%Natural & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+Muesli & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+RiceChex & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+TotalRaisinBran & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+CracklinOatBran & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+Crispix & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 37 a 42 -- Painel B: produtos adultos II (linhas 14 a 25)}
+\label{tab:elasticity-nested-logit-cols-37-42-adulto-ii}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & CornFlakes & RaisinBran (2) & GoldenGrahams & Cinn.ToastCrunch & Popeye & FrootLoops \\
+\midrule
+LowFatGranola & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+FrostedMiniWheats & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+RaisinNutBran & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+HoneyBunchesofOats & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+Product19 & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+ShreddedWheat & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+Total & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+BigBiscuitShdWt & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+NutriGrain & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+DoubleDipCrunch & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+OatSquares & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+SpoonSizeShdWt & 0.0393 & 0.0224 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 37 a 42 -- Painel C: produtos família (linhas 26 a 38)}
+\label{tab:elasticity-nested-logit-cols-37-42-familia}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & CornFlakes & RaisinBran (2) & GoldenGrahams & Cinn.ToastCrunch & Popeye & FrootLoops \\
+\midrule
+AppleCinn.Cheerios & 0.1386 & 0.0789 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+Clusters & 0.1386 & 0.0789 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+Cheerios & 0.1386 & 0.0789 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+FrostedFlakes & 0.1386 & 0.0789 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+RiceKrispies & 0.1386 & 0.0789 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+Wheaties & 0.1386 & 0.0789 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+CornPops & 0.1386 & 0.0789 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+RaisinBran (1) & 0.1386 & 0.0789 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+CinnamonMiniBuns & 0.1386 & 0.0789 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+HoneyNutCheerios & 0.1386 & 0.0789 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+MultiGrainCheerios & 0.1386 & 0.0789 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+CornFlakes & -1.2615 & 0.0789 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+RaisinBran (2) & 0.1386 & -1.7311 & 0.0218 & 0.0216 & 0.0349 & 0.0170 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 37 a 42 -- Painel D: produtos infantis (linhas 39 a 50)}
+\label{tab:elasticity-nested-logit-cols-37-42-infantil}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & CornFlakes & RaisinBran (2) & GoldenGrahams & Cinn.ToastCrunch & Popeye & FrootLoops \\
+\midrule
+GoldenGrahams & 0.0393 & 0.0224 & -2.4110 & 0.0941 & 0.1524 & 0.0744 \\
+Cinn.ToastCrunch & 0.0393 & 0.0224 & 0.0953 & -2.5050 & 0.1524 & 0.0744 \\
+Popeye & 0.0393 & 0.0224 & 0.0953 & 0.0941 & -1.2168 & 0.0744 \\
+FrootLoops & 0.0393 & 0.0224 & 0.0953 & 0.0941 & 0.1524 & -2.6562 \\
+CaptCrunch & 0.0393 & 0.0224 & 0.0953 & 0.0941 & 0.1524 & 0.0744 \\
+FruityPebbles & 0.0393 & 0.0224 & 0.0953 & 0.0941 & 0.1524 & 0.0744 \\
+CocoaPus & 0.0393 & 0.0224 & 0.0953 & 0.0941 & 0.1524 & 0.0744 \\
+Honeycomb & 0.0393 & 0.0224 & 0.0953 & 0.0941 & 0.1524 & 0.0744 \\
+AppleJacks & 0.0393 & 0.0224 & 0.0953 & 0.0941 & 0.1524 & 0.0744 \\
+Kix & 0.0393 & 0.0224 & 0.0953 & 0.0941 & 0.1524 & 0.0744 \\
+LuckyCharms & 0.0393 & 0.0224 & 0.0953 & 0.0941 & 0.1524 & 0.0744 \\
+Trix & 0.0393 & 0.0224 & 0.0953 & 0.0941 & 0.1524 & 0.0744 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+% ============================================================
+% Matriz de elasticidades do nested logit - colunas 43 a 48
+% ============================================================
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 43 a 48 -- Painel A: produtos adultos I (linhas 1 a 13)}
+\label{tab:elasticity-nested-logit-cols-43-48}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & CaptCrunch & FruityPebbles & CocoaPus & Honeycomb & AppleJacks & Kix \\
+\midrule
+Basic4 & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+SpecialK & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+GreatGraines & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+Triples & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+Mueslix & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+OtmlRaisinCrisp & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+GrapeNuts & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+100\%Natural & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+Muesli & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+RiceChex & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+TotalRaisinBran & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+CracklinOatBran & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+Crispix & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 43 a 48 -- Painel B: produtos adultos II (linhas 14 a 25)}
+\label{tab:elasticity-nested-logit-cols-43-48-adulto-ii}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & CaptCrunch & FruityPebbles & CocoaPus & Honeycomb & AppleJacks & Kix \\
+\midrule
+LowFatGranola & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+FrostedMiniWheats & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+RaisinNutBran & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+HoneyBunchesofOats & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+Product19 & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+ShreddedWheat & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+Total & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+BigBiscuitShdWt & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+NutriGrain & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+DoubleDipCrunch & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+OatSquares & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+SpoonSizeShdWt & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 43 a 48 -- Painel C: produtos família (linhas 26 a 38)}
+\label{tab:elasticity-nested-logit-cols-43-48-familia}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & CaptCrunch & FruityPebbles & CocoaPus & Honeycomb & AppleJacks & Kix \\
+\midrule
+AppleCinn.Cheerios & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+Clusters & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+Cheerios & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+FrostedFlakes & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+RiceKrispies & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+Wheaties & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+CornPops & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+RaisinBran (1) & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+CinnamonMiniBuns & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+HoneyNutCheerios & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+MultiGrainCheerios & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+CornFlakes & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+RaisinBran (2) & 0.0290 & 0.0215 & 0.0181 & 0.0200 & 0.0157 & 0.0203 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 43 a 48 -- Painel D: produtos infantis (linhas 39 a 50)}
+\label{tab:elasticity-nested-logit-cols-43-48-infantil}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.24\linewidth}*{6}{>{\raggedleft\arraybackslash}p{0.11\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & CaptCrunch & FruityPebbles & CocoaPus & Honeycomb & AppleJacks & Kix \\
+\midrule
+GoldenGrahams & 0.1264 & 0.0939 & 0.0791 & 0.0875 & 0.0686 & 0.0885 \\
+Cinn.ToastCrunch & 0.1264 & 0.0939 & 0.0791 & 0.0875 & 0.0686 & 0.0885 \\
+Popeye & 0.1264 & 0.0939 & 0.0791 & 0.0875 & 0.0686 & 0.0885 \\
+FrootLoops & 0.1264 & 0.0939 & 0.0791 & 0.0875 & 0.0686 & 0.0885 \\
+CaptCrunch & -1.8461 & 0.0939 & 0.0791 & 0.0875 & 0.0686 & 0.0885 \\
+FruityPebbles & 0.1264 & -2.3892 & 0.0791 & 0.0875 & 0.0686 & 0.0885 \\
+CocoaPus & 0.1264 & 0.0939 & -2.5974 & 0.0875 & 0.0686 & 0.0885 \\
+Honeycomb & 0.1264 & 0.0939 & 0.0791 & -2.5426 & 0.0686 & 0.0885 \\
+AppleJacks & 0.1264 & 0.0939 & 0.0791 & 0.0875 & -2.7471 & 0.0885 \\
+Kix & 0.1264 & 0.0939 & 0.0791 & 0.0875 & 0.0686 & -2.7504 \\
+LuckyCharms & 0.1264 & 0.0939 & 0.0791 & 0.0875 & 0.0686 & 0.0885 \\
+Trix & 0.1264 & 0.0939 & 0.0791 & 0.0875 & 0.0686 & 0.0885 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+% ============================================================
+% Matriz de elasticidades do nested logit - colunas 49 a 50
+% ============================================================
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 49 a 50 -- Painel A: produtos adultos I (linhas 1 a 13)}
+\label{tab:elasticity-nested-logit-cols-49-50}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.32\linewidth}*{2}{>{\raggedleft\arraybackslash}p{0.20\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & LuckyCharms & Trix \\
+\midrule
+Basic4 & 0.0187 & 0.0145 \\
+SpecialK & 0.0187 & 0.0145 \\
+GreatGraines & 0.0187 & 0.0145 \\
+Triples & 0.0187 & 0.0145 \\
+Mueslix & 0.0187 & 0.0145 \\
+OtmlRaisinCrisp & 0.0187 & 0.0145 \\
+GrapeNuts & 0.0187 & 0.0145 \\
+100\%Natural & 0.0187 & 0.0145 \\
+Muesli & 0.0187 & 0.0145 \\
+RiceChex & 0.0187 & 0.0145 \\
+TotalRaisinBran & 0.0187 & 0.0145 \\
+CracklinOatBran & 0.0187 & 0.0145 \\
+Crispix & 0.0187 & 0.0145 \\
+\bottomrule
+\end{tabular}
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 49 a 50 -- Painel B: produtos adultos II (linhas 14 a 25)}
+\label{tab:elasticity-nested-logit-cols-49-50-adulto-ii}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.32\linewidth}*{2}{>{\raggedleft\arraybackslash}p{0.20\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & LuckyCharms & Trix \\
+\midrule
+LowFatGranola & 0.0187 & 0.0145 \\
+FrostedMiniWheats & 0.0187 & 0.0145 \\
+RaisinNutBran & 0.0187 & 0.0145 \\
+HoneyBunchesofOats & 0.0187 & 0.0145 \\
+Product19 & 0.0187 & 0.0145 \\
+ShreddedWheat & 0.0187 & 0.0145 \\
+Total & 0.0187 & 0.0145 \\
+BigBiscuitShdWt & 0.0187 & 0.0145 \\
+NutriGrain & 0.0187 & 0.0145 \\
+DoubleDipCrunch & 0.0187 & 0.0145 \\
+OatSquares & 0.0187 & 0.0145 \\
+SpoonSizeShdWt & 0.0187 & 0.0145 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 49 a 50 -- Painel C: produtos família (linhas 26 a 38)}
+\label{tab:elasticity-nested-logit-cols-49-50-familia}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.32\linewidth}*{2}{>{\raggedleft\arraybackslash}p{0.20\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & LuckyCharms & Trix \\
+\midrule
+AppleCinn.Cheerios & 0.0187 & 0.0145 \\
+Clusters & 0.0187 & 0.0145 \\
+Cheerios & 0.0187 & 0.0145 \\
+FrostedFlakes & 0.0187 & 0.0145 \\
+RiceKrispies & 0.0187 & 0.0145 \\
+Wheaties & 0.0187 & 0.0145 \\
+CornPops & 0.0187 & 0.0145 \\
+RaisinBran (1) & 0.0187 & 0.0145 \\
+CinnamonMiniBuns & 0.0187 & 0.0145 \\
+HoneyNutCheerios & 0.0187 & 0.0145 \\
+MultiGrainCheerios & 0.0187 & 0.0145 \\
+CornFlakes & 0.0187 & 0.0145 \\
+RaisinBran (2) & 0.0187 & 0.0145 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}
+
+\begin{landscape}
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Matriz de elasticidades do nested logit - colunas 49 a 50 -- Painel D: produtos infantis (linhas 39 a 50)}
+\label{tab:elasticity-nested-logit-cols-49-50-infantil}
+\tiny
+\setlength{\tabcolsep}{3pt}
+\renewcommand{\arraystretch}{0.95}
+\begin{tabular}{@{}>{\raggedright\arraybackslash}p{0.32\linewidth}*{2}{>{\raggedleft\arraybackslash}p{0.20\linewidth}}@{}}
+\toprule
+Produto linha ($j$) & LuckyCharms & Trix \\
+\midrule
+GoldenGrahams & 0.0817 & 0.0634 \\
+Cinn.ToastCrunch & 0.0817 & 0.0634 \\
+Popeye & 0.0817 & 0.0634 \\
+FrootLoops & 0.0817 & 0.0634 \\
+CaptCrunch & 0.0817 & 0.0634 \\
+FruityPebbles & 0.0817 & 0.0634 \\
+CocoaPus & 0.0817 & 0.0634 \\
+Honeycomb & 0.0817 & 0.0634 \\
+AppleJacks & 0.0817 & 0.0634 \\
+Kix & 0.0817 & 0.0634 \\
+LuckyCharms & -2.5871 & 0.0634 \\
+Trix & 0.0817 & -2.9998 \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} A tabela reporta $\varepsilon_{jk}=\frac{\partial s_j}{\partial p_k}\frac{p_k}{s_j}$. Quando um mesmo nome aparece mais de uma vez, o sufixo numérico apenas preserva a posição original na matriz.
+\end{table}
+\endgroup
+\end{landscape}

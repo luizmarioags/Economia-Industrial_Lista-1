@@ -1,0 +1,36 @@
+\begin{table}[H]
+\centering
+\caption{Comparação entre especificações GMM do sistema AIDS}
+\label{tab:comparacao-modelos}
+\small % <-- Tamanho intermediário
+\setlength{\tabcolsep}{6pt} % <-- Espaçamento padrão
+\renewcommand{\arraystretch}{1.15} % <-- Altura das linhas moderada
+\begin{tabular}{@{}p{7.5cm}rrrrr@{}} % <-- Largura da 1ª coluna ajustada
+\toprule
+Especificação 
+& \(N\) 
+& Parâmetros 
+& Momentos 
+& gl overid. 
+& \(J\) \\
+\midrule
+Modelo sem restrições teóricas
+& 40 & 18 & 18 & 0 & 0.0000 \\
+
+Modelo com homogeneidade
+& 40 & 15 & 18 & 3 & 14.8150 \\
+
+Modelo com homogeneidade e simetria
+& 40 & 12 & 18 & 6 & 36.4051 \\
+
+Modelo com homogeneidade, simetria e instrumentos ampliados
+& 39 & 12 & 30 & 18 & 60.8732 \\
+\bottomrule
+\end{tabular}
+
+\par\vspace{0.35em}
+\begin{minipage}{0.95\textwidth} % <-- Minipage com 95% da largura
+\scriptsize % <-- Nota ligeiramente menor que a tabela
+\textit{Nota:} A coluna \(J\) reporta a estatística de sobreidentificação do GMM. O primeiro modelo é exatamente identificado, pois o número de momentos é igual ao número de parâmetros. Nos demais modelos, as restrições teóricas e/ou a ampliação do conjunto de instrumentos geram graus de liberdade de sobreidentificação.
+\end{minipage}
+\end{table}

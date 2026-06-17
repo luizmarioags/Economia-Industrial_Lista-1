@@ -1,0 +1,29 @@
+% ============================================================
+% Diagnóstico dos primeiros estágios
+% ============================================================
+
+% Requer no preâmbulo: \usepackage{booktabs}, \usepackage{float} e \usepackage{array}
+
+\begingroup
+\begin{table}[H]
+\centering
+\caption{Diagnóstico dos primeiros estágios}
+\label{tab:first-stage-diagnostics}
+\scriptsize
+\setlength{\tabcolsep}{4pt}
+\renewcommand{\arraystretch}{1.08}
+\begin{tabular}{@{}p{0.23\textwidth}rrrrp{0.24\textwidth}@{}}
+\toprule
+Variável endógena & Instrumentos excluídos & F parcial homoc. & F/Wald robusto & $R^2$ 1º estágio & Especificação \\
+\midrule
+Preço ($p_j$) & 6 & 1.9004 & 2.2755 & 0.1812 & Logit simples, ambos os instrumentos \\
+Preço ($p_j$) & 14 & 2.4227 & 4.4295 & 0.3210 & Nested logit \\
+Share dentro do nest ($\ln s_{j\mid g}$) & 14 & 5.6712 & 13.3378 & 0.5253 & Nested logit \\
+\bottomrule
+\end{tabular}
+
+\vspace{0.3em}
+\footnotesize
+\textit{Nota:} O diagnóstico compara o F parcial homocedástico, o F/Wald robusto e o $R^2$ do primeiro estágio para as variáveis endógenas.
+\end{table}
+\endgroup

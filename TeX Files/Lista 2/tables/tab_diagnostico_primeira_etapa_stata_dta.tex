@@ -1,0 +1,24 @@
+\begin{table}[H]
+\centering
+\caption{Diagnóstico de primeira etapa dos instrumentos}
+\label{tab:diagnostico-primeira-etapa-dup}
+\scriptsize
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{@{}llrrrrrr@{}}
+\toprule
+Preço & Instrumentos & F excluídos & p-valor & $R^2$ completo & $R^2$ reduzido & $R^2$ parcial & N \\
+\midrule
+\texttt{bfvl} & \texttt{L1} & 462.55 & $4.03\times 10^{-29}$ & 0.9833 & 0.0724 & 0.9820 & 40 \\
+\texttt{pork} & \texttt{L1} & 360.07 & $2.60\times 10^{-27}$ & 0.9788 & 0.0814 & 0.9769 & 40 \\
+\texttt{poult} & \texttt{L1} & 358.50 & $2.80\times 10^{-27}$ & 0.9786 & 0.0762 & 0.9768 & 40 \\
+\texttt{fish} & \texttt{L1} & 4722.92 & 0.0000 & 0.9983 & 0.0802 & 0.9982 & 40 \\
+\texttt{bfvl} & \texttt{L1\_L2} & 252.53 & $1.10\times 10^{-24}$ & 0.9863 & 0.0724 & 0.9853 & 39 \\
+\texttt{pork} & \texttt{L1\_L2} & 275.29 & $3.22\times 10^{-25}$ & 0.9875 & 0.0814 & 0.9863 & 39 \\
+\texttt{poult} & \texttt{L1\_L2} & 161.61 & $6.21\times 10^{-22}$ & 0.9789 & 0.0762 & 0.9771 & 39 \\
+\texttt{fish} & \texttt{L1\_L2} & 2805.65 & 0.0000 & 0.9988 & 0.0802 & 0.9987 & 39 \\
+\bottomrule
+\end{tabular}%
+}
+\par\vspace{0.35em}
+\begin{minipage}{0.92\textwidth}\footnotesize \textit{Nota:} A especificação \texttt{L1} usa preços defasados em um período; \texttt{L1\_L2} inclui também a segunda defasagem.\end{minipage}
+\end{table}

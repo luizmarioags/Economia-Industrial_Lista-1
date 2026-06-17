@@ -1,0 +1,102 @@
+
+% ================================================================
+% Tabelas de coeficientes AIDS separadas por especificação
+% Requer no preâmbulo: \usepackage{booktabs}, \usepackage{float}
+% ================================================================
+
+\begin{table}[H]
+\centering
+\small
+\caption{Coeficientes estimados no modelo AIDS irrestrito}
+\label{tab:coeficientes-irrestrito}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Parâmetro & Estimativa & Erro-padrão & Estatística $t$ \\
+\midrule
+$\alpha_{\text{bfvl}}$ & 0.4355 & 0.2003 & 2.1749 \\
+$\gamma_{\text{bfvl},\text{bfvl}}$ & 0.2502 & 0.0765 & 3.2694 \\
+$\gamma_{\text{bfvl},\text{pork}}$ & 0.3608 & 0.1965 & 1.8356 \\
+$\gamma_{\text{bfvl},\text{poult}}$ & -0.5682 & 0.2436 & -2.3323 \\
+$\gamma_{\text{bfvl},\text{fish}}$ & -0.1652 & 0.0636 & -2.5981 \\
+$\beta_{\text{bfvl}}$ & 0.0244 & 0.1490 & 0.1635 \\
+$\alpha_{\text{pork}}$ & 0.3855 & 0.0652 & 5.9138 \\
+$\gamma_{\text{pork},\text{bfvl}}$ & -0.0531 & 0.0249 & -2.1305 \\
+$\gamma_{\text{pork},\text{pork}}$ & 0.0056 & 0.0640 & 0.0879 \\
+$\gamma_{\text{pork},\text{poult}}$ & -0.0425 & 0.0793 & -0.5355 \\
+$\gamma_{\text{pork},\text{fish}}$ & 0.0488 & 0.0207 & 2.3584 \\
+$\beta_{\text{pork}}$ & -0.1068 & 0.0485 & -2.2032 \\
+$\alpha_{\text{fish}}$ & 0.1820 & 0.0660 & 2.7578 \\
+$\gamma_{\text{fish},\text{bfvl}}$ & -0.0800 & 0.0252 & -3.1698 \\
+$\gamma_{\text{fish},\text{pork}}$ & -0.1341 & 0.0648 & -2.0693 \\
+$\gamma_{\text{fish},\text{poult}}$ & 0.1163 & 0.0803 & 1.4487 \\
+$\gamma_{\text{fish},\text{fish}}$ & 0.1220 & 0.0210 & 5.8213 \\
+$\beta_{\text{fish}}$ & -0.0490 & 0.0491 & -0.9975 \\
+\bottomrule
+\end{tabular}
+\par\vspace{0.35em}
+\begin{minipage}{0.92\textwidth}
+\footnotesize\textit{Nota:} O modelo irrestrito não impõe homogeneidade nem simetria. No sistema AIDS, $\alpha_g$ representa o intercepto da equação de participação do bem $g$; $\gamma_{gk}$ representa o efeito do preço do bem $k$ sobre a participação no dispêndio do bem $g$; e $\beta_g$ representa o efeito do dispêndio real sobre a participação do bem $g$.
+\end{minipage}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Coeficientes estimados no modelo AIDS com homogeneidade}
+\label{tab:coeficientes-homogeneidade}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Parâmetro & Estimativa & Erro-padrão & Estatística $t$ \\
+\midrule
+$\alpha_{\text{bfvl}}$ & 0.4068 & 0.2360 & 1.7238 \\
+$\gamma_{\text{bfvl},\text{bfvl}}$ & 0.1084 & 0.0786 & 1.3804 \\
+$\gamma_{\text{bfvl},\text{pork}}$ & 0.2873 & 0.2306 & 1.2457 \\
+$\gamma_{\text{bfvl},\text{fish}}$ & -0.3287 & 0.0547 & -6.0058 \\
+$\beta_{\text{bfvl}}$ & 0.0460 & 0.1756 & 0.2623 \\
+$\alpha_{\text{pork}}$ & 0.3758 & 0.0972 & 3.8671 \\
+$\gamma_{\text{pork},\text{bfvl}}$ & -0.1007 & 0.0323 & -3.1119 \\
+$\gamma_{\text{pork},\text{pork}}$ & -0.0190 & 0.0950 & -0.2004 \\
+$\gamma_{\text{pork},\text{fish}}$ & -0.0061 & 0.0225 & -0.2687 \\
+$\beta_{\text{pork}}$ & -0.0996 & 0.0723 & -1.3771 \\
+$\alpha_{\text{fish}}$ & 0.1878 & 0.0703 & 2.6693 \\
+$\gamma_{\text{fish},\text{bfvl}}$ & -0.0518 & 0.0234 & -2.2114 \\
+$\gamma_{\text{fish},\text{pork}}$ & -0.1194 & 0.0687 & -1.7376 \\
+$\gamma_{\text{fish},\text{fish}}$ & 0.1545 & 0.0163 & 9.4722 \\
+$\beta_{\text{fish}}$ & -0.0533 & 0.0523 & -1.0185 \\
+\bottomrule
+\end{tabular}
+\par\vspace{0.35em}
+\begin{minipage}{0.92\textwidth}
+\footnotesize\textit{Nota:} A homogeneidade é imposta por diferenças de log-preços contra o preço do frango. Os coeficientes do preço do frango são recuperados pela restrição de soma dos coeficientes de preço. No sistema AIDS, $\alpha_g$ representa o intercepto da equação de participação do bem $g$; $\gamma_{gk}$ representa o efeito do preço do bem $k$ sobre a participação no dispêndio do bem $g$; e $\beta_g$ representa o efeito do dispêndio real sobre a participação do bem $g$.
+\end{minipage}
+\end{table}
+
+\begin{table}[H]
+\centering
+\small
+\caption{Coeficientes estimados no modelo AIDS com homogeneidade e simetria}
+\label{tab:coeficientes-homog-simetria}
+\begin{tabular}{@{}lrrr@{}}
+\toprule
+Parâmetro & Estimativa & Erro-padrão & Estatística $t$ \\
+\midrule
+$\alpha_{\text{bfvl}}$ & 0.2924 & 0.2728 & 1.0717 \\
+$\gamma_{\text{bfvl},\text{bfvl}}$ & -0.1072 & 0.0642 & -1.6690 \\
+$\gamma_{\text{bfvl},\text{pork}}=\gamma_{\text{pork},\text{bfvl}}$ & -0.1023 & 0.0325 & -3.1530 \\
+$\gamma_{\text{bfvl},\text{fish}}=\gamma_{\text{fish},\text{bfvl}}$ & -0.1495 & 0.0260 & -5.7538 \\
+$\beta_{\text{bfvl}}$ & 0.1307 & 0.2030 & 0.6439 \\
+$\alpha_{\text{pork}}$ & 0.3757 & 0.0980 & 3.8314 \\
+$\gamma_{\text{pork},\text{pork}}$ & -0.0165 & 0.0956 & -0.1729 \\
+$\gamma_{\text{pork},\text{fish}}=\gamma_{\text{fish},\text{pork}}$ & -0.0060 & 0.0226 & -0.2635 \\
+$\beta_{\text{pork}}$ & -0.0995 & 0.0729 & -1.3634 \\
+$\alpha_{\text{fish}}$ & 0.1742 & 0.1470 & 1.1850 \\
+$\gamma_{\text{fish},\text{fish}}$ & 0.1679 & 0.0168 & 10.0041 \\
+$\beta_{\text{fish}}$ & -0.0433 & 0.1094 & -0.3959 \\
+\bottomrule
+\end{tabular}
+\par\vspace{0.35em}
+\begin{minipage}{0.92\textwidth}
+\footnotesize\textit{Nota:} Além da homogeneidade, esta especificação impõe simetria entre os efeitos cruzados de preços. Por isso, alguns coeficientes representam simultaneamente dois efeitos cruzados. No sistema AIDS, $\alpha_g$ representa o intercepto da equação de participação do bem $g$; $\gamma_{gk}$ representa o efeito do preço do bem $k$ sobre a participação no dispêndio do bem $g$; e $\beta_g$ representa o efeito do dispêndio real sobre a participação do bem $g$.
+\end{minipage}
+\end{table}
+

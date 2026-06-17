@@ -1,0 +1,991 @@
+\documentclass[12pt,a4paper]{article}
+
+% -------------------------------------------------------------------
+% Codificação, idioma e fonte
+% -------------------------------------------------------------------
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[brazil]{babel}
+\usepackage{lmodern}
+\usepackage{tikz}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{tabularx}
+\usepackage{array}
+\usepackage{pdflscape}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{xparse}
+\usepackage{float}
+\usepackage{newunicodechar}
+\usepackage{caption}
+\newunicodechar{├}{|}
+
+% -------------------------------------------------------------------
+% Cores
+% -------------------------------------------------------------------
+\usepackage[dvipsnames]{xcolor}
+\definecolor{equilibriocolor}{RGB}{190,40,40}
+\definecolor{taxacolor}{RGB}{0,90,160}
+\definecolor{solucaoum}{RGB}{0,114,178}
+\definecolor{solucaodois}{RGB}{126,47,142}
+\definecolor{solucaotres}{RGB}{0,140,90}
+\definecolor{solucaoquatro}{RGB}{230,159,0}
+\definecolor{particularcolor}{RGB}{20,20,20}
+\definecolor{alert}{RGB}{200,0,0}
+\definecolor{structure}{rgb}{0.2,0.2,0.7}
+\colorlet{example}{green!50!black}
+
+\usepackage[ruled,vlined,linesnumbered]{algorithm2e}
+\SetKwInput{Entrada}{Entrada}
+\SetKwInput{Saida}{Saída}
+\SetKwBlock{Inicio}{início}{fim}
+\SetKwFor{ParaCada}{para cada}{faça}{fim}
+\SetKwFor{Para}{para}{faça}{fim}
+\SetKw{Retorna}{retorna}
+
+% -------------------------------------------------------------------
+% Layout da página
+% -------------------------------------------------------------------
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.6em}
+
+% -------------------------------------------------------------------
+% Matemática e símbolos
+% -------------------------------------------------------------------
+\usepackage{amsmath,amssymb}
+\usepackage[charter]{mathdesign}
+\usepackage{cancel}
+\usepackage{mathtools}
+\usepackage{array}
+\usepackage{microtype}
+\usepackage{enumitem}
+\usepackage{nicematrix}
+\usepackage{graphicx}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+% -------------------------------------------------------------------
+% Gráficos, caixas e figuras
+% -------------------------------------------------------------------
+\usepackage[most]{tcolorbox}
+
+% Versão compatível fora do beamer:
+% \alt<overlay>{texto A}{texto B} -> mostra sempre texto A
+\NewDocumentCommand{\alt}{d<> m m}{#2}
+
+\newtcolorbox{block}[1][]{
+  enhanced,
+  colback=blue!5,
+  colframe=structure,
+  fonttitle=\bfseries,
+  title={#1},
+  rounded corners,
+  boxrule=0.8pt,
+  drop shadow
+}
+
+% -------------------------------------------------------------------
+% Listas
+% -------------------------------------------------------------------
+\setlist[itemize]{leftmargin=2em}
+\setlist[enumerate]{leftmargin=2.2em}
+
+% -------------------------------------------------------------------
+% Legendas e links
+% -------------------------------------------------------------------
+\usepackage{caption}
+\captionsetup{labelfont=bf,font=small}
+\usepackage{xurl}
+
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=MidnightBlue,
+  urlcolor=MidnightBlue,
+  citecolor=MidnightBlue
+}
+\Urlmuskip=0mu plus 2mu\relax
+
+% -------------------------------------------------------------------
+% Cabeçalho e rodapé
+% -------------------------------------------------------------------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{Lista 3 - Berry/BLP}
+\rhead{Economia Industrial}
+\cfoot{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\setlength{\headheight}{14.5pt}
+
+% -------------------------------------------------------------------
+% Ambiente "conditions"
+% -------------------------------------------------------------------
+\newenvironment{conditions}
+  {\par\vspace{\abovedisplayskip}\noindent\begin{tabular}{>{$}l<{$} @{${}={}$} l}}
+  {\end{tabular}\par\vspace{\belowdisplayskip}}
+
+% -------------------------------------------------------------------
+% Título
+% -------------------------------------------------------------------
+\title{\textbf{Lista 3 - Economia Industrial - Estimação de Demanda por Produtos Diferenciados}}
+
+\author{
+\begin{tabular}{ccc}
+\begin{tabular}{c}
+Luiz Mario Andrade\\
+\small (Matrícula: 252029360)
+\end{tabular}
+&
+\begin{tabular}{c}
+Felipe Santos\\
+\small (Matrícula: 232010719)
+\end{tabular}
+&
+\begin{tabular}{c}
+Luiza Nodari\\
+\small (Matrícula: 242011335)
+\end{tabular}
+\\[1.2em]
+\multicolumn{3}{c}{
+\begin{tabular}{c}
+Diogo Martins\\
+\small (Matrícula: 232001578)
+\end{tabular}
+\begin{tabular}{c}
+Sarah Moura\\
+\small (Matrícula: 211060316)
+\end{tabular}
+\begin{tabular}{c}
+Pedro Bijos\\
+\small (Matrícula: 241003849)
+\end{tabular}
+}
+\end{tabular}
+}
+
+\date{\today}
+
+% -------------------------------------------------------------------
+% Documento
+% -------------------------------------------------------------------
+\begin{document}
+
+\maketitle
+
+%\tableofcontents
+\bigskip
+
+% ================================================================
+\section{Introdução}
+\label{sec:intro}
+
+Esta lista tem como objetivo estimar a demanda por produtos diferenciados no mercado de cereais matinais comercializados nos Estados Unidos em 1992. A base de dados contém informações agregadas de scanner do varejo, incluindo participações de mercado, preços e características dos produtos. O exercício segue a lógica dos modelos de escolha discreta apresentados na disciplina, em especial o logit simples, a inversão de Berry, a estimação por variáveis instrumentais, a formulação estrutural por GMM e uma extensão nested logit.
+
+Em Economia Industrial, modelos de demanda por produtos diferenciados são fundamentais porque permitem transformar dados de preços, características e market shares em estimativas de substituição entre produtos. Essa substituição é o elemento central para avaliar poder de mercado, elasticidades-preço, markups implícitos e os efeitos de mudanças competitivas. Diferentemente de uma demanda agregada por um produto homogêneo, a demanda por produtos diferenciados reconhece que cada bem possui atributos próprios e que os consumidores escolhem entre alternativas imperfeitamente substitutas.\footnote{A base teórica utilizada segue Gomes (2025), \textit{Introdução à Economia Industrial e ao Antitruste}, especialmente os capítulos sobre demanda, variáveis instrumentais, GMM, demanda por produtos diferenciados e markups.}
+
+Nesta aplicação, o conjunto de produtos observados corresponde aos cereais explicitamente listados na base. Os demais cereais são tratados como bem externo, ou \textit{outside good}. O market share do bem externo é fixado em:
+
+\begin{equation}
+    s_0 = 0{,}2429.
+    \label{eq:s0}
+\end{equation}
+
+Para cada produto observado \(j = 1,\ldots,J\), a utilidade indireta do consumidor \(i\) é dada por:
+
+\begin{equation}
+    u_{ij}
+    =
+    X_j'\beta
+    -
+    \alpha p_j
+    +
+    \xi_j
+    +
+    \varepsilon_{ij},
+    \label{eq:utilidade_indireta}
+\end{equation}
+
+em que \(X_j\) é o vetor de características observadas do produto \(j\), \(p_j\) é o preço de transação, \(\xi_j\) é a característica não observada pelo econometrista e observada pelos consumidores e firmas, e \(\varepsilon_{ij}\) é o choque idiossincrático de preferência. A utilidade é normalizada em relação ao bem externo. Por isso, não é necessário subtrair um preço numérico do bem externo; o preço relevante na estimação é o \textit{transaction price} do produto observado.
+
+A utilidade média do produto \(j\) é definida como:
+
+\begin{equation}
+    \delta_j
+    =
+    X_j'\beta
+    -
+    \alpha p_j
+    +
+    \xi_j.
+    \label{eq:utilidade_media}
+\end{equation}
+
+Assumindo que os choques idiossincráticos seguem distribuição valor extremo tipo I, o modelo logit implica que o market share do produto \(j\) é:
+
+\begin{equation}
+    s_j
+    =
+    \frac{\exp(\delta_j)}
+    {1 + \sum_{\ell=1}^{J}\exp(\delta_{\ell})},
+    \label{eq:share_logit}
+\end{equation}
+
+enquanto o market share do bem externo é:
+
+\begin{equation}
+    s_0
+    =
+    \frac{1}
+    {1 + \sum_{\ell=1}^{J}\exp(\delta_{\ell})}.
+    \label{eq:share_outside}
+\end{equation}
+
+Dividindo a equação~\eqref{eq:share_logit} pela equação~\eqref{eq:share_outside}, obtém-se a inversão logit de Berry:
+
+\begin{equation}
+    \delta_j
+    =
+    \ln(s_j)
+    -
+    \ln(s_0).
+    \label{eq:berry_inversion}
+\end{equation}
+
+Essa inversão é o ponto central da lista, pois transforma o problema de escolha discreta em uma equação estimável em nível de produto. Substituindo a equação~\eqref{eq:utilidade_media} na equação~\eqref{eq:berry_inversion}, obtém-se a especificação linear do logit simples:
+
+\begin{equation}
+    \ln(s_j)
+    -
+    \ln(s_0)
+    =
+    X_j'\beta
+    -
+    \alpha p_j
+    +
+    \xi_j.
+    \label{eq:logit_estimavel}
+\end{equation}
+
+Na implementação, o vetor de características observadas é composto por calorias, gordura e açúcar. Assim, a equação estimada pode ser escrita como:
+
+\begin{equation}
+    \delta_j
+    =
+    \beta_0
+    +
+    \beta_{cals}cals_j
+    +
+    \beta_{fat}fat_j
+    +
+    \beta_{sugar}sugar_j
+    -
+    \alpha p_j
+    +
+    \xi_j.
+    \label{eq:logit_aplicado}
+\end{equation}
+
+O coeficiente estimado diretamente sobre o preço corresponde a \(-\alpha\). Portanto, sob demanda decrescente, espera-se \(\alpha>0\) e coeficiente de preço negativo. Essa distinção é importante porque as tabelas de regressão reportam o coeficiente de \(p_j\), enquanto a interpretação econômica usual é feita em termos do parâmetro positivo \(\alpha\).
+
+A estimação por MQO da equação~\eqref{eq:logit_estimavel} é uma primeira referência, mas pode ser viesada caso o preço seja endógeno. O problema econômico é que as firmas podem escolher preços conhecendo componentes de qualidade observados pelos consumidores e não observados pelo econometrista. Formalmente, assume-se que as características observadas são exógenas:
+
+\begin{equation}
+   \mathbb{E}[X_j\xi_j]=0,
+    \label{eq:exogeneidade_x}
+\end{equation}
+
+mas o preço pode estar correlacionado com a qualidade não observada:
+
+\begin{equation}
+    \mathbb{E}[p_j\xi_j]\neq 0.
+    \label{eq:endogeneidade_preco}
+\end{equation}
+
+Por isso, a lista exige a construção de instrumentos de diferenciação no espírito Berry/BLP. Um instrumento válido deve satisfazer:
+
+\begin{equation}
+    \mathbb{E}[Z_j\xi_j]=0,
+    \label{eq:condicao_iv}
+\end{equation}
+
+e deve ser relevante para explicar \(p_j\). A lógica dos instrumentos é usar a estrutura de diferenciação de produtos dentro e fora da firma para gerar variação exógena no preço. Para cada característica \(k\), o instrumento baseado nos demais produtos da mesma firma é:
+
+\begin{equation}
+    Z^{own}_{jk}
+    =
+    \sum_{\ell\neq j:\,f(\ell)=f(j)}x_{\ell k},
+    \label{eq:instrumento_own}
+\end{equation}
+
+e o instrumento baseado nos produtos das firmas rivais é:
+
+\begin{equation}
+    Z^{rival}_{jk}
+    =
+    \sum_{\ell:\,f(\ell)\neq f(j)}x_{\ell k}.
+    \label{eq:instrumento_rival}
+\end{equation}
+
+Esses instrumentos exploram a ideia de que o preço de um produto depende do posicionamento do portfólio da própria firma e do ambiente competitivo formado pelos rivais. Na implementação, quando uma firma possui apenas um produto na base, o instrumento \(Z^{own}_{jk}\) é tratado como zero, pois não há outro produto da mesma firma a ser somado.
+
+A estimação estrutural é organizada por GMM. Para um vetor de parâmetros \(\theta\), o erro estrutural do logit simples é recuperado como:
+
+\begin{equation}
+    \xi_j(\theta)
+    =
+    \left[\ln(s_j)-\ln(s_0)\right]
+    -
+    X_j'\beta
+    +
+    \alpha p_j.
+    \label{eq:erro_estrutural_logit}
+\end{equation}
+
+A contraparte amostral dos momentos é:
+
+\begin{equation}
+    g_N(\theta)
+    =
+    \frac{1}{N}
+    \sum_{j=1}^{N}
+    Z_j\xi_j(\theta).
+    \label{eq:momentos_gmm}
+\end{equation}
+
+O estimador GMM escolhe os parâmetros que minimizam a distância ponderada entre os momentos amostrais e zero:
+
+\begin{equation}
+    \widehat{\theta}_{GMM}
+    =
+    \argmin_{\theta}
+    g_N(\theta)'W_Ng_N(\theta).
+    \label{eq:criterio_gmm}
+\end{equation}
+
+A primeira etapa usa uma matriz de ponderação inicial, como \((Z'Z/N)^{-1}\). A segunda etapa atualiza a matriz de ponderação com base na variância estimada dos momentos, produzindo o GMM eficiente. O 2SLS é usado como referência linear, mas a lógica estrutural da lista está associada à recuperação de \(\xi_j(\theta)\) e à minimização do critério de GMM.
+
+A lista também estima uma versão nested logit. Nesse caso, os produtos são agrupados em nests de acordo com o segmento de mercado informado na base. Para o produto \(j\) pertencente ao grupo \(g\), define-se:
+
+\begin{equation}
+    s_{j|g}
+    =
+    \frac{s_j}{s_g},
+    \qquad
+    s_g
+    =
+    \sum_{\ell\in g}s_{\ell}.
+    \label{eq:share_within_nest}
+\end{equation}
+
+A equação estimável do nested logit é:
+
+\begin{equation}
+    \ln(s_j)
+    -
+    \ln(s_0)
+    =
+    X_j'\beta
+    -
+    \alpha p_j
+    +
+    \sigma\ln(s_{j|g})
+    +
+    \xi_j.
+    \label{eq:nested_logit}
+\end{equation}
+
+O parâmetro \(\sigma\) mede a correlação das preferências dentro do mesmo nest. Quanto maior \(\sigma\), maior a substituição entre produtos agrupados no mesmo segmento. Para ser compatível com o modelo, espera-se:
+
+\begin{equation}
+    0\leq \sigma < 1.
+    \label{eq:intervalo_sigma}
+\end{equation}
+
+No nested logit, tanto o preço quanto \(\ln(s_{j|g})\) podem ser endógenos. Por isso, além dos instrumentos de diferenciação por firma, a implementação usa instrumentos construídos a partir do número de produtos dentro do mesmo nest, do número de produtos em nests rivais e das somas de características dentro e fora do nest. O erro estrutural recuperado no nested logit é:
+
+\begin{equation}
+    \xi_j(\theta)
+    =
+    \left[\ln(s_j)-\ln(s_0)\right]
+    -
+    X_j'\beta
+    +
+    \alpha p_j
+    -
+    \sigma\ln(s_{j|g}).
+    \label{eq:erro_nested}
+\end{equation}
+
+As elasticidades-preço são calculadas a partir das estimativas do modelo. Para o logit simples, a elasticidade própria é:
+
+\begin{equation}
+    \varepsilon_{jj}
+    =
+    -\alpha p_j(1-s_j),
+    \label{eq:elasticidade_propria}
+\end{equation}
+
+e a elasticidade cruzada, para \(k\neq j\), é:
+
+\begin{equation}
+    \varepsilon_{jk}
+    =
+    \alpha p_k s_k.
+    \label{eq:elasticidade_cruzada}
+\end{equation}
+
+A partir do lado da oferta, os markups implícitos podem ser recuperados sob hipóteses sobre a estrutura de propriedade. Sob a hipótese simplificadora de firmas monoproduto, o markup do produto \(j\) é:
+
+\begin{equation}
+    p_j-mc_j
+    =
+    \frac{1}{\alpha(1-s_j)}.
+    \label{eq:markup_mono}
+\end{equation}
+
+Relaxando a hipótese de firmas monoproduto, define-se a matriz de propriedade:
+
+\begin{equation}
+    \mathcal{O}_{jk}
+    =
+    \mathbf{1}\{f(j)=f(k)\}.
+    \label{eq:ownership}
+\end{equation}
+
+A matriz relevante para as condições de primeira ordem de Bertrand é:
+
+\begin{equation}
+    \Delta_{jk}
+    =
+    -\mathcal{O}_{jk}\frac{\partial s_k}{\partial p_j}.
+    \label{eq:delta_markup}
+\end{equation}
+
+No logit simples, seus elementos são:
+
+\begin{equation}
+    \Delta_{jj}
+    =
+    \alpha s_j(1-s_j),
+    \qquad
+    \Delta_{jk}
+    =
+    -\mathcal{O}_{jk}\alpha s_js_k
+    \quad (j\neq k).
+    \label{eq:delta_logit}
+\end{equation}
+
+Com isso, o vetor de markups multiproduto é obtido por:
+
+\begin{equation}
+    p-mc
+    =
+    \Delta^{-1}s.
+    \label{eq:markup_multi}
+\end{equation}
+
+Essas equações organizam toda a lista: primeiro estima-se a demanda por MQO, depois por 2SLS, em seguida por GMM estrutural, depois por nested logit, e finalmente usam-se os parâmetros estimados para calcular elasticidades, markups e diagnósticos de instrumentos.
+
+% ================================================================
+% ================================================================
+\section{Implementação Computacional}
+
+A implementação computacional foi organizada como um pacote de replicação modular para a estimação de demanda por produtos diferenciados. A execução principal é feita em \textbf{Stata}, pois essa versão concentra a rotina operacional baseada nos códigos originais \path{eberry.do} e \path{b_program.do}, disponibilizados como referência da lista. Esses códigos foram preservados na pasta \path{stata/original_reference/} e adaptados nos arquivos \path{eberry_operational.do} e \path{b_program_operational.do}, que implementam a estimação estrutural por GMM a partir da montagem das matrizes de dados, da definição da função objetivo, da escolha da matriz de ponderação e da otimização dos parâmetros estruturais.
+
+A estrutura geral do pacote é:
+
+\begin{verbatim}
+berry_replication_package/
+|-- data/
+|   |-- exemplo.csv
+|   |-- exemplo_schema.csv
+|   `-- README_data.md
+|-- stata/
+|   |-- run_all_stata.do
+|   |-- 00_config.do
+|   |-- 01_prepare_data.do
+|   |-- 02_estimate_logit_iv_gmm.do
+|   |-- 03_nested_gmm.do
+|   |-- 04_elasticities_markups.do
+|   |-- 05_diagnostics_weakiv.do
+|   |-- 06_visualizations.do
+|   |-- 07_extra_visualizations.do
+|   |-- 08_standard_tables.do
+|   |-- eberry_operational.do
+|   |-- b_program_operational.do
+|   |-- stata_graph_theme_snippet.do
+|   `-- original_reference/
+|       |-- original_eberry.do
+|       `-- original_b_program.do
+|-- R/
+|-- python/
+`-- outputs/
+    |-- stata/
+    |   |-- data/
+    |   |-- logs/
+    |   |-- figures/pdf/
+    |   |-- figures/png/
+    |   |-- tables/csv/
+    |   `-- tables/tex/
+    |-- R/
+    `-- python/
+\end{verbatim}
+
+A execução completa em Stata é feita a partir da raiz do pacote pelo comando:
+
+\begin{verbatim}
+do stata/run_all_stata.do
+\end{verbatim}
+
+O arquivo \path{run_all_stata.do} funciona como orquestrador da replicação. Ele define a raiz do projeto, cria os diretórios de saída, verifica se o arquivo \path{data/exemplo.csv} está disponível, limpa saídas tabulares antigas, abre o log geral e chama os demais scripts na ordem correta. A sequência executada é:
+
+\begin{verbatim}
+00_config.do
+stata_graph_theme_snippet.do
+01_prepare_data.do
+02_estimate_logit_iv_gmm.do
+03_nested_gmm.do
+04_elasticities_markups.do
+05_diagnostics_weakiv.do
+08_standard_tables.do
+06_visualizations.do
+07_extra_visualizations.do
+\end{verbatim}
+
+A ordem de execução é importante porque as tabelas finais dependem das estimações e do cálculo das elasticidades e markups, enquanto os gráficos usam as bases intermediárias salvas em \path{outputs/stata/data/}.
+
+O script \path{00_config.do} define os parâmetros globais usados pelas rotinas seguintes. Nele são fixados o market share do bem externo, conforme a equação~\eqref{eq:s0}, o vetor de características observadas, o nome da variável de preço, a variável dependente da inversão de Berry e os conjuntos de variáveis endógenas do logit simples e do nested logit. Em particular, a implementação usa \path{cals}, \path{fat} e \path{sugar} como características observadas, \path{price} como preço de transação e \path{delta} como variável dependente, construída de acordo com a equação~\eqref{eq:berry_inversion}. O mesmo arquivo também define o padrão visual dos gráficos e verifica a disponibilidade de comandos auxiliares, como \path{esttab}, \path{ivreg2} e \path{weakivtest}.
+
+O tratamento da base é feito em \path{01_prepare_data.do}. O script importa o arquivo \path{data/exemplo.csv}, cuja estrutura segue as colunas \path{idProduct}, \path{firm}, \path{product}, \path{price}, \path{shelf_price}, \path{ad_price}, \path{share_pct}, \path{segment}, \path{cals}, \path{fat} e \path{sugar}. Após a importação, os nomes das variáveis são padronizados por posição, as variáveis numéricas são convertidas para formato numérico e a firma externa \path{basketof} é removida da amostra interna. O bem externo não entra como observação de produto; ele entra apenas por meio do valor fixo de $s_0$, usado na construção de \path{delta}.
+
+A base tratada cria a variável \path{share}, definida como o market share do produto em proporção, a variável \path{outside_share}, a variável \path{delta} e uma constante \path{cons}. Também são gerados identificadores numéricos de firma e de segmento, usados nas rotinas de estimação, gráficos e cálculos matriciais. Em seguida, são construídos os instrumentos de diferenciação Berry/BLP. Para cada característica observada, o script calcula a soma das características dos demais produtos da mesma firma, conforme a lógica da equação~\eqref{eq:instrumento_own}, e a soma das características dos produtos de firmas rivais, conforme a equação~\eqref{eq:instrumento_rival}. Quando uma firma possui apenas um produto, o instrumento de mesma firma é preenchido com zero. O script também cria variáveis associadas à estrutura de nests, como \path{nest_share}, \path{share_within_nest}, \path{log_share_within_nest}, \path{n_same_nest_other}, \path{n_rival_nest} e somas de características dentro e fora de cada nest. As saídas dessa etapa são:
+
+\begin{verbatim}
+outputs/stata/data/prepared_data_stata.dta
+outputs/stata/data/prepared_data_stata.csv
+\end{verbatim}
+
+O script \path{02_estimate_logit_iv_gmm.do} estima o logit simples. Inicialmente, ele carrega a base preparada e define três conjuntos de instrumentos: instrumentos da própria firma, instrumentos das firmas rivais e o conjunto combinado. Em seguida, estima a especificação do logit simples, apresentada na equação~\eqref{eq:logit_aplicado}, por MQO com erros robustos. Essa estimação é usada como referência inicial, pois ignora a possível endogeneidade do preço discutida nas equações~\eqref{eq:exogeneidade_x} e~\eqref{eq:endogeneidade_preco}.
+
+Depois da estimação por MQO, o script estima três modelos por 2SLS: um usando apenas instrumentos da própria firma, outro usando apenas instrumentos das firmas rivais e um terceiro usando ambos os conjuntos. Essas estimações lineares por variáveis instrumentais servem como referência para a comparação com a estimação estrutural por GMM.
+
+A estimação GMM do logit simples também é feita em \path{02_estimate_logit_iv_gmm.do}, mas não usa o comando nativo \path{gmm} do Stata como núcleo da rotina. Em vez disso, o script chama \path{eberry_fit}, definido em \path{eberry_operational.do}, que por sua vez chama \path{b_program_operational.do}. A rotina operacional monta $Y$, $X$, $Z$, define os nomes dos parâmetros e minimiza o critério de GMM associado às equações~\eqref{eq:erro_estrutural_logit}, \eqref{eq:momentos_gmm} e~\eqref{eq:criterio_gmm}. São estimadas versões de primeira etapa e de duas etapas para os três conjuntos de instrumentos. Os resultados são armazenados como objetos \path{eclass} do Stata, permitindo o uso posterior de \path{estimates store}, \path{estimates restore}, \path{_b[nome_do_parametro]}, \path{_se[nome_do_parametro]}, \path{e(Q)} e \path{e(N)}. Ao final, o script recupera o resíduo estrutural da especificação GMM principal e salva a base intermediária:
+
+\begin{verbatim}
+outputs/stata/data/stata_after_simple_gmm.dta
+\end{verbatim}
+
+O nested logit é estimado em \path{03_nested_gmm.do}. Esse script parte da equação~\eqref{eq:nested_logit}, usando \path{price} e \path{log_share_within_nest} como variáveis endógenas. Primeiro é estimada uma referência por 2SLS com os instrumentos de firma e os instrumentos baseados na estrutura dos nests. Em seguida, o script estima o nested logit por GMM operacional de primeira etapa e por GMM operacional de duas etapas, novamente usando \path{eberry_fit}. A estimação recupera o parâmetro $\sigma$, cuja interpretação deve ser feita à luz do intervalo teórico apresentado na equação~\eqref{eq:intervalo_sigma}. Depois da estimação, o script calcula o resíduo estrutural do nested logit, conforme a equação~\eqref{eq:erro_nested}, e salva a base intermediária:
+
+\begin{verbatim}
+outputs/stata/data/stata_after_nested_gmm.dta
+\end{verbatim}
+
+O cálculo das elasticidades e dos markups é feito em \path{04_elasticities_markups.do}. Essa etapa usa como referência a estimação GMM principal do logit simples, recupera $\alpha$ a partir do coeficiente estimado sobre o preço e calcula as elasticidades próprias de acordo com a equação~\eqref{eq:elasticidade_propria}. O script também calcula o markup monoproduto e o custo marginal implícito, conforme a equação~\eqref{eq:markup_mono}. Para a estrutura multiproduto, uma rotina em Mata monta a matriz de propriedade das firmas, conforme a equação~\eqref{eq:ownership}, constrói a matriz $\Delta$ associada às condições de primeira ordem de Bertrand, conforme as equações~\eqref{eq:delta_markup} e~\eqref{eq:delta_logit}, e resolve o sistema que gera os markups multiproduto da equação~\eqref{eq:markup_multi}. A base de trabalho salva nessa etapa é:
+
+\begin{verbatim}
+outputs/stata/data/stata_elasticities_markups_work.dta
+\end{verbatim}
+
+O diagnóstico dos instrumentos é realizado em \path{05_diagnostics_weakiv.do}. O script estima regressões de primeiro estágio para avaliar a relevância dos instrumentos e aplica testes de significância conjunta dos instrumentos excluídos. No caso do logit simples, o diagnóstico se concentra no primeiro estágio do preço. No caso do nested logit, o diagnóstico é feito separadamente para \path{price} e \path{log_share_within_nest}, pois ambas são tratadas como endógenas. Quando disponível no ambiente Stata, o script também chama \path{weakivtest}, associado ao diagnóstico de instrumentos fracos.
+
+As tabelas finais são produzidas em \path{08_standard_tables.do}. Esse arquivo é o ponto único de exportação tabular do pacote. Ele recupera os modelos armazenados em memória, organiza coeficientes, erros-padrão, estatísticas $t$, objetivos GMM, estimativas de $\sigma$, parâmetros de preço, elasticidades, markups e diagnósticos de primeiro estágio. As principais tabelas exportadas são:
+
+\begin{verbatim}
+01_all_coefficients.csv/.tex
+02_price_parameter_comparison.csv/.tex
+03_elasticity_matrix_simple_logit.csv/.tex
+04_elasticity_matrix_simple_logit_subset.csv/.tex
+05_own_elasticities_simple_logit.csv/.tex
+06_elasticity_matrix_nested_logit.csv/.tex
+07_own_elasticities_nested_logit.csv/.tex
+08_markups.csv/.tex
+09_first_stage_diagnostics.csv/.tex
+\end{verbatim}
+
+As tabelas são salvas em:
+
+\begin{verbatim}
+outputs/stata/tables/csv/
+outputs/stata/tables/tex/
+\end{verbatim}
+
+A rotina de exportação foi escrita de modo robusto para evitar problemas de \path{file write} em ambiente Windows. Por isso, os arquivos com extensão \path{.tex} gerados diretamente pelo Stata são saídas tabulares simples. Para a versão final no Overleaf, as tabelas podem ser substituídas por versões formatadas em \path{longtable} e \path{booktabs}, mantendo os mesmos nomes e conteúdos.
+
+As visualizações principais são geradas em \path{06_visualizations.do}. Esse script exporta gráficos em PDF e PNG para:
+
+\begin{verbatim}
+outputs/stata/figures/pdf/
+outputs/stata/figures/png/
+\end{verbatim}
+
+Entre os gráficos principais estão: share contra preço de transação, maiores market shares, preços por segmento, $\delta_j$ contra preço, comparação do coeficiente de preço entre modelos, matriz de elasticidades, elasticidades próprias, comparação entre markups monoproduto e multiproduto, preço observado contra markup multiproduto, estatísticas de primeiro estágio, curva clássica do logit, resposta simulada de shares ao preço, shares observados contra previstos, histograma com densidade dos resíduos estruturais, QQ-plot dos resíduos, curvas de resposta de preço para produtos selecionados, distribuição das elasticidades próprias e distribuição dos markups.
+
+O script \path{07_extra_visualizations.do} gera gráficos complementares para enriquecer a análise dos resultados. Ele produz visualizações de concentração de market share por firma, tamanho dos nests, médias de características por segmento, matriz de correlação dos instrumentos, resíduos estruturais contra preço, resíduos por firma e ajuste do primeiro estágio do preço. Esses gráficos são úteis para a discussão da diferenciação dos produtos, da estrutura dos nests, da qualidade dos instrumentos e da relação entre os resíduos estruturais e variáveis observáveis.
+
+As principais saídas da implementação em Stata ficam organizadas em:
+
+\begin{verbatim}
+outputs/stata/data/          bases intermediárias
+outputs/stata/logs/          logs de execução
+outputs/stata/tables/csv/    tabelas em CSV
+outputs/stata/tables/tex/    tabelas em TEX simples
+outputs/stata/figures/pdf/   figuras em PDF
+outputs/stata/figures/png/   figuras em PNG
+\end{verbatim}
+
+O log principal da execução é:
+
+\begin{verbatim}
+outputs/stata/logs/run_all_stata.log
+\end{verbatim}
+
+As implementações em \textbf{R} e \textbf{Python} reproduzem o mesmo fluxo geral de tratamento da base, estimação, cálculo de elasticidades, markups, diagnósticos, tabelas e gráficos. Elas servem como implementações paralelas para conferência e replicação em ambientes alternativos. Entretanto, a referência principal da estimação e dos resultados reportados nesta lista é a rotina em Stata, pois nela está implementada a versão operacional baseada nos códigos originais \path{eberry} e \path{b_program}.
+% ================================================================
+
+\section{Discussão e Resultados}
+
+\begin{enumerate}
+
+% ------------------------------------------------
+\item \textbf{Logit simples por MQO.}
+
+Construa a variável dependente da inversão logit de Berry e estime o logit simples por MQO, usando preços de transação. Reporte o coeficiente de preço, os coeficientes das características dos produtos e discuta o sinal esperado do parâmetro de preço. Lembre-se de que o coeficiente estimado sobre o preço corresponde a \(-\alpha\); portanto, sob demanda decrescente, espera-se \(\alpha>0\) e coeficiente de preço negativo.
+
+\textbf{Resultados.}
+
+O ponto de partida é a construção da variável dependente da inversão de Berry. Como o bem externo tem participação fixa em \(s_0=0{,}2429\), conforme a equação~\eqref{eq:s0}, a utilidade média observável de cada cereal é recuperada por \(\delta_j=\ln(s_j)-\ln(s_0)\), exatamente como definido em~\eqref{eq:berry_inversion}. Essa transformação permite estimar por MQO a especificação linear do logit simples apresentada em~\eqref{eq:logit_estimavel} e operacionalizada em~\eqref{eq:logit_aplicado}, usando preço de transação e as características observadas de calorias, gordura e açúcar.
+
+A interpretação do coeficiente de preço exige cuidado com a convenção de sinais. Na utilidade indireta, o preço entra como \(-\alpha p_j\), conforme as equações~\eqref{eq:utilidade_indireta} e~\eqref{eq:utilidade_media}. Portanto, a tabela de regressão reporta o coeficiente de \(p_j\), isto é, \(-\alpha\), enquanto a interpretação econômica da sensibilidade ao preço é feita em termos de \(\alpha\). Sob demanda decrescente, espera-se um coeficiente de preço negativo e, equivalentemente, \(\alpha>0\).
+
+A Tabela~\ref{tab:coef-logit-simples} mostra que o MQO estima \(\alpha=0{,}2240\), o que corresponde a coeficiente de preço igual a \(-0{,}2240\). O sinal é, portanto, coerente com a teoria. Entretanto, o erro-padrão é elevado e o valor-p associado ao preço é \(0{,}2656\), indicando baixa precisão estatística. Entre as características observadas, açúcar aparece com coeficiente negativo e significância marginal, enquanto calorias e gordura não apresentam evidência estatística forte nessa especificação.
+
+As Figuras~\ref{fig:q1-share-preco-transacao}, \ref{fig:q1-top15-shares} e~\ref{fig:q1-delta-preco} ajudam a interpretar a base empírica do item. Elas mostram a dispersão dos preços e shares, a concentração dos maiores produtos e a relação entre \(\delta_j\) e preço. Já as Figuras~\ref{fig:q1-curva-classica-logit}, \ref{fig:q1-share-produto-focal-preco} e~\ref{fig:q1-ajuste-share-logit} ilustram a mecânica do modelo: a relação logística entre utilidade média e probabilidade de escolha, a queda prevista do share de um produto focal quando seu preço aumenta e a comparação entre shares observados e previstos. Assim, o MQO funciona como uma referência inicial, mas ainda não resolve o problema de endogeneidade de preço discutido em~\eqref{eq:endogeneidade_preco}, que motiva os itens seguintes.
+
+\input{Tables/01_all_coefficients.tex}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{Figures/Stata/01_share_vs_transaction_price.pdf}
+    \caption{Market share observado e preço de transação.}
+    \label{fig:q1-share-preco-transacao}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{Figures/Stata/02_top15_market_shares.pdf}
+    \caption{Quinze maiores market shares da amostra.}
+    \label{fig:q1-top15-shares}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{Figures/Stata/04_delta_vs_price.pdf}
+    \caption{Variável dependente da inversão de Berry e preço de transação.}
+    \label{fig:q1-delta-preco}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{Figures/Stata/11_classic_logit_curve_share_vs_utility.pdf}
+    \caption{Curva clássica do logit: relação entre utilidade média e probabilidade de escolha.}
+    \label{fig:q1-curva-classica-logit}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{Figures/Stata/12_focal_product_share_vs_price.pdf}
+    \caption{Resposta do market share previsto de um produto focal a variações no preço.}
+    \label{fig:q1-share-produto-focal-preco}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{Figures/Stata/14_observed_vs_predicted_shares_simple_logit.pdf}
+    \caption{Shares observados e shares previstos pelo logit simples.}
+    \label{fig:q1-ajuste-share-logit}
+\end{figure}
+
+% ------------------------------------------------
+\item \textbf{Instrumentos de Berry/BLP e referência por 2SLS.}
+
+Construa os instrumentos de diferenciação de Berry/BLP. No logit simples, use o 2SLS como referência linear ou ponto de partida, mas mantenha a interpretação estrutural associada aos momentos dos erros estruturais e à estimação por GMM da questão seguinte. Estime a equação de demanda por 2SLS instrumentando o preço com três conjuntos de instrumentos: produtos da mesma firma, produtos de firmas rivais e ambos os conjuntos simultaneamente. Em todos os casos, não use a característica do próprio produto na construção dos instrumentos e explicite como foram tratados os casos de firmas com apenas um produto na base.
+
+\textbf{Resultados.}
+
+O segundo item parte da limitação central do MQO: se firmas escolhem preços conhecendo atributos de qualidade não observados pelo econometrista, então \(p_j\) pode ser correlacionado com \(\xi_j\), violando a condição necessária para interpretar o coeficiente de preço como causal. Essa possibilidade foi formalizada em~\eqref{eq:endogeneidade_preco}. A estratégia de variáveis instrumentais busca substituir a variação potencialmente endógena do preço por variação explicada por instrumentos \(Z_j\) que satisfaçam a restrição de exclusão em~\eqref{eq:condicao_iv} e sejam relevantes para explicar o preço.
+
+Foram construídos dois blocos de instrumentos de diferenciação. O primeiro soma, para cada característica \(k\), as características dos demais produtos da mesma firma, conforme~\eqref{eq:instrumento_own}. O segundo soma as características dos produtos das firmas rivais, conforme~\eqref{eq:instrumento_rival}. Em ambos os casos, a característica do próprio produto \(j\) não entra no instrumento. Quando uma firma possui apenas um produto na base, o instrumento de mesma firma foi definido como zero, pois não há outro produto do portfólio interno a ser somado.
+
+As Tabelas~\ref{tab:coef-2sls-propria-firma}, \ref{tab:coef-2sls-firmas-rivais} e~\ref{tab:coef-2sls-ambos-instrumentos} reportam as três especificações por 2SLS. Em todas elas, a estimativa estrutural aparece como \(\alpha=-1{,}3030\), equivalente a um coeficiente de preço positivo na equação de demanda. Esse resultado tem sinal econômico inadequado, pois implicaria aumento da utilidade média quando o preço cresce. A leitura correta, portanto, não é a de que a demanda tem inclinação positiva, mas a de que a identificação do preço por esses instrumentos é frágil na amostra.
+
+As Figuras~\ref{fig:q2-concentracao-firmas} e~\ref{fig:q2-correlacao-instrumentos} complementam essa interpretação. A primeira mostra a concentração de shares por firma, informação relevante porque os instrumentos de própria firma dependem da existência de portfólios multiproduto. A segunda mostra a correlação entre instrumentos, sinalizando que parte dos blocos de diferenciação carrega informação parecida. Esse padrão ajuda a explicar por que os três conjuntos de instrumentos geram estimativas praticamente idênticas e antecipa o diagnóstico formal do primeiro estágio discutido no item 7.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{Figures/Stata/extra_01_firm_share_concentration.pdf}
+    \caption{Concentração de \textit{market shares} por firma.}
+    \label{fig:q2-concentracao-firmas}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.82\textwidth]{Figures/Stata/extra_04_instrument_correlation_matrix.pdf}
+    \caption{Matriz de correlação dos instrumentos de diferenciação.}
+    \label{fig:q2-correlacao-instrumentos}
+\end{figure}
+
+% ------------------------------------------------
+\item \textbf{GMM estrutural e estimação otimizada.}
+
+Estime o modelo por GMM utilizando os momentos dos erros estruturais. Repita a estimação para os mesmos conjuntos de instrumentos da questão anterior. Reporte pelo menos duas versões: GMM de primeira etapa, com matriz de ponderação inicial, e GMM de duas etapas ou GMM eficiente, com matriz de ponderação baseada na variância estimada dos momentos. Reporte também a função objetivo do GMM ao final da estimação.
+
+\textbf{Resultados.}
+
+A estimação por GMM reorganiza o problema de IV a partir dos momentos estruturais. Para cada vetor de parâmetros, recupera-se o erro de demanda \(\xi_j(\theta)\) pela equação~\eqref{eq:erro_estrutural_logit}; em seguida, calcula-se o vetor de momentos amostrais em~\eqref{eq:momentos_gmm}; por fim, escolhem-se os parâmetros que minimizam o critério quadrático em~\eqref{eq:criterio_gmm}. Essa formulação é importante porque deixa claro que o objetivo não é apenas substituir o preço por valores ajustados, mas impor que os resíduos estruturais sejam ortogonais aos instrumentos.
+
+As Tabelas~\ref{tab:coef-gmm1-propria-firma}, \ref{tab:coef-gmm1-firmas-rivais} e~\ref{tab:coef-gmm1-ambos-instrumentos} apresentam o GMM de primeira etapa. Como esperado em uma especificação linear com o mesmo conjunto de momentos, os resultados coincidem com a referência por 2SLS do item anterior: \(\alpha=-1{,}3030\) e função objetivo igual a \(0{,}2056\). A matriz de ponderação inicial adotada foi \(W_0 = (Z'Z)^{-1}\), em que \(Z\) é a matriz de instrumentos. Essa escolha é padrão na literatura e equivale a atribuir peso uniforme aos momentos, ponderado apenas pela variância amostral dos instrumentos.
+As Tabelas~\ref{tab:coef-gmm2-propria-firma}, \ref{tab:coef-gmm2-firmas-rivais} e~\ref{tab:coef-gmm2-ambos-instrumentos} mostram o GMM de duas etapas, em que a matriz de ponderação é atualizada pela variância estimada dos momentos. A estimativa passa para \(\alpha=-1{,}1764\) e a função objetivo reportada é \(0{,}3234\). O fato de os três conjuntos de instrumentos produzirem estimativas praticamente idênticas tanto no GMM de primeira etapa quanto no de duas etapas é consistente com o padrão de multicolinearidade evidenciado na Figura~\ref{fig:q2-correlacao-instrumentos}: quando os blocos de instrumentos carregam informação muito semelhante, o espaço de variação instrumental efetiva se contrai, de modo que reponderar ou ampliar o conjunto de momentos não altera materialmente a solução. Em todas as especificações, os erros-padrão reportados são robustos à heterocedasticidade, calculados a partir da fórmula sanduíche \((D'WD)^{-1}D'W\hat{S}WD(D'WD)^{-1}\), em que \(\hat{S}\) é a estimativa consistente da matriz de variância-covariância dos momentos e \(D\) é o jacobiano amostral dos momentos em relação aos parâmetros.
+
+A mudança entre a primeira e a segunda etapa mostra que a ponderação dos momentos altera a solução numérica, ainda que não corrija o principal problema econômico: o parâmetro de preço permanece com sinal inadequado. Vale notar que o valor da função objetivo aumenta de \(0{,}2056\) para \(0{,}3234\) entre as etapas, o que pode parecer contraintuitivo. Esse comportamento é esperado: as duas etapas minimizam critérios quadráticos com métricas distintas. O GMM de primeira etapa usa \(W_0\), enquanto o de duas etapas usa \(\hat{W} = \widehat{\text{Var}}(g(\theta))^{-1}\). Como as funções objetivo são calculadas com ponderações diferentes, seus valores não são comparáveis entre si; o que o GMM eficiente otimiza não é o mesmo escalar que o GMM de primeira etapa minimizou. Assim, o GMM estrutural cumpre a lógica solicitada na lista, mas seus resultados para o logit simples devem ser interpretados com cautela. Essa cautela será retomada no item 6, quando o sinal de \(\alpha\) afetar diretamente elasticidades e markups.
+
+Os gráficos de resíduos ajudam a avaliar o ajuste. A Figura~\ref{fig:q3-residuos-densidade} mostra a distribuição bruta dos resíduos estruturais e sua respectiva densidade; a Figura~\ref{fig:q3-residuos-qqplot} compara os resíduos com uma referência normal; a Figura~\ref{fig:q3-residuos-preco} verifica se resta padrão sistemático dos resíduos em relação ao preço; e a Figura~\ref{fig:q3-residuos-firma} mostra se há concentração de resíduos por firma. Em conjunto, essas figuras reforçam que a estimação deve ser lida como exercício estrutural e diagnóstico, não como evidência definitiva de poder de mercado.
+
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/15_structural_residual_hist_density.pdf}
+    \caption{Histograma com densidade dos resíduos estruturais do modelo logit.}
+    \label{fig:q3-residuos-densidade}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/16_structural_residual_qqplot.pdf}
+    \caption{QQ-plot dos resíduos estruturais do modelo logit.}
+    \label{fig:q3-residuos-qqplot}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/extra_05_structural_residuals_vs_price.pdf}
+    \caption{Resíduos estruturais e preço de transação.}
+    \label{fig:q3-residuos-preco}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/extra_06_structural_residuals_by_firm.pdf}
+    \caption{Resíduos estruturais por firma.}
+    \label{fig:q3-residuos-firma}
+\end{figure}
+
+% ------------------------------------------------
+\item \textbf{Nested logit por GMM.}
+
+Estime uma versão nested logit por GMM. Defina previamente os grupos de cereais, usando uma classificação economicamente defensável disponível na base, como o segmento de mercado. Calcule o share condicional dentro do nest, discuta por que essa variável também pode ser endógena e proponha instrumentos para ela. Em particular, considere instrumentos construídos a partir do número e das características dos produtos dentro do mesmo nest e em nests rivais. Interprete o parâmetro \(\sigma\) e verifique se a estimativa está no intervalo compatível com o modelo.
+
+\textbf{Resultados.}
+
+O nested logit relaxa a substituição proporcional do logit simples ao permitir que produtos agrupados no mesmo segmento sejam substitutos mais próximos. A variável central é o share condicional \(s_{j\mid g}\), definido em~\eqref{eq:share_within_nest}. A equação estimável, apresentada em~\eqref{eq:nested_logit}, acrescenta \(\sigma\ln(s_{j\mid g})\) à utilidade média. O parâmetro \(\sigma\) mede a correlação das preferências dentro do nest e deve obedecer à restrição teórica~\eqref{eq:intervalo_sigma}. O erro estrutural recuperado na estimação é dado por~\eqref{eq:erro_nested}.
+
+A segmentação por tipo de cereal é economicamente defensável porque aproxima produtos com posicionamento semelhante. As Figuras~\ref{fig:q4-tamanho-nests}, \ref{fig:q4-preco-segmento}, \ref{fig:q4-calorias-segmento}, \ref{fig:q4-gordura-segmento} e~\ref{fig:q4-acucar-segmento} mostram que os grupos diferem em tamanho, preços e características nutricionais médias. Portanto, os nests não são apenas uma classificação mecânica: eles capturam dimensões de diferenciação relevantes para a escolha do consumidor.
+
+A variável \(\ln(s_{j\mid g})\) também pode ser endógena, pois depende dos shares de equilíbrio dentro do grupo e, portanto, pode refletir componentes não observados de qualidade, propaganda ou reputação dos produtos. Por isso, além dos instrumentos de firma definidos em~\eqref{eq:instrumento_own} e~\eqref{eq:instrumento_rival}, foram usados instrumentos baseados no número de produtos dentro do mesmo nest, no número de produtos em nests rivais e nas somas de características dentro e fora dos nests.
+
+As Tabelas~\ref{tab:coef-nested-2sls}, \ref{tab:coef-nested-gmm1} e~\ref{tab:coef-nested-gmm2} reportam os resultados do nested logit. Na versão GMM de duas etapas, a estimativa é \(\alpha=0{,}4848\) e \(\sigma=0{,}3733\). O sinal de \(\alpha\) volta a ser economicamente coerente e \(\sigma\) está no intervalo compatível com o modelo, pois \(0\leq 0{,}3733<1\). Além disso, \(\sigma\) é estatisticamente relevante, sugerindo que há correlação de preferências dentro dos segmentos e que o nested logit é mais adequado do que o logit simples para descrever padrões de substituição entre cereais.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/extra_02_nest_sizes.pdf}
+    \caption{Número de produtos por nest utilizado no nested logit.}
+    \label{fig:q4-tamanho-nests}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/03_price_by_segment.pdf}
+    \caption{Distribuição dos preços de transação por segmento de cereal.}
+    \label{fig:q4-preco-segmento}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/extra_03_mean_cals_by_segment.pdf}
+    \caption{Calorias médias por segmento de cereal.}
+    \label{fig:q4-calorias-segmento}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/extra_03_mean_fat_by_segment.pdf}
+    \caption{Gordura média por segmento de cereal.}
+    \label{fig:q4-gordura-segmento}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/extra_03_mean_sugar_by_segment.pdf}
+    \caption{Açúcar médio por segmento de cereal.}
+    \label{fig:q4-acucar-segmento}
+\end{figure}
+
+% ------------------------------------------------
+\item \textbf{Comparação dos resultados.}
+
+Construa uma tabela comparando as estimativas do parâmetro de preço nas seguintes especificações: MQO; 2SLS e GMM com instrumentos de produtos da mesma firma; 2SLS e GMM com instrumentos de produtos rivais; 2SLS e GMM com ambos os conjuntos de instrumentos; GMM eficiente em duas etapas; e nested logit por GMM. Explique economicamente as diferenças entre as estimativas, discutindo como a endogeneidade de preço pode afetar o sinal e a magnitude do coeficiente estimado por MQO, como os instrumentos alteram a interpretação de \(\alpha\) e por que a minimização do critério de GMM pode alterar as estimativas em relação ao 2SLS.
+
+\textbf{Resultados.}
+
+A comparação deve ser lida a partir da mesma convenção de sinais adotada desde a introdução: as tabelas reportam o coeficiente de preço como \(-\alpha\), enquanto \(\alpha\) é a sensibilidade estrutural ao preço. Por isso, um coeficiente de preço negativo é compatível com \(\alpha>0\), ao passo que um coeficiente de preço positivo implica \(\alpha<0\) e gera uma interpretação econômica inadequada.
+
+A Tabela~\ref{tab:preco-logit-simples} mostra que o MQO produz coeficiente de preço negativo e \(\alpha=0{,}2240\). Esse resultado tem o sinal esperado, mas pode estar viesado se a condição de exogeneidade do preço for violada, como indicado em~\eqref{eq:endogeneidade_preco}. A Tabela~\ref{tab:preco-2sls} mostra que as três especificações por 2SLS produzem \(\alpha=-1{,}3030\), com sinal contrário ao esperado. A Tabela~\ref{tab:preco-gmm} confirma que o GMM de primeira etapa coincide com essa referência linear e que o GMM de duas etapas altera a magnitude para \(\alpha=-1{,}1764\), mas não corrige o sinal.
+
+A principal diferença aparece no nested logit. Conforme a Tabela~\ref{tab:preco-nested-logit}, a especificação nested por GMM de duas etapas estima \(\alpha=0{,}4848\) e \(\sigma=0{,}3733\), ambos com interpretação econômica coerente. Isso sugere que parte do problema do logit simples decorre da imposição de substituição proporcional entre todos os produtos. Ao permitir correlação de preferências dentro dos nests, o modelo recupera uma estrutura de substituição mais plausível.
+
+A Figura~\ref{fig:q5-comparacao-preco} sintetiza visualmente essas diferenças. Ela também ajuda a conectar este item aos anteriores: o MQO é útil como ponto de partida, o 2SLS e o GMM logit simples revelam fragilidade na identificação do preço, e o nested logit melhora a coerência econômica ao incorporar segmentação de produtos. A conclusão é que a comparação dos parâmetros de preço não deve ser feita apenas por magnitude, mas pela consistência entre teoria, instrumentos, sinal de \(\alpha\), estrutura de substituição e diagnóstico de primeiro estágio.
+
+\input{Tables/02_price_parameter_comparison.tex}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{Figures/Stata/05_price_coefficient_comparison.pdf}
+    \caption{Comparação do coeficiente de preço entre especificações.}
+    \label{fig:q5-comparacao-preco}
+\end{figure}
+
+% ------------------------------------------------
+\item \textbf{Elasticidades e markups implícitos.}
+
+Usando as estimativas do logit simples e do nested logit, calcule elasticidades-preço próprias e cruzadas da demanda. Apresente uma tabela com as elasticidades próprias dos principais produtos da amostra e uma matriz de elasticidades cruzadas para um subconjunto de produtos selecionados. Em seguida, usando o modelo logit simples, calcule os markups implícitos sob a hipótese simplificadora de firmas monoproduto e depois sob a estrutura multiproduto observada. Compare os markups estimados com os preços observados e discuta se os resultados são economicamente plausíveis.
+
+\textbf{Resultados.}
+
+As elasticidades-preço do logit simples foram calculadas a partir das equações~\eqref{eq:elasticidade_propria} e~\eqref{eq:elasticidade_cruzada}. A elasticidade própria mede a resposta percentual da demanda do produto \(j\) a uma variação percentual em seu próprio preço; a elasticidade cruzada mede a resposta do share de \(j\) a uma variação percentual no preço de outro produto \(k\), com \(k\neq j\). Em uma demanda decrescente, as elasticidades próprias devem ser negativas, enquanto elasticidades cruzadas positivas indicam substituição entre produtos.
+
+As Tabelas~\ref{tab:own-elasticities-simple-fam}, \ref{tab:own-elasticities-simple-adult} e~\ref{tab:own-elasticities-simple-kids} mostram as elasticidades próprias do logit simples por segmento. Como o parâmetro de preço usado nessa etapa vem do logit simples IV/GMM e tem \(\alpha<0\), as elasticidades próprias aparecem positivas. Isso é economicamente implausível e deve ser interpretado como consequência direta do problema de identificação discutido nos itens 2, 3 e 5, não como evidência de demanda crescente. A matriz de elasticidades do logit simples, apresentada nos subconjuntos das Tabelas~\ref{tab:elas-cornflakes}, \ref{tab:elas-cheerios}, \ref{tab:elas-ricekrispies}, \ref{tab:elas-frostedflakes}, \ref{tab:elas-raisinbran}, \ref{tab:elas-total}, \ref{tab:elas-honeynutcheerios}, \ref{tab:elas-specialk}, \ref{tab:elas-grapenuts}, \ref{tab:elas-spoonsizeshdwt}, \ref{tab:elas-100natural} e~\ref{tab:elas-frostedminiwheats}, reforça esse diagnóstico.
+
+O nested logit gera resultados mais coerentes. As Tabelas~\ref{tab:own-elasticities-nested-logit}, \ref{tab:own-elasticities-nested-logit-parte-2}, \ref{tab:own-elasticities-nested-logit-parte-3}, \ref{tab:own-elasticities-nested-logit-parte-4} e~\ref{tab:own-elasticities-nested-logit-parte-5} reportam elasticidades próprias negativas, como esperado. A Tabela~\ref{tab:elasticity-nested-logit-global} organiza a matriz de elasticidades do nested logit, enquanto as Tabelas~\ref{tab:elas-nested-subset-1}, \ref{tab:elas-nested-subset-2} e~\ref{tab:elas-nested-subset-3} apresentam subconjuntos que facilitam a leitura dos padrões de substituição. A diferença em relação ao logit simples é coerente com o item 4: ao permitir maior substituição dentro dos segmentos, o nested logit produz respostas de demanda mais plausíveis.
+
+Os markups foram calculados a partir das equações~\eqref{eq:markup_mono}, \eqref{eq:ownership}, \eqref{eq:delta_markup}, \eqref{eq:delta_logit} e~\eqref{eq:markup_multi}. As Tabelas~\ref{tab:markups-adult-mono}, \ref{tab:markups-adult-multi}, \ref{tab:markups-fam-mono}, \ref{tab:markups-fam-multi}, \ref{tab:markups-kids-mono} e~\ref{tab:markups-kids-multi} comparam os markups implícitos sob hipóteses monoproduto e multiproduto. Como o cálculo foi feito com o parâmetro de preço problemático do logit simples, aparecem markups negativos e custos marginais implícitos acima dos preços em várias linhas. Esse resultado não é plausível como medida de poder de mercado; ele funciona como diagnóstico adicional de que a estimação de preço do logit simples não deve ser usada para conclusões de oferta.
+
+As Figuras~\ref{fig:q6-matriz-elasticidades}, \ref{fig:q6-elasticidades-proprias}, \ref{fig:q6-efeito-marginal-produto-focal} e~\ref{fig:q6-curvas-resposta-top5} ilustram as respostas de demanda. As Figuras~\ref{fig:q6-markups-mono-multi} e~\ref{fig:q6-preco-markup-multi} mostram o contraste entre markups e preços. Por fim, as Figuras~\ref{fig:q6-densidade-elasticidades}, \ref{fig:q6-boxplot-elasticidades}, \ref{fig:q6-densidade-markups} e~\ref{fig:q6-boxplot-markups} resumem a distribuição desses objetos. Em conjunto, a evidência confirma a mensagem dos itens anteriores: as elasticidades do nested logit são mais coerentes, enquanto os markups derivados do logit simples devem ser tratados como exercício diagnóstico.
+
+\input{Tables/05_own_elasticities_simple_logit.tex}
+
+\input{Tables/04_elasticity_matrix_simple_logit_subset.tex}
+
+\input{Tables/07_own_elasticities_nested_logit.tex}
+
+\input{Tables/06_elasticity_matrix_nested_logit.tex}
+
+\input{Tables/08_markups.tex}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{Figures/Stata/06_elasticity_matrix_subset.pdf}
+    \caption{Matriz de elasticidades-preço para subconjunto de produtos.}
+    \label{fig:q6-matriz-elasticidades}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{Figures/Stata/07_own_price_elasticities.pdf}
+    \caption{Elasticidades-preço próprias por produto.}
+    \label{fig:q6-elasticidades-proprias}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{Figures/Stata/13_focal_product_marginal_effect_vs_price.pdf}
+    \caption{Efeito marginal do preço sobre o share previsto de um produto focal.}
+    \label{fig:q6-efeito-marginal-produto-focal}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{Figures/Stata/17_price_response_curves_top5_products.pdf}
+    \caption{Curvas de resposta do share previsto ao preço para os cinco principais produtos.}
+    \label{fig:q6-curvas-resposta-top5}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{Figures/Stata/08_markups_mono_vs_multi.pdf}
+    \caption{Comparação entre markups monoproduto e multiproduto.}
+    \label{fig:q6-markups-mono-multi}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.88\textwidth]{Figures/Stata/09_price_vs_multiproduct_markup.pdf}
+    \caption{Preço observado e markup multiproduto estimado.}
+    \label{fig:q6-preco-markup-multi}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/18_own_elasticity_hist_density.pdf}
+    \caption{Histograma com densidade das elasticidades-preço próprias.}
+    \label{fig:q6-densidade-elasticidades}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/20_own_elasticity_boxplot.pdf}
+    \caption{Boxplot das elasticidades-preço próprias.}
+    \label{fig:q6-boxplot-elasticidades}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/19_markup_multiproduct_hist_density.pdf}
+    \caption{Histograma com densidade dos markups multiproduto.}
+    \label{fig:q6-densidade-markups}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.84\textwidth]{Figures/Stata/21_markup_multiproduct_boxplot.pdf}
+    \caption{Boxplot dos markups multiproduto.}
+    \label{fig:q6-boxplot-markups}
+\end{figure}
+
+% ------------------------------------------------
+\item \textbf{Diagnóstico dos instrumentos e robustez.}
+
+Avalie a qualidade dos instrumentos usados nas estimações IV/GMM. A resposta deve incluir a regressão de primeiro estágio do preço sobre os instrumentos e controles exógenos, o teste F-eficiente de Montiel-Olea e Pflueger do primeiro estágio para o preço, o diagnóstico separado das variáveis endógenas no nested logit e uma discussão econômica sobre a validade da restrição de exclusão dos instrumentos de diferenciação. Conclua indicando quais especificações parecem mais confiáveis e quais resultados devem ser interpretados com maior cautela.
+
+\textbf{Resultados.}
+
+O diagnóstico dos instrumentos fecha a lógica empírica da lista. A validade de IV/GMM exige duas condições: a restrição de exclusão, sintetizada por~\eqref{eq:condicao_iv}, e a relevância dos instrumentos no primeiro estágio. A primeira é uma hipótese econômica; a segunda pode ser avaliada empiricamente por regressões de primeiro estágio e estatísticas de força dos instrumentos.
+
+A restrição de exclusão é plausível apenas se as somas de características dos demais produtos da própria firma e das firmas rivais afetarem o preço de \(j\), mas não afetarem diretamente \(\xi_j\). A justificativa é que essas variáveis capturam o posicionamento competitivo do produto no espaço de características, e não uma qualidade não observada específica do produto. Ainda assim, essa hipótese pode falhar se firmas com portfólios sistematicamente diferentes também tiverem marcas, publicidade, localização em prateleira ou reputação não observada correlacionadas com \(\xi_j\). Por isso, os instrumentos são teoricamente motivados, mas não automaticamente válidos.
+
+A Tabela~\ref{tab:first-stage-diagnostics} mostra que o primeiro estágio do preço é fraco no logit simples: com os instrumentos combinados, o F parcial homocedástico é \(1{,}9004\), o F/Wald robusto é \(2{,}2755\) e o \(R^2\) do primeiro estágio é \(0{,}1812\). Esses valores ficam abaixo da regra prática de referência frequentemente associada a instrumentos fortes. No nested logit, o primeiro estágio do preço melhora, mas ainda é limitado: o F/Wald robusto é \(4{,}4295\) e o \(R^2\) é \(0{,}3210\). O diagnóstico é diferente para \(\ln(s_{j\mid g})\): o F/Wald robusto é \(13{,}3378\) e o \(R^2\) chega a \(0{,}5253\), sugerindo maior força dos instrumentos para a variável de share dentro do nest.
+
+As Figuras~\ref{fig:q7-f-robusto} e~\ref{fig:q7-primeiro-estagio-ajuste} confirmam essa leitura. A primeira compara as estatísticas robustas de primeiro estágio e destaca a fragilidade do preço em relação ao share dentro do nest. A segunda mostra que o ajuste do primeiro estágio para o preço não reproduz plenamente sua dispersão observada.
+
+Com base nesses resultados, as especificações mais confiáveis para interpretar substituição entre produtos são as do nested logit, especialmente porque \(\sigma\) está no intervalo teórico em~\eqref{eq:intervalo_sigma} e porque os instrumentos são relativamente mais fortes para \(\ln(s_{j\mid g})\). Por outro lado, as conclusões que dependem diretamente do parâmetro de preço do logit simples devem ser lidas com cautela. Isso inclui as elasticidades próprias positivas, os markups negativos e qualquer interpretação de poder de mercado baseada nesses markups. Assim, o exercício cumpre a lógica estrutural Berry/BLP, mas também mostra que a qualidade empírica dos instrumentos é decisiva para transformar a estrutura teórica em estimativas economicamente confiáveis.
+
+\input{Tables/09_first_stage_diagnostics.tex}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{Figures/Stata/10_first_stage_robust_f.pdf}
+    \caption{Estatísticas F/Wald robustas dos primeiros estágios.}
+    \label{fig:q7-f-robusto}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.86\textwidth]{Figures/Stata/extra_07_first_stage_price_fit.pdf}
+    \caption{Ajuste do primeiro estágio para o preço de transação.}
+    \label{fig:q7-primeiro-estagio-ajuste}
+\end{figure}
+
+\end{enumerate}
+
+\end{document}
